@@ -77,3 +77,9 @@ search:
   path: search.xml
   field: post
 
+# Sitemap
+sitemap:
+  path: sitemap.xml
+
+baidusitemap:
+  path: baidusitemap.xml
