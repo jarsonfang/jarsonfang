@@ -6,7 +6,7 @@
 favicon: /favicon.ico
 
 # Set default keywords (Use a comma to separate)
-keywords: "Hexo, NexT"
+keywords: "学习, 工作, 生活"
 
 # Set rss to false to disable feed link.
 # Leave rss as empty to use site's feed link.
@@ -134,7 +134,7 @@ social_icons:
 # Sidebar Avatar
 # in theme directory(source/images): /images/avatar.jpg
 # in site  directory(source/uploads): /uploads/avatar.jpg
-#avatar:
+avatar: /images/avatar.jpg
 
 # Table Of Contents in the Sidebar
 toc:
@@ -146,13 +146,13 @@ toc:
 # Creative Commons 4.0 International License.
 # http://creativecommons.org/
 # Available: by | by-nc | by-nc-nd | by-nc-sa | by-nd | by-sa | zero
-#creative_commons: by-nc-sa
+creative_commons: by-nc-sa
 #creative_commons:
 
 sidebar:
   # Sidebar Position, available value: left | right
-  position: left
-  #position: right
+  #position: left
+  position: right
 
   # Sidebar Display, available value:
   #  - post    expand on posts automatically. Default.
@@ -168,8 +168,14 @@ sidebar:
 #links_title: Links
 #links_layout: block
 #links_layout: inline
-#links:
+links:
   #Title: http://example.com/
+  ABS: http://tldp.org/LDP/abs/html/
+  ProGit: http://git-scm.com/book/zh/
+  DevBean: https://www.devbean.net/
+  CoolShell: http://coolshell.cn/
+  Rust-庄晓立: http://blog.csdn.net/liigo/
+  蜗窝科技: http://www.wowotech.net/
 
 
 # ---------------------------------------------------------------
