@@ -1,17 +1,24 @@
-## Install npm
->sudo apt-get install nodejs-legacy npm
+## Install Hexo
 
-## Install hexo
->sudo npm install -g hexo-cli
+```bash
+sudo apt-get install nodejs-legacy npm
+sudo npm install -g hexo-cli
+```
 
 ## Clone blog source
->git clone https://github.com/jarsonfang/blog.git
 
-## Install hexo node_modules
->cd blog && npm install
+```bash
+git clone https://github.com/jarsonfang/blog.git
+```
 
-## Generate blog pages
->hexo g
+## Install node_modules
 
-## Deploy to github
->hexo d
+```bash
+cd blog && npm install
+```
+
+## Generate and deploy website
+
+```bash
+hexo d -g
+```
