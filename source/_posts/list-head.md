@@ -315,7 +315,7 @@ list_entry(nf_sockopts->next, struct nf_sockopt_ops, list);
 `container_of()`和`offsetof()`并不仅用于链表操作，这里最有趣的地方是`((type *)0)->member`，它将`0`地址强制"转换"为`type`结构的指针，再访问到`type`结构中的`member`成员。在`container_of`宏中，它用来给`typeof()`提供参数（`typeof()`是gcc的扩展，和`sizeof()`类似 ），以获`member`成员的数据类型；在`offsetof()`中，这个`member`成员的地址实际上就是`type` 数据结构中`member`成员相对于结构变量的偏移量。
 
 如果这么说还不好理解的话，不妨看看下面这张图：`offsetof()`宏的原理
-![image005](/uploads/image005.gif)
+![image005](/uploads/offsetof.gif)
 
 对于给定一个结构，`offsetof(type,member)`是一个常量，`list_entry()`正是利用这个不变的偏移量来求得链表数据项的变量地址。
 ```c
