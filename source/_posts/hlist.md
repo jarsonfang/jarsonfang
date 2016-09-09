@@ -24,7 +24,7 @@ date: 2014-03-08 11:54:51
  };
 ```
 顾名思义，`hlist_head`表示哈希表的头结点。哈希表中每一个 entry (hlist_head) 所对应的都是一个链表（hlist)，该链表的结点由`hlist_node`表示。
-![hlist](/uploads/hlist.jpg)
+![hlist](/uploads/images/hlist.jpg)
 `hlist_head` 结构体只有一个域，即`first`。`first`指针指向该 hlist 链表的第一个节点。
 
 `hlist_node`结构体有两个域，`next`和`pprev`。 `next`指针很容易理解，它指向下个`hlist_node`结点，倘若该节点是链表的最后一个节点，`next`指向`NULL`。
