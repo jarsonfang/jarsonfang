@@ -454,5 +454,5 @@ static inline unsigned int kfifo_len(struct kfifo *fifo)
 <span style="color:red;">2014.03.31 更新</span>
 新的内核版本中，kfifo 接口已经改写，新的 kfifo 接口请查阅最新的内核源码。
 相关的接口修改历史可查阅以下链接：
-[http://lwn.net/Articles/345015/](http://lwn.net/Articles/345015/)
-[http://lwn.net/Articles/347619/](http://lwn.net/Articles/347619/)
+<http://lwn.net/Articles/345015/>
+<http://lwn.net/Articles/347619/>
