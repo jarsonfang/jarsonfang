@@ -78,8 +78,8 @@ font:
   # Global font settings used on <body> element.
   global:
     # external: true will load this font family from host.
-    external: true
-    family: Lato
+    external: false
+    family: WenQuanYi Micro Hei
 
   # Font settings for Headlines (h1, h2, h3, h4, h5, h6)
   # Fallback to `global` font settings.
@@ -103,8 +103,8 @@ font:
 
   # Font settings for <code> and code blocks.
   codes:
-    external: true
-    family:
+    external: false
+    family: Source Code Pro  # install powerline fonts
 
 
 # ---------------------------------------------------------------
