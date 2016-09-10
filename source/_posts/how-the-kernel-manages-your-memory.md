@@ -2,7 +2,6 @@
 title: 内核是如何管理内存的
 tags:
   - kernel
-id: 201
 categories:
   - 内核内存管理
 date: 2014-02-26 13:34:46

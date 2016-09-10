@@ -3,7 +3,6 @@ title: linux内核环形队列kfifo
 tags:
   - kernel
   - 数据结构
-id: 573
 categories:
   - 内核数据结构
 date: 2014-03-29 23:07:35

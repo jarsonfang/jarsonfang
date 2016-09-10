@@ -3,7 +3,6 @@ title: linux内核链表之list_head
 tags:
   - kernel
   - 数据结构
-id: 340
 categories:
   - 内核数据结构
 date: 2014-03-07 16:58:28
