@@ -2,6 +2,7 @@
 title: 设备树使用手册（译）
 tags:
   - DevTree
+  - kernel
 categories:
   - 内核设备树
 date: 2015-04-19 13:51:06
