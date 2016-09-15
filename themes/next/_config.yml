@@ -255,7 +255,7 @@ duoshuo_shortname: jarsonfang
 duoshuo_share: true
 
 # Hot artical
-duoshuo_hotartical: true
+#duoshuo_hotartical: true
 
 # Google Webmaster tools verification setting
 # See: https://www.google.com/webmasters/
