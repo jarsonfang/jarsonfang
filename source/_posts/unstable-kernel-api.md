@@ -1,10 +1,9 @@
 ---
 title: 不稳定的内核API
 tags:
-  - kernel
+  - kernel-doc
 categories:
   - linux内核修炼之道
-  - 内核文档
 date: 2014-04-17 14:45:34
 ---
 
