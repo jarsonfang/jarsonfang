@@ -5,10 +5,10 @@ sudo apt-get install nodejs-legacy npm
 sudo npm install -g hexo-cli
 ```
 
-## Clone blog source
+## Clone website
 
 ```bash
-git clone https://github.com/jarsonfang/blog.git
+git clone https://github.com/jarsonfang/jarsonfang.github.io.git
 ```
 
 ## Install node_modules
@@ -17,7 +17,13 @@ git clone https://github.com/jarsonfang/blog.git
 cd blog && npm install
 ```
 
-## Generate and deploy website
+## Preview on localhost
+
+```bash
+hexo s
+```
+
+## Generate and deploy
 
 ```bash
 hexo d -g
