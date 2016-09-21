@@ -8,7 +8,7 @@ sudo npm install -g hexo-cli
 ## Clone website
 
 ```bash
-git clone https://github.com/jarsonfang/jarsonfang.github.io.git
+git clone https://github.com/jarsonfang/jarsonfang.github.io.git blog
 ```
 
 ## Install node_modules
