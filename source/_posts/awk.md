@@ -1424,7 +1424,7 @@ FNR == 23 , FNR == 28 { print "     " $0 }
 当 switch 打开的期间, awk 会执行 `print "     " $0`  
 ( FNR 为awk的内建变量, 请参考 附录 D )
 
-## 13. 附录 B ── Actions
+## 附录 B ── Actions
 
 Actions 是由下列指令(statement)所组成:
 
