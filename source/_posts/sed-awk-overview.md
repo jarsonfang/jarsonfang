@@ -1,7 +1,8 @@
 ---
 title: sed & awk 概述
 tags:
-  - sed & awk
+  - sed
+  - awk
 categories:
   - sed & awk
 date: 2014-02-21 14:23:20
