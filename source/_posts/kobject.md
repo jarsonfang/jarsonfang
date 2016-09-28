@@ -1,9 +1,9 @@
 ---
 title: 关于 kobject，kset 和 ktype 的一切
 tags:
-  - kernel-doc
   - 设备模型
 categories:
+  - kernel
   - 内核文档
 date: 2014-03-04 15:01:22
 ---

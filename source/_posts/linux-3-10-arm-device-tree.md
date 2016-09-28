@@ -2,8 +2,8 @@
 title: Linux 3.10 ARM Device Tree 的初始化
 tags:
   - DevTree
-  - kernel
 categories:
+  - kernel
   - 内核设备树
 date: 2015-05-10 11:46:09
 ---

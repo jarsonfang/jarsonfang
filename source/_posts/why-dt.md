@@ -2,8 +2,8 @@
 title: Device Tree（一）：背景介绍
 tags:
   - DevTree
-  - kernel
 categories:
+  - kernel
   - 内核设备树
 date: 2015-04-19 15:52:30
 ---

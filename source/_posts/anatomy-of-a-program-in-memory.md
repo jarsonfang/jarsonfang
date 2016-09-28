@@ -1,8 +1,8 @@
 ---
 title: 进程内存布局剖析
 tags:
-  - kernel
 categories:
+  - kernel
   - 内核内存管理
 date: 2014-02-26 13:32:52
 ---

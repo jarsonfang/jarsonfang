@@ -1,9 +1,9 @@
 ---
 title: 驱动模型之设备驱动
 tags:
-  - kernel-doc
   - 设备模型
 categories:
+  - kernel
   - 内核文档
 date: 2014-03-05 14:18:28
 ---

@@ -1,8 +1,8 @@
 ---
 title: 驱动模型之设备类
 tags:
-  - kernel-doc
 categories:
+  - kernel
   - 内核文档
 date: 2014-03-05 15:28:09
 ---

@@ -2,8 +2,8 @@
 title: Relay：一种内核到用户空间的高效数据传输技术
 tags:
   - VFS
-  - kernel
 categories:
+  - kernel
   - 内核文件系统
 date: 2015-04-11 18:37:26
 ---

@@ -1,9 +1,8 @@
 ---
 title: linux内核链表之hlist
 tags:
-  - kernel
-  - 数据结构
 categories:
+  - kernel
   - 内核数据结构
 date: 2014-03-08 11:54:51
 ---

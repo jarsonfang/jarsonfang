@@ -1,9 +1,9 @@
 ---
 title: 二分法与printk()
 tags:
-  - kernel
 categories:
-  - linux内核修炼之道
+  - kernel
+  - 内核修炼之道
 date: 2014-04-17 15:10:23
 ---
 

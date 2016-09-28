@@ -1,8 +1,8 @@
 ---
 title: linux内核参数简介
 tags:
-  - kernel-doc
 categories:
+  - kernel
   - 内核文档
 date: 2014-04-22 14:51:39
 ---

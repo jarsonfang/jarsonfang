@@ -1,9 +1,8 @@
 ---
 title: linux内核环形队列kfifo
 tags:
-  - kernel
-  - 数据结构
 categories:
+  - kernel
   - 内核数据结构
 date: 2014-03-29 23:07:35
 ---

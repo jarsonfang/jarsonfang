@@ -1,9 +1,9 @@
 ---
 title: Kernel地图：Kconfig与Makefile
 tags:
-  - kernel
 categories:
-  - linux内核修炼之道
+  - kernel
+  - 内核修炼之道
 date: 2014-04-17 10:18:09
 ---
 

@@ -2,8 +2,8 @@
 title: 从文件 I/O 看 Linux 的虚拟文件系统
 tags:
   - VFS
-  - kernel
 categories:
+  - kernel
   - 内核文件系统
 date: 2014-02-25 14:53:28
 ---

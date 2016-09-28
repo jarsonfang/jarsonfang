@@ -1,10 +1,10 @@
 ---
 title: linux设备模型
 tags:
-  - kernel
   - 设备模型
 categories:
-  - linux内核修炼之道
+  - kernel
+  - 内核修炼之道
 date: 2014-04-17 14:17:28
 ---
 

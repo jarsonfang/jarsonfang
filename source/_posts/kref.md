@@ -1,9 +1,9 @@
 ---
 title: 记录内核对象生命周期的kref
 tags:
-  - kernel-doc
   - 设备模型
 categories:
+  - kernel
   - 内核文档
 date: 2014-03-07 10:40:14
 ---

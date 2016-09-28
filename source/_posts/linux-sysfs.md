@@ -2,9 +2,9 @@
 title: Linux文件系统之sysfs
 tags:
   - VFS
-  - kernel
   - 设备模型
 categories:
+  - kernel
   - 内核文件系统
 date: 2014-02-28 11:01:21
 ---
