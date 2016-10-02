@@ -2,9 +2,9 @@
 title: Hexo 命令
 date: 2016-10-01 09:52:54
 tags:
-  - hexo
+  - Hexo
 categories:
-  - hexo
+  - Hexo
 ---
 
 ## 命令

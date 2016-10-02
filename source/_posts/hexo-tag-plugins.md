@@ -2,9 +2,9 @@
 title: Hexo 标签插件
 date: 2016-10-01 21:40:05
 tags:
-  - hexo
+  - Hexo
 categories:
-  - hexo
+  - Hexo
 ---
 
 标签插件和 Front-matter 中的标签不同，它们是用于在文章中快速插入特定内容的插件。
@@ -141,4 +141,13 @@ array.map(callback[, thisArg])
 {% asset_path slug %}
 {% asset_img slug [title] %}
 {% asset_link slug [title] %}
+```
+
+### Raw
+
+如果您想在文章中插入 Swig 标签，可以尝试使用 Raw 标签，以免发生解析异常。
+```
+{% raw %}
+content
+{% endraw %}
 ```

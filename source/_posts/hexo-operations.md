@@ -2,9 +2,9 @@
 title: Hexo 基本操作
 date: 2016-10-01 20:33:03
 tags:
-  - hexo
+  - Hexo
 categories:
-  - hexo
+  - Hexo
 ---
 
 ## 写作
