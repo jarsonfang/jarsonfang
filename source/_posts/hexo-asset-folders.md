@@ -1,5 +1,5 @@
 ---
-title: hexo 资源文件夹
+title: Hexo 资源文件夹
 date: 2016-10-02 09:17:33
 tags:
   - Hexo
