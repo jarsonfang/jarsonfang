@@ -18,26 +18,26 @@ date: 2014-08-19 22:15:33
 ### 生命线
 
 生命线名称可带下划线。当使用下划线时，意味着序列图中的生命线代表一个类的特定实体。
-![life](/uploads/images/life.png)
+{% asset_img life.png %}
 
 ### 同步消息
 
 发送人在它继续之前，将等待同步消息响应
-![sync](/uploads/images/sync.png)
+{% asset_img sync.png %}
 
 ### 异步消息
 
 在发送方继续之前，无需等待响应的消息
-![async](/uploads/images/async.png)
+{% asset_img async.png %}
 
 ### 注释
 
-![comment](/uploads/images/comment.png)
+{% asset_img comment.png %}
 
 ### 约束
 
 约束的符号很简单；格式是: \[Boolean Test\]
-![constraint](/uploads/images/constraint.png)
+{% asset_img constrant.png %}
 
 ### 组合片段
 
@@ -50,21 +50,21 @@ _a. 抉择（Alt）_
 <span style="color: blue;">抉择用来指明在两个或更多的消息序列之间的互斥的选择，相当于经典的if..else..。</span>
 
 抉择在任何场合下只发生一个序列。可以在每个片段中设置一个临界来指示该片段可以运行的条件。else 的临界指示其他任何临界都不为 True 时应运行的片段。如果所有临界都为 False 并且没有 else，则不执行任何片段。
-![alt](/uploads/images/alt.png)
+{% asset_img alt.png %}
 
 _b. 选项（Opt）_
 
 包含一个可能发生或不发生的序列
-![opt](/uploads/images/opt.png)
+{% asset_img opt.png %}
 
 _c. 循环（Loop）_
 
 片段重复一定次数。 可以在临界中指示片段重复的条件。
-![loop](/uploads/images/loop.png)
+{% asset_img loop.png %}
 
 _d. 并行（Par）_
 
-![par](/uploads/images/par.png)
+{% asset_img par.png %}
 
 **下表列出了常用的组合片段：**
 

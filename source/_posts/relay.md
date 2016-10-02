@@ -38,7 +38,7 @@ RelayFS目前已经被越来越多的内核工具使用，包括内核调试工�
 Relay将数据的读和写分离，使得突发性大量数据写入的时候，不需要受限于用户空间相对较慢的读取速度，从而大大提高了效率。Relay作为写入和读取的桥梁，也就是将内核用户写入的数据缓存并转发给用户空间的程序。这种转发机制也正是Relay这个名称的由来。
 
 下面这个图给出了Relay的基本结构和典型操作：
-![relay](/uploads/images/relay.png)
+{% asset_img relay.png %}
 可以看到，这里的relay通道由四个relay缓冲区(`kbuf0`到`kbuf3`)组成，分别对应于系统中的`cpu0`到`cpu3`。每个CPU上的代码调用`relay_write()`的时候将数据写入自己对应的relay缓冲区内。每个relay缓冲区称一个relay文件，即`/cpu0`到`/cpu3`。当文件系统被mount到`/mnt/`以后，这个relay文件就被映射成映射到用户空间的地址空间。一旦数据可用，用户程序就可以把它的数据读出来写入到硬盘上的文件中，即`cpu0.out`到`cpu3.out`。
 
 ## Relay的主要API

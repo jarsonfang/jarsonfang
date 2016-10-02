@@ -475,7 +475,7 @@ OK，我们已经通过`compatible`属性找到了适合的interrupt controller�
 （4）type标识了该中断的trigger type，例如：上升沿触发还是电平触发。
 
 为了更顺畅的描述后续的代码，我需要简单的介绍2416的中断控制器，其block diagram如下：
-![irqs-2416](/uploads/images/irqs-2416.gif)
+{% asset_img irqs-2416.gif %}
 53个Samsung2416的中断源被分成两种类型，一种是需要sub寄存器进行控制的，例如DMA，系统中的8个DMA中断是通过两级识别的，先在SRCPND寄存器中得到是DMA中断的信息，具体是哪一个channel的DMA中断需要继续查询SUBSRC寄存器。那些不需要sub寄存器进行控制的，例如timer，5个timer的中断可以直接从SRCPND中得到。
 中断MASK寄存器可以控制产生的中断是否要报告给CPU，当一个中断被mask的时候，虽然SRCPND寄存器中，硬件会set该bit，但是不会影响到INTPND寄存器，从而不会向CPU报告该中断。对于SUBMASK寄存器，如果该bit被set，也就是该sub中断被mask了，那么即便产生了对应的sub中断，也不会修改SRCPND寄存器的内容，只是修改SUBSRCPND中寄存器的内容。
 

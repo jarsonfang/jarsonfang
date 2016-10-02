@@ -22,8 +22,7 @@ Linux支持各种各样的文件系统格式，如ext2、ext3、reiserfs、FAT�
 上一节我们介绍了一种典型的文件系统在磁盘上的存储布局，这一节我们介绍运行时文件系统在内核中的表示。
 
 Linux内核的VFS子系统可以图示如下：
-
-![linux-vfs](/uploads/images/linux-vfs.png)
+{% asset_img linux-vfs.png %}
 
 **每个进程在PCB (Process Control Block) 即进程控制块中都保存着一份文件描述符表，文件描述符就是这个表的索引，文件描述表中每个表项都有一个指向已打开文件的指针**，现在我们明确一下：已打开的文件在内核中用`file`结构体表示，文件描述符表中的指针指向`file`结构体。
 

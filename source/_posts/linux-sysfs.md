@@ -60,7 +60,7 @@ out_err:
 ```
 每个`kobject`对应sysfs中的一个目录，`kobject`的每个属性对应sysfs文件系统中的文件。
 `struct sysfs_dirent`就是用来做`kobject`与`dentry`的互相转换用的，它们的关系如下图所示:
-![sysfs-fig1](/uploads/images/sysfs-fig1.jpg)
+{% asset_img sysfs.jpg %}
 上图表示的是一个`kobject`的层次结构，`dentry`的`d_fsdata`字段指定该结点所表示的`sysfs_dirent`，`sysfs_dirent.s_parent`表示它的父`kobject`，`sysfs_dirent`.`s_sibling`表示它的兄弟结点，`sysfs_dirent.s_dir.children`表示它所属的子节点。
 
 从上图可知，如果要遍历一个结点下面的子结点，只需要找到`sysfs_dirent.s_dir.children`结点，然后按着子节点的`s_sibling`域遍历即可。当然，有时候也需要从`struct sysfs_dirent`导出它所属的`dentry`结点，我们在代码中遇到的时候再进行分析。

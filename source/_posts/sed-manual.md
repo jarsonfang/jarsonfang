@@ -26,7 +26,7 @@ sed 是一个非交互式上下文(context)编辑器,它被设计在下列三种
 ## sed 如何工作
 
 如同其它 UNIX 命令, sed 由标准输入读入编辑文件并由标准输出送出结果。下图表示 sed将资料行 "`Unix`" 替换成 "`UNIX`",  
-![sed](/uploads/images/sed.gif)  
+{% asset_img sed.gif %}
 在图中, 上方 standard input 为标准输入, 是读取资料之处; standard output 为标准输出, 是送出结果之处;中间 sed 方块的下面两个虚线方块表示 sed 的工作流程。其中, 左边虚线方块表示 sed 将标准输入资料置入pattern space, 右边虚线方块表示 sed 将 pattern space 中编辑完毕後的资料送到标准输出。
 
 在虚线方块中, 两个实线方块分别表示 pattern space 与 sed script。其中, pattern space 为一缓区, 它是sed 工作场所; 而 sed script 则表示一组执行的编辑指令。

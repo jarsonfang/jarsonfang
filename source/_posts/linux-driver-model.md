@@ -23,29 +23,29 @@ struct bus_type {
 
      struct kset             subsys;
      struct kset             drivers;
-      struct kset             devices;
+     struct kset             devices;
      struct klist            klist_devices;
      struct klist            klist_drivers;
 
-      struct blocking_notifier_head bus_notifier;
+     struct blocking_notifier_head bus_notifier;
 
      struct bus_attribute    * bus_attrs;
-      struct device_attribute * dev_attrs;
+     struct device_attribute * dev_attrs;
      struct driver_attribute * drv_attrs;
      struct bus_attribute drivers_autoprobe_attr;
      struct bus_attribute drivers_probe_attr;
 
      int (*match)(struct device * dev, struct device_driver * drv);
-      int (*uevent)(struct device *dev, char **envp,
+     int (*uevent)(struct device *dev, char **envp,
      int num_envp, char *buffer, int buffer_size);
      int             (*probe)(struct device * dev);
      int             (*remove)(struct device * dev);
-      void            (*shutdown)(struct device * dev);
+     void            (*shutdown)(struct device * dev);
 
      int (*suspend)(struct device * dev, pm_message_t state);
      int (*suspend_late)(struct device * dev, pm_message_t state);
      int (*resume_early)(struct device * dev);
-      int (*resume)(struct device * dev);
+     int (*resume)(struct device * dev);
 
      unsigned int drivers_autoprobe:1;
 };
@@ -64,9 +64,9 @@ struct device_driver {
 
     int     (*probe)        (struct device * dev);
     int     (*remove)       (struct device * dev);
-     void    (*shutdown)     (struct device * dev);
+    void    (*shutdown)     (struct device * dev);
     int     (*suspend)      (struct device * dev, pm_message_t state);
-     int     (*resume)       (struct device * dev);
+    int     (*resume)       (struct device * dev);
 };
 
 struct device {
@@ -82,7 +82,7 @@ struct device {
   unsigned  is_registered:1;
   unsigned  uevent_suppress:1;
 
-     struct semaphore sem; /* semaphore to synchronize calls to
+  struct semaphore sem; /* semaphore to synchronize calls to
         * its driver.
         */
 
@@ -141,7 +141,6 @@ driver`结构里出现的`kobject`结构是什么？作为一个五星红旗下�
 
 但现在情况变了，在这红莲绽放的日子里，在这樱花伤逝的日子里，出现了一种新的名词，叫热插拔。设备可以在计算机启动以后在插入或者拔出计算机了。因此，很难再说是先有设备还是先有驱动了。因为都有可能。设备可以在任何时刻出现，而驱动也可以在任何时刻被加载，所以，出现的情况就是，每当一个`struct device`诞生，它就会去`bus`的`drivers`链表中寻找自己的另一半，反之，每当一个`struct device_driver`诞生，它就去`bus`的`devices`链表中寻找它的那些设备。如果找到了合适的，那么OK，和之前那种情况一样，调用`device_bind_driver`绑定好。如果找不到，没有关系，等待吧，等到昙花再开，等到风景看透，心中相信，这世界上总有一个人是你所等的，只是还没有遇到而已。
 
-～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～～
 
 设备模型拍得再玄幻，它也只是个模型，必须得落实在具体的子系统，否则就只能抱着个最佳技术奖空遗恨。既然前面已经以USB子系统的实现分析示例了分析内核源码应该如何入手，那么这里就仍然以USB子系统为例，看看设备模型是如何软着陆的。
 
@@ -152,7 +151,9 @@ driver`结构里出现的`kobject`结构是什么？作为一个五星红旗下�
 core就是核心，基本上你要在你的电脑里用USB设备，那么两个模块是必须的：一个是usbcore，这就是核心模块；另一个是主机控制器的驱动程序，比如ehci_hcd和uhci_hcd。你的USB设备要工作，合适的USB主机控制器模块也是必不可少的。
 
 usbcore负责实现一些核心的功能，为别的设备驱动程序提供服务，提供一个用于访问和控制USB硬件的接口，而不用去考虑系统当前存在哪种主机控制器。至于core、主机控制器和USB驱动三者之间的关系，如下图所示。
-![usb_subsystem](/uploads/images/usb_subsystem.png)
+
+{% asset_img usb_subsystem.png %}
+
 USB驱动和主机控制器就像core的两个保镖，协议里也说了，主机控制器的驱动（HCD）必须位于USB软件的最下一层。HCD提供主机控制器硬件的抽象，隐藏硬件的细节，在主机控制器之下是物理的USB及所有与之连接的USB设备。而HCD只有一个客户，对一个人负责，就是usbcore。usbcore将用户的请求映射到相关的HCD，用户不能直接访问HCD。
 
 core为咱们完成了大部分的工作，因此咱们写USB驱动的时候，只能调用core的接口，core会将咱们的请求发送给相应的HCD。
