@@ -17,7 +17,7 @@ categories:
 content
 {% endblockquote %}
 ```
-
+<!--more-->
 ### 示例
 
 **没有提供参数，则只输出普通的blockquote**
