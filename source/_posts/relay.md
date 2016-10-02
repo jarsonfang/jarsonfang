@@ -179,4 +179,4 @@ int main(void)
 ## 参考资料
 
 Relay的主页：<http://relayfs.sourceforge.net/>
-示例代码：[relay-apps-0.94.tar](/uploads/code/relay-apps-0.94.tar.gz)
+示例代码： {% asset_link relay-apps-0.94.tar.gz %}
