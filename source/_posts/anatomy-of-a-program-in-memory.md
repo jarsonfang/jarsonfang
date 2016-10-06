@@ -7,5 +7,6 @@ categories:
 date: 2014-02-26 13:32:52
 ---
 
-[anatomy-of-a-program-in-memory](http://duartes.org/gustavo/blog/post/anatomy-of-a-program-in-memory)
+原文：[anatomy-of-a-program-in-memory](http://duartes.org/gustavo/blog/post/anatomy-of-a-program-in-memory)
+
 {% asset_link anatomy-of-a-program-in-memory.pdf 【译】进程内存布局剖析 %}
