@@ -1,10 +1,11 @@
 ---
 title: 标准I/O库
+date: 2014-05-05 23:27:27
 tags:
   - APUE
 categories:
+  - programming
   - APUE
-date: 2014-05-05 23:27:27
 ---
 
 参考：[APUE读书笔记 之 标准I/O库](http://www.cnblogs.com/CoreyGao/archive/2013/04/23/3038490.html)

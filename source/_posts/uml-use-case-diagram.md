@@ -1,10 +1,11 @@
 ---
 title: UML 用例图总结
+date: 2014-08-26 22:42:28
 tags:
   - UML
 categories:
+  - programming
   - 设计模式
-date: 2014-08-26 22:42:28
 ---
 
 原文：<http://blog.csdn.net/tianhai110/article/details/6369762>
