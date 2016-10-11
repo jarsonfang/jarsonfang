@@ -1,10 +1,11 @@
 ---
 title: 文件 I/O
+date: 2014-04-13 10:05:59
 tags:
   - APUE
 categories:
+  - programming
   - APUE
-date: 2014-04-13 10:05:59
 ---
 
 原文参考：[APUE读书笔记 之 文件I/O](http://www.cnblogs.com/CoreyGao/archive/2013/04/21/3031414.html)

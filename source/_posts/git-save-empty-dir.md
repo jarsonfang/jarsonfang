@@ -1,10 +1,11 @@
 ---
 title: 用git保存空目录
+date: 2016-03-22 11:07:36
 tags:
   - git
 categories:
+  - tools
   - VCS
-date: 2016-03-22 11:07:36
 ---
 
 git 和 svn 不同，仅仅跟踪文件的变动，不跟踪目录。Perforce 也是如此。所以，一个空目录，如果里面没有文件，即便 git add 这个目录，另外在别处 check out 的时候，是没有这个空目录的。

@@ -1,10 +1,11 @@
 ---
 title: 文件和目录
+date: 2014-04-17 10:02:30
 tags:
   - APUE
 categories:
+  - programming
   - APUE
-date: 2014-04-17 10:02:30
 ---
 
 参考：[APUE读书笔记 之 文件和目录](http://www.cnblogs.com/CoreyGao/archive/2013/04/21/3034745.html)

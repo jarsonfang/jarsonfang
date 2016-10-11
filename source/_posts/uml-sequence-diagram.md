@@ -1,10 +1,11 @@
 ---
 title: UML序列图总结
+date: 2014-08-19 22:15:33
 tags:
   - UML
 categories:
+  - programming
   - 设计模式
-date: 2014-08-19 22:15:33
 ---
 
 原文：<http://blog.csdn.net/tianhai110/article/details/6361338>

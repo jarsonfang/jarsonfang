@@ -1,10 +1,11 @@
 ---
 title: UML类图几种关系的总结
+date: 2014-08-18 23:01:05
 tags:
   - UML
 categories:
+  - programming
   - 设计模式
-date: 2014-08-18 23:01:05
 ---
 
 原文：<http://blog.csdn.net/tianhai110/article/details/6339565>
