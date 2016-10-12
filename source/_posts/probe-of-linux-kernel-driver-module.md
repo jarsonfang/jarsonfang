@@ -198,7 +198,7 @@ static int kobject_add_varg(struct kobject *kobj, struct kobject *parent,
 }
 ```
 设置好`kobject->name`后，转入`kobject_add_internal()`，在sysfs中创建空间结构。代码如下：
-[cc lang="c"]
+```c
 static int kobject_add_internal(struct kobject *kobj)
 {
      int error = 0;
@@ -254,9 +254,9 @@ static int kobject_add_internal(struct kobject *kobj)
 
      return error;
 }
-[/cc]
-这段代码比较简单，它主要完成kobject父结点的判断和选定，然后再调用create_dir()在sysfs创建相关信息。该函数代码如下：
-[cc lang="c"]
+```
+这段代码比较简单，它主要完成`kobject`父结点的判断和选定，然后再调用`create_dir()`在`sysfs`创建相关信息。该函数代码如下：
+```c
 static int create_dir(struct kobject *kobj)
 {
      int error = 0;
@@ -272,9 +272,9 @@ static int create_dir(struct kobject *kobj)
      }
      return error;
 }
-[/cc]
-我们在上面的示例中看到的/sys下的eric_test目录，以及该目录下面的eric_xiao的这个文件就是这里被创建的。我们先看一下kobject所表示的目录创建过程，这是在sysfs_create_dir()中完成的。代码如下：
-[cc lang="c"]
+```
+我们在上面的示例中看到的`/sys`下的`eric_test`目录，以及该目录下面的`eric_xiao`的这个文件就是这里被创建的。我们先看一下`kobject`所表示的目录创建过程，这是在`sysfs_create_dir()`中完成的。代码如下：
+```c
 int sysfs_create_dir(struct kobject * kobj)
 {
      struct sysfs_dirent *parent_sd, *sd;
@@ -297,11 +297,11 @@ int sysfs_create_dir(struct kobject * kobj)
          kobj->sd = sd;
      return error;
 }
-[/cc]
-在这里，我们就要联系之前分析过的sysfs文件系统的研究了。如果不太清楚的，可以再找到那篇文章仔细的研读一下。create_dir()就是在sysfs中创建目录的接口，在之前已经详细分析过了。这里不再讲述。
+```
+在这里，我们就要联系之前分析过的sysfs文件系统的研究了。如果不太清楚的，可以再找到那篇文章仔细的研读一下。`create_dir()`就是在`sysfs`中创建目录的接口，在之前已经详细分析过了。这里不再讲述。
 
-接着看为kobject->ktype中的属性创建文件，这是在populate_dir()中完成的。代码如下：
-[cc lang="c"]
+接着看为`kobject->ktype`中的属性创建文件，这是在`populate_dir()`中完成的。代码如下：
+```c
 static int populate_dir(struct kobject *kobj)
 {
      struct kobj_type *t = get_ktype(kobj);
@@ -318,11 +318,11 @@ static int populate_dir(struct kobject *kobj)
      }
      return error;
 }
-[/cc]
-这段代码比较简单，它遍历ktype中的属性，然后为其建立文件。请注意：文件的操作最后都会回溯到ktype->sysfs_ops的show和store这两个函数中。
+```
+这段代码比较简单，它遍历`ktype`中的属性，然后为其建立文件。请注意：文件的操作最后都会回溯到`ktype->sysfs_ops`的`show`和`store`这两个函数中。
 
-Kobject的创建已经分析完了，接着分析怎么将一个kobject注销掉。注意过程是在kobject_del()中完成的。代码如下：
-[cc lang="c"]
+`kobject`的创建已经分析完了，接着分析怎么将一个`kobject`注销掉。注意过程是在`kobject_del()`中完成的。代码如下：
+```c
 void kobject_del(struct kobject *kobj)
 {
      if (!kobj)
@@ -334,16 +334,14 @@ void kobject_del(struct kobject *kobj)
      kobject_put(kobj->parent);
      kobj->parent = NULL;
 }
-[/cc]
-该函数会将在sysfs中的kobject对应的目录删除。请注意，属性文件是建立在这个目录下面的，只需要将这个目录删除，属性文件也随之删除。
-最后，减少相关的引用计数，如果kobject的引用计数为零。则将其所占空间释放.
+```
+该函数会将在`sysfs`中的`kobject`对应的目录删除。请注意，属性文件是建立在这个目录下面的，只需要将这个目录删除，属性文件也随之删除。  
+最后，减少相关的引用计数，如果`kobject`的引用计数为零。则将其所占空间释放.
 
-<a name=3.2>
+### <a name=3.2>kset 操作</a>
 
-### kset 操作
-</a>
-kset的操作与kobject类似，因为kset中内嵌了一个kobject结构，所以，大部份操作都是集中在kset->kobject上。具体分析一下kset_create_and_add()这个接口,类似上面分析的kobject接口，这个接口也包括了kset的大部分操作。代码如下:
-[cc lang="c"]
+`kset`的操作与`kobject`类似，因为`kset`中内嵌了一个`kobject`结构，所以，大部份操作都是集中在`kset->kobject`上。具体分析一下`kset_create_and_add()`这个接口,类似上面分析的`kobject`接口，这个接口也包括了`kset`的大部分操作。代码如下:
+```c
 struct kset *kset_create_and_add(const char *name,
                     struct kset_uevent_ops *uevent_ops,
                     struct kobject *parent_kobj)
@@ -363,9 +361,9 @@ struct kset *kset_create_and_add(const char *name,
      }
      return kset;
 }
-[/cc]
-Kset_create()用来创建一个struct kset结构。代码如下:
-[cc lang="c"]
+```
+`kset_create()`用来创建一个`struct kset`结构。代码如下:
+```c
 static struct kset *kset_create(const char *name,
                    struct kset_uevent_ops *uevent_ops,
                    struct kobject *parent_kobj)
@@ -384,23 +382,23 @@ static struct kset *kset_create(const char *name,
 
      return kset;
 }
-[/cc]
-我们注意，在这里创建kset时，为其内嵌的kobject指定其ktype结构为kset_ktype。这个结构的定义如下:
-[cc lang="c"]
+```
+我们注意，在这里创建`kset`时，为其内嵌的`kobject`指定其`ktype`结构为`kset_ktype`。这个结构的定义如下:
+```c
 static struct kobj_type kset_ktype = {
      .sysfs_ops    = &kobj_sysfs_ops,
      .release = kset_release,
 };
-[/cc]
-属性文件的读写操作全部都包含在sysfs_ops成员里，kobj_sysfs_ops的定义如下:
-[cc lang="c"]
+```
+属性文件的读写操作全部都包含在`sysfs_ops`成员里，`kobj_sysfs_ops`的定义如下:
+```c
 struct sysfs_ops kobj_sysfs_ops = {
      .show    = kobj_attr_show,
      .store   = kobj_attr_store,
 };
-[/cc]
-show,store成员对应的函数代码如下所示:
-[cc lang="c"]
+```
+`show`,`store`成员对应的函数代码如下所示:
+```c
 static ssize_t kobj_attr_show(struct kobject *kobj, struct attribute *attr,
                     char *buf)
 {
@@ -424,11 +422,11 @@ static ssize_t kobj_attr_store(struct kobject *kobj, struct attribute *attr,
          ret = kattr->store(kobj, kattr, buf, count);
      return ret;
 }
-[/cc]
-从上面的代码看以看出，会将struct attribute结构转换为struct kobj_attribte结构，也就是说struct kobj_attribte内嵌了一个struct attribute。实际上，这是和宏__ATTR配合在一起使用的，经常用于group中，在这里并不打算研究group，原理都是一样的，这里列出来只是做个说明而已。
+```
+从上面的代码看以看出，会将`struct attribute`结构转换为`struct kobj_attribte`结构，也就是说`struct kobj_attribte`内嵌了一个`struct attribute`。实际上，这是和宏`__ATTR`配合在一起使用的，经常用于`group`中，在这里并不打算研究`group`，原理都是一样的，这里列出来只是做个说明而已。
 
-创建好了kset之后，会调用kset_register()，这个函数就是kset操作的核心代码了。如下:
-[cc lang="c"]
+创建好了`kset`之后，会调用`kset_register()`，这个函数就是`kset`操作的核心代码了。如下:
+```c
 int kset_register(struct kset *k)
 {
      int err;
@@ -443,18 +441,18 @@ int kset_register(struct kset *k)
      kobject_uevent(&k->kobj, KOBJ_ADD);
      return 0;
 }
-[/cc]
-在kset_init()里会初始化kset中的其它字段，然后调用kobject_add_internal()为其内嵌的kobject结构建立空间层次结构，之后因为添加了kset，会产生一个事件，这个事件是通过用户空间的hotplug程序处理的，这就是kset明显不同于kobject的地方。详细研究一下这个函数，这对于我们研究hotplug的深层机理是很有帮助的，它的代码如下：
-[cc lang="c"]
+```
+在`kset_init()`里会初始化`kset`中的其它字段，然后调用`kobject_add_internal()`为其内嵌的`kobject`结构建立空间层次结构，之后因为添加了`kset`，会产生一个事件，这个事件是通过用户空间的`hotplug`程序处理的，这就是`kset`明显不同于`kobject`的地方。详细研究一下这个函数，这对于我们研究`hotplug`的深层机理是很有帮助的，它的代码如下：
+```c
 int kobject_uevent(struct kobject *kobj, enum kobject_action action)
 {
      return kobject_uevent_env(kobj, action, NULL);
 }
-[/cc]
-之后，会调用kobject_uevent_env()。这个函数中的三个参数含义分别为:引起事件的kobject，事件类型(add,remove,change,move,online,offline等)，第三个参数是要添加的环境变量。
+```
+之后，会调用`kobject_uevent_env()`。这个函数中的三个参数含义分别为:引起事件的`kobject`，事件类型(`add`,`remove`,`change`,`move`,`online`,`offline`等)，第三个参数是要添加的环境变量。
 
 代码篇幅较长，我们效仿情景分析的做法，分段分析如下:
-[cc lang="c"]
+```c
 int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
                 char *envp_ext[])
 {
@@ -483,9 +481,9 @@ int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
                __FUNCTION__);
          return -EINVAL;
      }
-[/cc]
-因为对事件的处理函数包含在kobject->kset->uevent_ops中，要处理事件，就必须要找到上层的一个不为空的kset。上面的代码就是顺着kobject->parent找不到一个不为空的kset，如果不存在这样的kset，就退出
-[cc lang="c"]
+```
+因为对事件的处理函数包含在`kobject->kset->uevent_ops`中，要处理事件，就必须要找到上层的一个不为空的`kset`。上面的代码就是顺着`kobject->parent`找不到一个不为空的`kset`，如果不存在这样的`kset`，就退出
+```c
      kset = top_kobj->kset;
      uevent_ops = kset->uevent_ops;
 
@@ -509,9 +507,9 @@ int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
                __FUNCTION__);
          return 0;
      }
-[/cc]
-找到了不为空的kset，就跟kset->uevent_ops->filter()匹配，看这个事件是否被过滤。如果没有被过滤掉，就会调用kset->uevent_ops->name()得到子系统的名称。如果不存在kset->uevent_ops->name()，就会以kobject->name做为子系统名称。
-[cc lang="c"]
+```
+找到了不为空的`kset`，就跟`kset->uevent_ops->filter()`匹配，看这个事件是否被过滤。如果没有被过滤掉，就会调用`kset->uevent_ops->name()`得到子系统的名称。如果不存在`kset->uevent_ops->name()`，就会以`kobject->name`做为子系统名称。
+```c
      /* environment buffer */
      env = kzalloc(sizeof(struct kobj_uevent_env), GFP_KERNEL);
      if (!env)
@@ -543,9 +541,9 @@ int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
                    goto exit;
          }
      }
-[/cc]
-接下来,就应该设置为调用hotplug设置环境变量了。首先,分配一个struct kobj_uevent_env结构用来存放环境变量的值；然后调用kobject_get_path()用来获得引起事件的kobject在sysfs中的路径；再调用add_uevent_var()将动作代表的字串、kobject路径、子系统名称填充到struct kobj_uevent_env中。如果有指定环境变量,也将其添加进去。 kobject_get_path()和add_uevent_var()都比较简单.这里不再详细分析了.请自行查看源代码
-[cc lang="c"]
+```
+接下来,就应该设置为调用`hotplug`设置环境变量了。首先,分配一个`struct kobj_uevent_env`结构用来存放环境变量的值；然后调用`kobject_get_path()`用来获得引起事件的`kobject`在`sysfs`中的路径；再调用`add_uevent_var()`将动作代表的字串、`kobject`路径、子系统名称填充到`struct kobj_uevent_env`中。如果有指定环境变量,也将其添加进去。 `kobject_get_path()`和`add_uevent_var()`都比较简单.这里不再详细分析了.请自行查看源代码
+```c
      /* let the kset specific function add its stuff */
      if (uevent_ops && uevent_ops->uevent) {
          retval = uevent_ops->uevent(kset, kobj, env);
@@ -575,9 +573,9 @@ int kobject_uevent_env(struct kobject *kobj, enum kobject_action action,
      retval = add_uevent_var(env, "SEQNUM=%llu", (unsigned long long)seq);
      if (retval)
          goto exit;
-[/cc]
-在这里还会调用kobject->kset->uevent_ops->uevent()，让产生事件的kobject添加环境变量，最后将事件序列添加到环境变量中去。
-[cc lang="c"]
+```
+在这里还会调用`kobject->kset->uevent_ops->uevent()`，让产生事件的`kobject`添加环境变量，最后将事件序列添加到环境变量中去。
+```c
 #if defined(CONFIG_NET)
      /* send netlink message */
      if (uevent_sock) {
@@ -630,13 +628,13 @@ exit:
      kfree(env);
      return retval;
 }
-[/cc]
-忽略一段选择编译的代码，再后就是调用用户空间的hotplug了。添加最后两个环境变量：HOME和PATH。然后调用hotplug，以子系统名称为参数。
-现在我们终于知道hotplug处理程序中的参数和环境变量是怎么来的了.^_^
+```
+忽略一段选择编译的代码，再后就是调用用户空间的`hotplug`了。添加最后两个环境变量：`HOME`和`PATH`。然后调用`hotplug`，以子系统名称为参数。  
+现在我们终于知道`hotplug`处理程序中的参数和环境变量是怎么来的了.^_^
 
-使用完了kset，再调用kset_unregister()将其注销。这个函数很简单,请自行查阅代码.
+使用完了`kset`，再调用`kset_unregister()`将其注销。这个函数很简单,请自行查阅代码.  
 为了印证一下上面的分析，写一个测试模块。如下：
-[cc lang="c"]
+```c
 #include <linux/device.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
@@ -715,13 +713,13 @@ int kset_test_exit()
 
 module_init(kset_test_init);
 module_exit(kset_test_exit);
-[/cc]
-在这里，定义并注册了二个kset，第二个kset的kobj->kset域指向第一个kset。这样，当第二个kset注册或者卸载的时候就会调用第一个kset中的uevent_ops的相关操作.
-kset_p.uevent_ops->filter函数中，使其返回1.使其匹配成功。
-在kset_p.uevent_ops->name中，使其返回的子系统名为引起事件的kobject的名称，即：kset_c.
-最后在kset_p.uevent_ops->uevent中将环境变量全部打印出来。
-下面是dmesg的输出结果：
-[cc]
+```
+在这里，定义并注册了二个`kset`，第二个`kset`的`kobj->kset`域指向第一个`kset`。这样，当第二个`kset`注册或者卸载的时候就会调用第一个`kset`中的`uevent_ops`的相关操作.  
+`kset_p.uevent_ops->filter`函数中，使其返回`1`.使其匹配成功。  
+在`kset_p.uevent_ops->name`中，使其返回的子系统名为引起事件的`kobject`的名称，即：`kset_c`.  
+最后在`kset_p.uevent_ops->uevent`中将环境变量全部打印出来。  
+下面是`dmesg`的输出结果：
+```
 kset test init.
 UEVENT: filter. kobj kset_c.
 UEVENT: name. kobj kset_c.
@@ -729,24 +727,22 @@ UEVENT: uevent. kobj kset_c.
 ACTION=add.
 DEVPATH=/kset_p/kset_c.
 SUBSYSTEM=kset_test.
-[/cc]
-输出结果跟我们的分析是吻合的，在这里，值得我们注意的是：注册一个kobject不会产生事件，只有注册kset才会。
+```
+输出结果跟我们的分析是吻合的，在这里，值得我们注意的是：注册一个`kobject`不会产生事件，只有注册`kset`才会。
 
-<a name=4>
+## <a name=4>四：bus、device和device_driver</a>
 
-## 四：bus、device和device_driver
-</a>
-上面分析了kobject、kset、ktype，这三个结构联合起来一起构成了整个设备模型的基石。而bus、device、device_driver，则是基于kobject、kset、ktype之上的架构。在这里,总线、设备、驱动被有序的组合在一起。Bus、device、device_driver三者之间的关系如下图所示:
-![080710160335](http://jarson.in/wp-content/uploads/2014/02/080710160335.jpg)
-如上图所示，struct bus_type的p->drivers_kset指向注册在上面的驱动程序，它的p->device_kset上挂着注册在上面的设备。每次有一个新的设备注册到上面，都会去匹配右边的驱动，看是否能匹配上。如果匹配成功，则将设备结构的is_registerd域置为0，然后将设备添加到驱动的p->klist_devices域。同理,每注册一个驱动,都会去匹配左边的设备。如果匹配成功,将则设备加到驱动的p->klist_devices域，再将设备的is_registerd置为0。
+上面分析了`kobject`、`kset`、`ktype`，这三个结构联合起来一起构成了整个设备模型的基石。而`bus`、`device`、`device_driver`，则是基于`kobject`、`kset`、`ktype`之上的架构。在这里,总线、设备、驱动被有序的组合在一起。`bus`、`device`、`device_driver`三者之间的关系如下图所示:
+
+{% asset_img bus-device-driver.jpg %}
+
+如上图所示，`struct bus_type`的`p->drivers_kset`指向注册在上面的驱动程序，它的`p->device_kset`上挂着注册在上面的设备。每次有一个新的设备注册到上面，都会去匹配右边的驱动，看是否能匹配上。如果匹配成功，则将设备结构的`is_registerd`域置为`0`，然后将设备添加到驱动的`p->klist_devices`域。同理,每注册一个驱动,都会去匹配左边的设备。如果匹配成功,将则设备加到驱动的`p->klist_devices`域，再将设备的`is_registerd`置为`0`。  
 这就是linux设备模型用来管理设备和驱动的基本架构，我们来跟踪一下代码来看下详细的操作。
 
-<a name=4.1>
+### <a name=4.1>总线注册</a>
 
-### 总线注册
-</a>
-注册一个总线的接口为bus_register()，我们照例分段分析:
-[cc lang="c"]
+注册一个总线的接口为`bus_register()`，我们照例分段分析:
+```c
 int bus_register(struct bus_type *bus)
 {
      int retval;
@@ -772,19 +768,21 @@ int bus_register(struct bus_type *bus)
      retval = kset_register(&priv->subsys);
      if (retval)
          goto out;
-[/cc]
-首先,先为struct bus_type的私有区分配空间,然后将其和struct bus_type关联起来。由于struct bus_type也要在sysfs文件中表示一个节点,因此,它也内嵌一个kset的结构，这就是priv->subsys。
+```
+首先,先为`struct bus_type`的私有区分配空间,然后将其和`struct bus_type`关联起来。由于`struct bus_type`也要在`sysfs`文件中表示一个节点,因此,它也内嵌一个`kset`的结构，这就是`priv->subsys`。
 
-首先,它为这个kset的名称赋值为bus的名称，然后将priv->subsys.kobj.kset指向bus_kset，priv->subsys.kobj.ktype指向bus_ktype;然后调用kset_reqister()将priv->subsys注册。这里涉及到的接口都在之前分析过，注册过后，应该会在bus_kset所表示的目录下创建一个总线名称的目录，并且用户空间的hotplug应该会检测到一个add事件。我们来看一下bus_kset到底指向的是什么:
-[cc lang="c"]bus_kset = kset_create_and_add("bus", &bus_uevent_ops, NULL);[/cc]
-从此可以看出，这个bus_kset在sysfs中的结点就是/sys/bus，在这里注册的struct bus_types就会在/sys/bus/下面出现。
-[cc lang="c"] 
+首先,它为这个`kset`的名称赋值为`bus`的名称，然后将`priv->subsys.kobj.kset`指向`bus_kset`，`priv->subsys.kobj.ktype`指向`bus_ktype`;然后调用`kset_reqister()`将`priv->subsys`注册。这里涉及到的接口都在之前分析过，注册过后，应该会在`bus_kset`所表示的目录下创建一个总线名称的目录，并且用户空间的`hotplug`应该会检测到一个`add`事件。我们来看一下`bus_kset`到底指向的是什么:
+```c
+bus_kset = kset_create_and_add("bus", &bus_uevent_ops, NULL);
+```
+从此可以看出，这个`bus_kset`在`sysfs`中的结点就是`/sys/bus`，在这里注册的`struct bus_types`就会在`/sys/bus/`下面出现。
+```c
      retval = bus_create_file(bus, &bus_attr_uevent);
      if (retval)
          goto bus_uevent_fail;
-[/cc]
-bus_create_file()就是在priv->subsys.kobj的这个kobject上建立一个普通属性的文件，这个文件的属性对应在bus_attr_uevent，读写操作对应在priv->subsys.ktype中，我们到后面才统一分析bus注册时候的文件创建。
-[cc lang="c"] 
+```
+`bus_create_file()`就是在`priv->subsys.kobj`的这个`kobject`上建立一个普通属性的文件，这个文件的属性对应在`bus_attr_uevent`，读写操作对应在`priv->subsys.ktype`中，我们到后面才统一分析`bus`注册时候的文件创建。
+```c
      priv->devices_kset = kset_create_and_add("devices", NULL,
                              &priv->subsys.kobj);
      if (!priv->devices_kset) {
@@ -801,9 +799,9 @@ bus_create_file()就是在priv->subsys.kobj的这个kobject上建立一个普通
 
      klist_init(&priv->klist_devices, klist_devices_get, klist_devices_put);
      klist_init(&priv->klist_drivers, NULL, NULL);
-[/cc]
-这段代码会在bus所在的目录下建立两个目录，分别为devices和drivers，并初始化挂载设备和驱动的链表。
-[cc lang="c"] 
+```
+这段代码会在`bus`所在的目录下建立两个目录，分别为`devices`和`drivers`，并初始化挂载设备和驱动的链表。
+```c
      retval = add_probe_files(bus);
      if (retval)
          goto bus_probe_files_fail;
@@ -814,9 +812,9 @@ bus_create_file()就是在priv->subsys.kobj的这个kobject上建立一个普通
 
      pr_debug("bus: '%s': registered\n", bus->name);
      return 0;
-[/cc]
-在这里,会为bus_attr_drivers_probe, bus_attr_drivers_autoprobe.注册bus_type中的属性建立文件
-[cc lang="c"] 
+```
+在这里,会为`bus_attr_drivers_probe`, `bus_attr_drivers_autoprobe`.注册`bus_type`中的属性建立文件
+```c
 bus_attrs_fail:
      remove_probe_files(bus);
 bus_probe_files_fail:
@@ -831,19 +829,19 @@ bus_uevent_fail:
 out:
      return retval;
 }
-[/cc]
+```
 这段代码为出错处理
 
-这段代码中比较繁锁的就是bus_type对应目录下的属性文件建立,为了直观的说明,将属性文件的建立统一放到一起分析。从上面的代码中可以看,创建属性文件对应的属性分别为:bus_attr_uevent、bus_attr_drivers_probe、bus_attr_drivers_autoprobe。
+这段代码中比较繁锁的就是`bus_type`对应目录下的属性文件建立,为了直观的说明,将属性文件的建立统一放到一起分析。从上面的代码中可以看,创建属性文件对应的属性分别为:`bus_attr_uevent`、`bus_attr_drivers_probe`、`bus_attr_drivers_autoprobe`。  
 分别定义如下:
-[cc lang="c"]
+```c
 static BUS_ATTR(uevent, S_IWUSR, NULL, bus_uevent_store);
 static BUS_ATTR(drivers_probe, S_IWUSR, NULL, store_drivers_probe);
 static BUS_ATTR(drivers_autoprobe, S_IWUSR | S_IRUGO,
          show_drivers_autoprobe, store_drivers_autoprobe);
-[/cc]
-BUS_ATTR定义如下:
-[cc lang="c"]
+```
+`BUS_ATTR`定义如下:
+```c
 #define BUS_ATTR(_name, _mode, _show, _store)  \
 struct bus_attribute bus_attr_##_name = __ATTR(_name, _mode, _show, _store)
 #define __ATTR(_name,_mode,_show,_store) { \
@@ -851,15 +849,15 @@ struct bus_attribute bus_attr_##_name = __ATTR(_name, _mode, _show, _store)
      .show    = _show,                    \
      .store   = _store,                   \
 }
-[/cc]
-由此可见.上面这三个属性对应的名称为别为uevent、drivers_probe、drivers_autoprobe。也就是说，会在bus_types目录下生成三个文件，分别为uevent、probe、autoprobe。
-根据之前的分析,我们知道在sysfs文件系统中,对普通属性文件的读写都会回溯到kobject->ktype->sysfs_ops中.在这里,注意到有:
-[cc lang="c"]
+```
+由此可见.上面这三个属性对应的名称为别为`uevent`、`drivers_probe`、`drivers_autoprobe`。也就是说，会在`bus_types`目录下生成三个文件，分别为`uevent`、`probe`、`autoprobe`。  
+根据之前的分析,我们知道在`sysfs`文件系统中,对普通属性文件的读写都会回溯到`kobject->ktype->sysfs_ops`中.在这里,注意到有:
+```c
      priv->subsys.kobj.kset = bus_kset;
      priv->subsys.kobj.ktype = &bus_ktype;
-[/cc]
-显然,读写操作就回溯到了bus_ktype中.定义如下:
-[cc lang="c"]
+```
+显然,读写操作就回溯到了`bus_ktype`中.定义如下:
+```c
 static struct kobj_type bus_ktype = {
      .sysfs_ops    = &bus_sysfs_ops,
 };
@@ -867,9 +865,9 @@ static struct sysfs_ops bus_sysfs_ops = {
      .show    = bus_attr_show,
      .store   = bus_attr_store,
 };
-[/cc]
-show和store函数对应的代码为:
-[cc lang="c"]
+```
+`show`和`store`函数对应的代码为:
+```c
 static ssize_t bus_attr_show(struct kobject *kobj, struct attribute *attr,
                    char *buf)
 {
@@ -893,13 +891,13 @@ static ssize_t bus_attr_store(struct kobject *kobj, struct attribute *attr,
          ret = bus_attr->store(bus_priv->bus, buf, count);
      return ret;
 }
-[/cc]
-从代码可以看出.读写操作又会回溯到bus_attribute中的show和store中.在自定义结构里嵌入struct attribute,.然后再操作回溯到自定义结构中,这是一种比较高明的架构设计手法.
+```
+从代码可以看出.读写操作又会回溯到`bus_attribute`中的`show`和`store`中.在自定义结构里嵌入`struct attribute`,.然后再操作回溯到自定义结构中,这是一种比较高明的架构设计手法.
 
-闲言少叙.我们对应看一下上面三个文件对应的最终操作:
-uevent对应的读写操作为：NULL、bus_uevent_store。对于这个文件没有读操作，只有写操作，用cat 命令去查看这个文件的时候,可能会返回“设备不存在”的错误。
-bus_uevent_store()代码如下:
-[cc lang="c"]
+闲言少叙.我们对应看一下上面三个文件对应的最终操作:  
+`uevent`对应的读写操作为：`NULL`、`bus_uevent_store`。对于这个文件没有读操作，只有写操作，用`cat` 命令去查看这个文件的时候,可能会返回“设备不存在”的错误。  
+`bus_uevent_store()`代码如下:
+```c
 static ssize_t bus_uevent_store(struct bus_type *bus,
                    const char *buf, size_t count)
 {
@@ -909,22 +907,22 @@ static ssize_t bus_uevent_store(struct bus_type *bus,
          kobject_uevent(&bus->p->subsys.kobj, action);
      return count;
 }
-[/cc]
-从这里可以看到,可以在用户空间控制事件的发生,如echo add > event就会产生一个add的事件。
+```
+从这里可以看到,可以在用户空间控制事件的发生,如`echo add > event`就会产生一个`add`的事件。
 
-probe文件对应的读写操作为：NULL、store_drivers_probe。 store_drivers_probe()这个函数的代码涉及到struct device，等分析完struct device可以自行回过来看下这个函数的实现。实际上,这个函数是将用户输入的设备名称对应的设备与驱动匹配一次。
+`probe`文件对应的读写操作为：`NULL`、`store_drivers_probe`。 `store_drivers_probe()`这个函数的代码涉及到`struct device`，等分析完`struct device`可以自行回过来看下这个函数的实现。实际上,这个函数是将用户输入的设备名称对应的设备与驱动匹配一次。
 
-autoprobe文件对应的读写操作为show_drivers_autoprobe, store_drivers_autoprobe.对应读的代码为:
-[cc lang="c"]
+`autoprobe`文件对应的读写操作为`show_drivers_autoprobe`, `store_drivers_autoprobe`.对应读的代码为:
+```c
 static ssize_t show_drivers_autoprobe(struct bus_type *bus, char *buf)
 {
      return sprintf(buf, "%d\n", bus->p->drivers_autoprobe);
 }
-[/cc]
-它将总线对应的drivers_autoprobe的值输出到用户空间，这个值为1时，自动将驱动与设备进行匹配，否则，反之。
+```
+它将总线对应的`drivers_autoprobe`的值输出到用户空间，这个值为`1`时，自动将驱动与设备进行匹配，否则，反之。
 
 写操作的代码如下:
-[cc lang="c"]
+```c
 static ssize_t store_drivers_autoprobe(struct bus_type *bus,
                           const char *buf, size_t count)
 {
@@ -934,28 +932,30 @@ static ssize_t store_drivers_autoprobe(struct bus_type *bus,
          bus->p->drivers_autoprobe = 1;
      return count;
 }
-[/cc]
-写操作就会改变bus->p->drivers_autoprobe的值，就这样，通过sysfs就可以控制总线是否要进行自动匹配了。
-从这里也可以看出，内核开发者的思维是何等的灵活。我们从sysfs中找个例子来印证一下：
-[cc lang="bash"]cd  / sys/bus/usb[/cc]
+```
+写操作就会改变`bus->p->drivers_autoprobe`的值，就这样，通过`sysfs`就可以控制总线是否要进行自动匹配了。
+从这里也可以看出，内核开发者的思维是何等的灵活。我们从`sysfs`中找个例子来印证一下：
+```bash
+cd  / sys/bus/usb
+```
 用ls命令查看：
-[cc lang="bash"]devices  drivers  drivers_autoprobe  drivers_probe  uevent[/cc]
+```bash
+devices  drivers  drivers_autoprobe  drivers_probe  uevent
+```
 与上面分析的相吻合
 
-<a name=4.2>
+### <a name=4.2>设备注册</a>
 
-### 设备注册
-</a>
-设备的注册接口为: device_register().
-[cc lang="c"]
+设备的注册接口为: `device_register()`.
+```c
 int device_register(struct device *dev)
 {
      device_initialize(dev);
      return device_add(dev);
 }
-[/cc]
-device_initialize()中有几个很重要的操作,如下:
-[cc lang="c"]
+```
+`device_initialize()`中有几个很重要的操作,如下:
+```c
 void device_initialize(struct device *dev)
 {
      dev->kobj.kset = devices_kset;
@@ -970,16 +970,16 @@ void device_initialize(struct device *dev)
      device_init_wakeup(dev, 0);
      set_dev_node(dev, -1);
 }
-[/cc]
-在这里,它为device的内嵌kobject指定了ktype和kset。device_kset的值如下:
-[cc lang="c"]
+```
+在这里,它为`device`的内嵌`kobject`指定了`ktype`和`kset`。`device_kset`的值如下:
+```c
 devices_kset = kset_create_and_add("devices", &device_uevent_ops, NULL);
-[/cc]
-即对应sysfs中的/sys/devices。
-device_ktype中对属性的读写操作同bus中的类似,被回溯到了struct device_attribute中的show和store。
+```
+即对应`sysfs`中的`/sys/devices`。  
+`device_ktype`中对属性的读写操作同`bus`中的类似,被回溯到了`struct device_attribute`中的`show`和`store`。
 
-接着往下看device_add()的实现.这个函数比较长,分段分析如下:
-[cc lang="c"]
+接着往下看`device_add()`的实现.这个函数比较长,分段分析如下:
+```c
 int device_add(struct device *dev)
 {
      struct device *parent = NULL;
@@ -1001,9 +1001,9 @@ int device_add(struct device *dev)
      error = kobject_add(&dev->kobj, dev->kobj.parent, "%s", dev->bus_id);
      if (error)
          goto Error;
-[/cc]
-     如果注册device的时候,没有指定父结点,在kobject_add将会在/sys/device/下建立相同名称的目录
-[cc lang="c"]
+```
+如果注册`device`的时候,没有指定父结点,在`kobject_add`将会在`/sys/device/`下建立相同名称的目录
+```c
      /* notify platform of device entry */
      if (platform_notify)
          platform_notify(dev);
@@ -1012,9 +1012,9 @@ int device_add(struct device *dev)
      if (dev->bus)
          blocking_notifier_call_chain(&dev->bus->p->bus_notifier,
                             BUS_NOTIFY_ADD_DEVICE, dev);
-[/cc]
-忽略notify部份,这部份不会影响本函数的流程
-[cc lang="c"] 
+```
+忽略`notify`部份,这部份不会影响本函数的流程
+```c
      error = device_create_file(dev, &uevent_attr);
      if (error)
          goto attrError;
@@ -1024,9 +1024,9 @@ int device_add(struct device *dev)
          if (error)
               goto ueventattrError;
      }
-[/cc]
-建立属性为uevent_attr的属性文件,如果device中指定了设备号,则建立属性为devt_attr的属性文件
-[cc lang="c"] 
+```
+建立属性为`uevent_attr`的属性文件,如果`device`中指定了设备号,则建立属性为`devt_attr`的属性文件
+```c
      error = device_add_class_symlinks(dev);
      if (error)
          goto SymlinkError;
@@ -1037,9 +1037,9 @@ int device_add(struct device *dev)
      if (error)
          goto PMError;
      device_pm_add(dev);
-[/cc]
-在这里,不打算讨论class的部份,dpm、pm是选择编译部份,不讨论. device_add_attrs中涉及到了group的部分,暂不讨论
-[cc lang="c"]
+```
+在这里,不打算讨论`class`的部份,`dpm`、`pm`是选择编译部份,不讨论.` device_add_attrs`中涉及到了`group`的部分,暂不讨论
+```c
      error = bus_add_device(dev);
      if (error)
          goto BusError;
@@ -1059,9 +1059,9 @@ int device_add(struct device *dev)
                    class_intf->add_dev(dev, class_intf);
          up(&dev->class->sem);
      }
-[/cc]
-bus_add_device()在对应总线代表目录的device目录下创建几个到device的链接，然后调用kobject_uevent()产生一个add事件，再调用bus_attach_device()去匹配已经注册到总线的驱动程序。全部做完之后，将设备挂到父结点的子链表。
-[cc lang="c"]
+```
+`bus_add_device()`在对应总线代表目录的`device`目录下创建几个到`device`的链接，然后调用`kobject_uevent()`产生一个`add`事件，再调用`bus_attach_device()`去匹配已经注册到总线的驱动程序。全部做完之后，将设备挂到父结点的子链表。
+```c
  Done:
      put_device(dev);
      return error;
@@ -1088,11 +1088,11 @@ bus_add_device()在对应总线代表目录的device目录下创建几个到devi
          put_device(parent);
      goto Done;
 }
-[/cc]
+```
 出错处理部份.
 
-bus_attach_device()是一个很重要的函数。它将设备自动与挂在总线上面的驱动进行匹配。代码如下：
-[cc lang="c"]
+`bus_attach_device()`是一个很重要的函数。它将设备自动与挂在总线上面的驱动进行匹配。代码如下：
+```c
 void bus_attach_device(struct device *dev)
 {
      struct bus_type *bus = dev->bus;
@@ -1109,10 +1109,10 @@ void bus_attach_device(struct device *dev)
               dev->is_registered = 0;
      }
 }
-[/cc]
-从上面的代码我们可以看出。只有在bus->p->drivers_autoprobe为1的情况下，才会去自己匹配。这也就是bus目录下的drivers_probe 文件的作用.然后，将设备挂到总线的设备链表。
-device_attach()代码如下：
-[cc lang="c"]
+```
+从上面的代码我们可以看出。只有在`bus->p->drivers_autoprobe`为`1`的情况下，才会去自己匹配。这也就是`bus`目录下的`drivers_probe` 文件的作用.然后，将设备挂到总线的设备链表。
+`device_attach()`代码如下：
+```c
 int device_attach(struct device *dev)
 {
      int ret = 0;
@@ -1132,11 +1132,13 @@ int device_attach(struct device *dev)
      up(&dev->sem);
      return ret;
 }
-[/cc]
+```
 对于设备自己已经指定驱动的情况，只需要将其直接和驱动绑定即可。如果没有指定驱动,就匹配总线之上的驱动，这是在
-[cc lang="c"]bus_for_each_drv(dev->bus, NULL, dev, __device_attach);[/cc]
+```c
+bus_for_each_drv(dev->bus, NULL, dev, __device_attach);
+```
 完成的。代码如下：
-[cc lang="c"]
+```c
 int bus_for_each_drv(struct bus_type *bus, struct device_driver *start,
               void *data, int (*fn)(struct device_driver *, void *))
 {
@@ -1154,17 +1156,17 @@ int bus_for_each_drv(struct bus_type *bus, struct device_driver *start,
      klist_iter_exit(&i);
      return error;
 }
-[/cc]
-很明显，这个函数就是遍历总线之上的驱动。每遍历一个驱动就调用一次回调函数进行判断，如果回调函数返回不为0，就说明匹配已经成功了，不需要再匹配剩余的，退出。在这里调用的回调函数是__device_attach()，在这里，完成了设备与驱动匹配的最核心的动作。代码如下：
-[cc lang="c"]
+```
+很明显，这个函数就是遍历总线之上的驱动。每遍历一个驱动就调用一次回调函数进行判断，如果回调函数返回不为`0`，就说明匹配已经成功了，不需要再匹配剩余的，退出。在这里调用的回调函数是`__device_attach()`，在这里，完成了设备与驱动匹配的最核心的动作。代码如下：
+```c
 static int __device_attach(struct device_driver *drv, void *data)
 {
      struct device *dev = data;
      return driver_probe_device(drv, dev);
 }
-[/cc]
-转到driver_probe_device():
-[cc lang="c"]
+```
+转到`driver_probe_device()`:
+```c
 int driver_probe_device(struct device_driver *drv, struct device *dev)
 {
      int ret = 0;
@@ -1182,9 +1184,9 @@ int driver_probe_device(struct device_driver *drv, struct device *dev)
 done:
      return ret;
 }
-[/cc]
-如果设备没有注册到总线之上，即dev->is_registered不为1， 就直接返回。然后，再调用总线的match()函数进行匹配。如果match()函数返回0，说明匹配失败，那退出此函数。如果match函数返回1，说明初步的检查已经通过了，可以进入really_probe()再进行细致的检查。如果匹配成功，这个函数会返回1。此函数比较长而且比较重要，分段列出代码：
-[cc lang="c"]
+```
+如果设备没有注册到总线之上，即`dev->is_registered`不为`1`， 就直接返回。然后，再调用总线的`match()`函数进行匹配。如果`match()`函数返回`0`，说明匹配失败，那退出此函数。如果`match`函数返回`1`，说明初步的检查已经通过了，可以进入`really_probe()`再进行细致的检查。如果匹配成功，这个函数会返回`1`。此函数比较长而且比较重要，分段列出代码：
+```c
 static int really_probe(struct device *dev, struct device_driver *drv)
 {
      int ret = 0;
@@ -1200,11 +1202,11 @@ static int really_probe(struct device *dev, struct device_driver *drv)
               __FUNCTION__, dev->bus_id);
          goto probe_failed;
      }
-[/cc]
-先假设驱动和设备是匹配的，为设备结构设置驱动成员，使其指向匹配的驱动，然后再调用driver_sysfs_add()建立几个符号链接。这几个链接分别为：
-1、在驱动目录下建立一个到设备的同名链接；
+```
+先假设驱动和设备是匹配的，为设备结构设置驱动成员，使其指向匹配的驱动，然后再调用`driver_sysfs_add()`建立几个符号链接。这几个链接分别为：  
+1、在驱动目录下建立一个到设备的同名链接；  
 2、在设备目录下建立一个名为driver到驱动的链接。
-[cc lang="c"] 
+```c
      if (dev->bus->probe) {
          ret = dev->bus->probe(dev);
          if (ret)
@@ -1214,21 +1216,21 @@ static int really_probe(struct device *dev, struct device_driver *drv)
          if (ret)
               goto probe_failed;
      }
-[/cc]
-然后，再调用总线的probe函数，如果总线的此函数不存在，就会调用驱动的probe函数。如果匹配成功，返回0；如果不成功，就会跳转到probe_failed。
-[cc lang="c"] 
+```
+然后，再调用总线的`probe`函数，如果总线的此函数不存在，就会调用驱动的`probe`函数。如果匹配成功，返回`0`；如果不成功，就会跳转到`probe_failed`。
+```c
      driver_bound(dev);
      ret = 1;
      pr_debug("bus: '%s': %s: bound device %s to driver %s\n",
           drv->bus->name, __FUNCTION__, dev->bus_id, drv->name);
      goto done;
-[/cc]
-到这里，设备和驱动已经匹配成功，调用driver_bound()将其关联起来，在这个函数里会将设备加至驱动的设备链表，这在我们之前分析bus、device、driver中分析到的。相关的代码如下示：
-[cc lang="c"]
+```
+到这里，设备和驱动已经匹配成功，调用`driver_bound()`将其关联起来，在这个函数里会将设备加至驱动的设备链表，这在我们之前分析`bus`、`device`、`driver`中分析到的。相关的代码如下示：
+```c
 klist_add_tail(&dev->knode_driver, &dev->driver->p->klist_devices);
-[/cc]
-至此，这个匹配过程已经圆满结束了，返回1
-[cc lang="c"] 
+```
+至此，这个匹配过程已经圆满结束了，返回`1`
+```c
 probe_failed:
      devres_release_all(dev);
      driver_sysfs_remove(dev);
@@ -1245,24 +1247,24 @@ probe_failed:
       * its luck.
       */
      ret = 0;
-[/cc]
-这里是匹配不成功的处理，在这里，删除之前建立的几个链接文件，然后将设备的driver域置空。
-[cc lang="c"]
+```
+这里是匹配不成功的处理，在这里，删除之前建立的几个链接文件，然后将设备的`driver`域置空。
+```c
 done:
      atomic_dec(&probe_count);
      wake_up(&probe_waitqueue);
      return ret;
 }
-[/cc]
-从上面的分析可以看到，对应创建的属性文件分别为：uevent_attr devt_attr。它们的定义如下：
-[cc lang="c"]
+```
+从上面的分析可以看到，对应创建的属性文件分别为：`uevent_attr`, ` devt_attr`。它们的定义如下：
+```c
 static struct device_attribute uevent_attr =
      __ATTR(uevent, S_IRUGO | S_IWUSR, show_uevent, store_uevent);
 static struct device_attribute devt_attr =
      __ATTR(dev, S_IRUGO, show_dev, NULL);
-[/cc]
-uevent_attr对应的读写函数分别为：show_uevent、store_uevent。先分析读操作。它的代码如下：
-[cc lang="c"]
+```
+`uevent_attr`对应的读写函数分别为：`show_uevent`、`store_uevent`。先分析读操作。它的代码如下：
+```c
 static ssize_t show_uevent(struct device *dev, struct device_attribute *attr,
                  char *buf)
 {
@@ -1305,18 +1307,20 @@ out:
      kfree(env);
      return count;
 }
-[/cc]
-从代码可以看出，这里会显示出由设备对应的kset，也就是由devices_kset所产生的环境变量。例如，在shell中输入如下指令：
-[cc lang="bash"]cat /sys/devices/LNXSYSTM:00/uevent[/cc]
+```
+从代码可以看出，这里会显示出由设备对应的`kset`，也就是由`devices_kset`所产生的环境变量。例如，在shell中输入如下指令：
+```bash
+cat /sys/devices/LNXSYSTM:00/uevent
+```
 输出结果如下：
-[cc lang="bash"]
+```
 PHYSDEVBUS=acpi
 MODALIAS=acpi:LNXSYSTM:
-[/cc]
-这就是由devices_kset所添加的环境变量
+```
+这就是由`devices_kset`所添加的环境变量
 
 写操作对应的代码如下：
-[cc lang="c"]
+```c
 static ssize_t store_uevent(struct device *dev, struct device_attribute *attr,
                   const char *buf, size_t count)
 {
@@ -1333,26 +1337,24 @@ static ssize_t store_uevent(struct device *dev, struct device_attribute *attr,
 out:
      return count;
 }
-[/cc]
-从上面的代码可以看出，这个文件的作用是输入一个字符字串，如果字符不合法，就会默认产生一个add事件。
+```
+从上面的代码可以看出，这个文件的作用是输入一个字符字串，如果字符不合法，就会默认产生一个`add`事件。
 
-devt_attr对应的读写函数为show_dev、NULL。写函数为空，也就是说这个属性文件不允许写，只允许读。读操作的代码如下示：
-[cc lang="c"]
+`devt_attr`对应的读写函数为`show_dev`、`NULL`。写函数为空，也就是说这个属性文件不允许写，只允许读。读操作的代码如下示：
+```c
 static ssize_t show_dev(struct device *dev, struct device_attribute *attr,
               char *buf)
 {
      return print_dev_t(buf, dev->devt);
 }
-[/cc]
+```
 也就是说，会将设备号显示出来.
 
-<a name=4.3>
+### <a name=4.3>驱动注册</a>
 
-### 驱动注册
-</a>
-分析完了bus、device，再接着分析driver。这里我们要分析的最后一个元素了，耐着性子往下看，快要完了^_^
-驱动注册的接口为：driver_register()。代码如下：
-[cc lang="c"]
+分析完了`bus`、`device`，再接着分析`driver`。这里我们要分析的最后一个元素了，耐着性子往下看，快要完了^_^  
+驱动注册的接口为：`driver_register()`。代码如下：
+```c
 int driver_register(struct device_driver *drv)
 {
      int ret;
@@ -1370,9 +1372,9 @@ int driver_register(struct device_driver *drv)
          bus_remove_driver(drv);
      return ret;
 }
-[/cc]
-如果设备与总线定义了相同的成员的函数，内核是优先使用bus中定义的，这一点我们在分析device注册的时候已经分析过。所以，这里打印出警告信息，用来提醒代码编写者。在这里，忽略有关group的东西，剩余的便只剩下bus_add_driver()。代码如下：
-[cc lang="c"]
+```
+如果设备与总线定义了相同的成员的函数，内核是优先使用`bus`中定义的，这一点我们在分析`device`注册的时候已经分析过。所以，这里打印出警告信息，用来提醒代码编写者。在这里，忽略有关`group`的东西，剩余的便只剩下`bus_add_driver()`。代码如下：
+```c
 int bus_add_driver(struct device_driver *drv)
 {
      struct bus_type *bus;
@@ -1396,9 +1398,9 @@ int bus_add_driver(struct device_driver *drv)
      priv->kobj.kset = bus->p->drivers_kset;
      error = kobject_init_and_add(&priv->kobj, &driver_ktype, NULL,
                         "%s", drv->name);
-[/cc]
-初始化驱动的driver_private域，使其内嵌的kobject的kset指bus中的drivers_kset，这样，这个内嵌的kobject所生成的目录就会存在于bus对应目录的driver目录之下。这里还要注意的是,为内嵌kobject指定的ktype是driver_ktype，属性文件的读写操作都回回溯到struct driver_attribute中，这在之后再分析。
-[cc lang="c"] 
+```
+初始化驱动的`driver_private`域，使其内嵌的`kobject`的`kset`指bus中的`drivers_kset`，这样，这个内嵌的`kobject`所生成的目录就会存在于`bus`对应目录的`driver`目录之下。这里还要注意的是,为内嵌`kobject`指定的`ktype`是`driver_ktype`，属性文件的读写操作都回回溯到`struct driver_attribute`中，这在之后再分析。
+```c
      if (error)
          goto out_unregister;
 
@@ -1410,39 +1412,39 @@ int bus_add_driver(struct device_driver *drv)
      klist_add_tail(&priv->knode_bus, &bus->p->klist_drivers);
 
      module_add_driver(drv->owner, drv);
-[/cc]
-如果总线允许自动进行匹配，就会调用driver_attach()进行这个自己匹配过程。这个函数跟我们在上面分析的device自动匹配过程是一样的，请自行分析。最后，将驱动挂到bus对应的驱动链表。
-[cc lang="c"] 
+```
+如果总线允许自动进行匹配，就会调用`driver_attach()`进行这个自己匹配过程。这个函数跟我们在上面分析的`device`自动匹配过程是一样的，请自行分析。最后，将驱动挂到`bus`对应的驱动链表。
+```c
      error = driver_create_file(drv, &driver_attr_uevent);
      if (error) {
          printk(KERN_ERR "%s: uevent attr (%s) failed\n",
               __FUNCTION__, drv->name);
      }
-[/cc]
-生成一个属性为driver_attr_uevent的属性文件
-[cc lang="c"]
+```
+生成一个属性为`driver_attr_uevent`的属性文件
+```c
      error = driver_add_attrs(bus, drv);
      if (error) {
          /* How the hell do we get out of this pickle? Give up */
          printk(KERN_ERR "%s: driver_add_attrs(%s) failed\n",
               __FUNCTION__, drv->name);
      }
-[/cc]
-为bus中的driver属性生成属性文件
-[cc lang="c"]
+```
+为`bus`中的`driver`属性生成属性文件
+```c
      error = add_bind_files(drv);
      if (error) {
          /* Ditto */
          printk(KERN_ERR "%s: add_bind_files(%s) failed\n",
               __FUNCTION__, drv->name);
      }
-[/cc]
-生成属性为driver_attr_unbind和driver_attr_bind的属性文件
-[cc lang="c"] 
+```
+生成属性为`driver_attr_unbind`和`driver_attr_bind`的属性文件
+```c
      kobject_uevent(&priv->kobj, KOBJ_ADD);
-[/cc]
-生成一个add事件
-[cc lang="c"]
+```
+生成一个`add`事件
+```c
      return error;
 out_unregister:
      kobject_put(&priv->kobj);
@@ -1450,22 +1452,22 @@ out_put_bus:
      bus_put(bus);
      return error;
 }
-[/cc]
-总的来说，这个函数比较简单，其中涉及到的子函数大部份都在之前分析过。我们接下来分析一下，它所创建的几个属性文件的含义。
-如上所述，在这里会创建三个属性文件，对应属性分别为：driver_attr_uevent，driver_attr_unbind，driver_attr_bind。这几个属性的定义如下：
-[cc lang="c"]
+```
+总的来说，这个函数比较简单，其中涉及到的子函数大部份都在之前分析过。我们接下来分析一下，它所创建的几个属性文件的含义。  
+如上所述，在这里会创建三个属性文件，对应属性分别为：`driver_attr_uevent`，`driver_attr_unbind`，`driver_attr_bind`。这几个属性的定义如下：
+```c
 static DRIVER_ATTR(uevent, S_IWUSR, NULL, driver_uevent_store);
 static DRIVER_ATTR(unbind, S_IWUSR, NULL, driver_unbind);
 static DRIVER_ATTR(bind, S_IWUSR, NULL, driver_bind);
-[/cc]
-DRIVER_ATTR宏的定义如下：
-[cc lang="c"]
+```
+`DRIVER_ATTR`宏的定义如下：
+```c
 #define DRIVER_ATTR(_name, _mode, _show, _store)   \
 struct driver_attribute driver_attr_##_name =      \
      __ATTR(_name, _mode, _show, _store)
-[/cc] 
-对于driver_attr_uevent，它的读写函数分别为：NULL，driver_uevent_store。也就是说这个文件只允许写，不允许读操作。写操作的代码如下示：
-[cc lang="c"]
+```
+对于`driver_attr_uevent`，它的读写函数分别为：`NULL`，`driver_uevent_store`。也就是说这个文件只允许写，不允许读操作。写操作的代码如下示：
+```c
 static ssize_t driver_uevent_store(struct device_driver *drv,
                       const char *buf, size_t count)
 {
@@ -1475,10 +1477,10 @@ static ssize_t driver_uevent_store(struct device_driver *drv,
          kobject_uevent(&drv->p->kobj, action);
      return count;
 }
-[/cc]
+```
 很明显，这是一个手动产生事件的过程。用户可间可以写事件到这个文件来产生事件。
-对于driver_unbind，它的读写函数分别为：NULL，driver_unbind。这个文件也是不允许读的，写操作代码如下：
-[cc lang="c"]
+对于`driver_unbind`，它的读写函数分别为：`NULL`，`driver_unbind`。这个文件也是不允许读的，写操作代码如下：
+```c
 static ssize_t driver_unbind(struct device_driver *drv,
                    const char *buf, size_t count)
 {
@@ -1499,11 +1501,11 @@ static ssize_t driver_unbind(struct device_driver *drv,
      bus_put(bus);
      return err;
 }
-[/cc]
+```
 从上面的代码可以看出，写入文件的是一个设备名称，这个函数对应操作是将这个设备与驱动的绑定分离开来。
 
-driver_attr_bind属性对应的读写函数分别为：NULL，driver_attr_bind。 即也是不允许写的。从字面意思和上面分析的driver_attr_unbind操作代码来看，这个属性对应的写函数应该是将写入的设备文件与此驱动绑定起来。我们来看下代码，以证实我们的猜测。代码如下：
-[cc lang="c"]
+`driver_attr_bind`属性对应的读写函数分别为：`NULL`，`driver_attr_bind`。 即也是不允许写的。从字面意思和上面分析的`driver_attr_unbind`操作代码来看，这个属性对应的写函数应该是将写入的设备文件与此驱动绑定起来。我们来看下代码，以证实我们的猜测。代码如下：
+```c
 static ssize_t driver_bind(struct device_driver *drv,
                  const char *buf, size_t count)
 {
@@ -1533,11 +1535,9 @@ static ssize_t driver_bind(struct device_driver *drv,
      bus_put(bus);
      return err;
 }
-[/cc]
+```
 果然，和我们猜测的是一样的。
 
-<a name=5>
+## <a name=5>五：小结</a>
 
-## 五：小结
-</a>
 在这一节里，分析了设备模型中的最底层的元素和他们之间的关系，也分析了它们建立的几个属性文件的含义。到这里，我们已经可以自己写驱动架构代码了 ^_^
