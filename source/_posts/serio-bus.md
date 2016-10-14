@@ -1,21 +1,23 @@
 ---
 title: serio总线
-tags:
-  - kernel
-categories:
-  - 设备驱动
-id: 275
 date: 2014-03-03 14:10:35
+tags:
+categories:
+  - kernel
+  - 设备驱动
 ---
 
-原文链接：[http://blog.chinaunix.net/uid-20543183-id-1930815.html](http://blog.chinaunix.net/uid-20543183-id-1930815.html)
+原文链接：<http://blog.chinaunix.net/uid-20543183-id-1930815.html>
 
-**一：前言**
-Serio总线同之前分析的platform总线一样，也是一种虚拟总线。它是Serial I/O的缩写，表示串行的输入输出设备，很多输入输出设备都是以此为基础的。同前面几篇笔记一样，下面的代码分析是基于linux kernel 2.6.25版本。
+### 前言
+
+serio总线同之前分析的platform总线一样，也是一种虚拟总线。它是Serial I/O的缩写，表示串行的输入输出设备，很多输入输出设备都是以此为基础的。同前面几篇笔记一样，下面的代码分析是基于linux kernel 2.6.25版本。
 <!--more-->
-**二：serio总线的初始化**
-Serio总线的初始化是在linux2.6.25/drivers/input/serio/serio.c中完成的。代码如下：
-[cc lang="c"]
+
+### serio总线的初始化
+
+serio总线的初始化是在`linux2.6.25/drivers/input/serio/serio.c`中完成的。代码如下：
+```c
 static int __init serio_init(void)
 {
      int error;
@@ -37,27 +39,28 @@ static int __init serio_init(void)
 
      return 0;
 }
-[/cc]
-在这里，创建了对应bus_type为serio_bus的总线，还创建了一个名为“kseriod”的内核线程。我们暂且不管它是做什么的，等以后的代码涉及到再来进行分析。
+```
+在这里，创建了对应`bus_type`为`serio_bus`的总线，还创建了一个名为“`kseriod`”的内核线程。我们暂且不管它是做什么的，等以后的代码涉及到再来进行分析。
 
-**三：serio设备注册**
-Serio设备对应的数据结构为struct serio, 对应的注册接口为：serio_register_port()。代码如下：
-[cc lang="c"]
+### serio设备注册
+
+serio设备对应的数据结构为`struct serio`, 对应的注册接口为：`serio_register_port()`。代码如下：
+```c
 static inline void serio_register_port(struct serio *serio)
 {
      __serio_register_port(serio, THIS_MODULE);
 }
-[/cc]
-它是__serio_register_port()的一个封装函数。代码如下：
-[cc lang="c"]
+```
+它是`__serio_register_port()`的一个封装函数。代码如下：
+```c
 void __serio_register_port(struct serio *serio, struct module *owner)
 {
      serio_init_port(serio);
      serio_queue_event(serio, owner, SERIO_REGISTER_PORT);
 }
-[/cc]
-它先初始化一个serio设备，在serio_init_port()中，它指定了设备的总线类型为serio_bus。之后，调用serio_queue_event()。看这个函数的名称好像是产生了什么事件，来看一下它的代码：
-[cc lang="c"]
+```
+它先初始化一个serio设备，在`serio_init_port()`中，它指定了设备的总线类型为`serio_bus`。之后，调用`serio_queue_event()`。看这个函数的名称好像是产生了什么事件，来看一下它的代码：
+```c
 static int serio_queue_event(void *object, struct module *owner,
                    enum serio_event_type event_type)
 {
@@ -111,12 +114,12 @@ out:
      spin_unlock_irqrestore(&serio_event_lock, flags);
      return retval;
 }
-[/cc]
-这个函数比较简单，就是根据参数信息生成了一个struct serio_event结构，再将此结构链接至serio_event_list末尾。
+```
+这个函数比较简单，就是根据参数信息生成了一个`struct serio_event`结构，再将此结构链接至`serio_event_list`末尾。
 
-接着就要来寻找serio_event_list这个链表的处理。这个就是serio_thread的工作了，还记得初始化的时候所创建的线程么，不错，就是它。Kernel可能认为对serio的操作比较频繁，所以对一些操作事件化，将它以多线程处理。
-serio_thread()代码如下：
-[cc lang="c"]
+接着就要来寻找`serio_event_list`这个链表的处理。这个就是`serio_thread`的工作了，还记得初始化的时候所创建的线程么，不错，就是它。Kernel可能认为对serio的操作比较频繁，所以对一些操作事件化，将它以多线程处理。  
+`serio_thread()`代码如下：
+```c
 static int serio_thread(void *nothing)
 {
      set_freezable();
@@ -129,9 +132,9 @@ static int serio_thread(void *nothing)
      printk(KERN_DEBUG "serio: kseriod exiting\n");
      return 0;
 }
-[/cc]
-这个函数的核心处理是serio_handle_event(), 代码如下：
-[cc lang="c"]
+```
+这个函数的核心处理是`serio_handle_event()`, 代码如下：
+```c
 static void serio_handle_event(void)
 {
      struct serio_event *event;
@@ -168,12 +171,12 @@ static void serio_handle_event(void)
 
      mutex_unlock(&serio_mutex);
 }
-[/cc]
-这个函数的流程大致是这样的：
-调用serio_get_event()从链表中取出struct serio_event元素，然后对这个元素的事件类型做不同的处理，处理完了之后，调用serio_remove_duplicate_events()在链表中删除相同请求的event.
-对应之前的serio_register_port()函数，它产生的事件类型是SERIO_REGISTER_PORT。也就是说，对于注册serio设备来说，流程会转入serio_add_port()。
+```
+这个函数的流程大致是这样的：  
+调用`serio_get_event()`从链表中取出`struct serio_event`元素，然后对这个元素的事件类型做不同的处理，处理完了之后，调用`serio_remove_duplicate_events()`在链表中删除相同请求的`event`.
+对应之前的`serio_register_port()`函数，它产生的事件类型是`SERIO_REGISTER_PORT`。也就是说，对于注册serio设备来说，流程会转入`serio_add_port()`。
 代码如下：
-[cc lang="c"]
+```c
 static void serio_add_port(struct serio *serio)
 {
      int error;
@@ -202,11 +205,11 @@ static void serio_add_port(struct serio *serio)
                    serio->phys, serio->name, error);
      }
 }
-[/cc]
-我们终于看到serio device注册的庐山真面目了，它会调用设备的start()函数，然后调用device_add()将设备注册到总线上。
+```
+我们终于看到serio device注册的庐山真面目了，它会调用设备的`start()`函数，然后调用`device_add()`将设备注册到总线上。
 
-同platform总线一样，这里的serio device注册的时候也会产生一个hotplug事件，对应就会调用总线的uenvent函数，serio_bus的event接口为：
-[cc lang="c"]
+同platform总线一样，这里的serio device注册的时候也会产生一个hotplug事件，对应就会调用总线的`uenvent`函数，`serio_bus`的`event`接口为：
+```c
 static int serio_uevent(struct device *dev, struct kobj_uevent_env *env)
 {
      struct serio *serio;
@@ -225,9 +228,9 @@ static int serio_uevent(struct device *dev, struct kobj_uevent_env *env)
 
      return 0;
 }
-[/cc]
-可见, 会在hotplug的环境变量中添加几项值。记得我们之前分析设备驱动模型的时候，在总线下面的设备都有一个属性文件，这个文件的内容就是对应bus和kset所添加的环境变量。在/sys文件系统中就可以看到这此环境变量。做个测试：
-[cc lang="bash"]
+```
+可见, 会在hotplug的环境变量中添加几项值。记得我们之前分析设备驱动模型的时候，在总线下面的设备都有一个属性文件，这个文件的内容就是对应`bus`和`kset`所添加的环境变量。在`/sys`文件系统中就可以看到这此环境变量。做个测试：
+```bash
 [root@localhost serio0]# cat /sys/bus/serio/devices/serio0/uevent
 DRIVER=atkbd
 PHYSDEVBUS=serio
@@ -237,17 +240,18 @@ SERIO_PROTO=00
 SERIO_ID=00
 SERIO_EXTRA=00
 MODALIAS=serio:ty06pr00id00ex00
-[/cc]
-**四：serio driver的注册**
-对应serio driver注册的接口serio_register_driver()。代码如下：
-[cc lang="c"]
+```
+### serio driver的注册
+
+对应serio driver注册的接口`serio_register_driver()`。代码如下：
+```c
 static inline int serio_register_driver(struct serio_driver *drv)
 {
      return __serio_register_driver(drv, THIS_MODULE, KBUILD_MODNAME);
 }
-[/cc]
-它是__serio_register_driver()的封装函数，代码如下：
-[cc lang="c"]
+```
+它是`__serio_register_driver()`的封装函数，代码如下：
+```c
 int __serio_register_driver(struct serio_driver *drv, struct module *owner, const char *mod_name)
 {
      int manual_bind = drv->manual_bind;
@@ -287,12 +291,12 @@ int __serio_register_driver(struct serio_driver *drv, struct module *owner, cons
 
      return 0;
 }
-[/cc]
-上面这段代码比较简单，在注册驱动的时候，将驱动的总线指定为serio_bus，然后调用driver_register()将驱动注册到总线。如果drv->manual_bind不为1，还会产生一个SERIO_ATTACH_DRIVER事件。drv->manual_bind成员的含义应该是要手动进行驱动与设备的绑定。
+```
+上面这段代码比较简单，在注册驱动的时候，将驱动的总线指定为`serio_bus`，然后调用`driver_register()`将驱动注册到总线。如果`drv->manual_bind`不为`1`，还会产生一个`SERIO_ATTACH_DRIVER`事件。`drv->manual_bind`成员的含义应该是要手动进行驱动与设备的绑定。
 
-在注册驱动的时候，会产生一次驱动与设备的匹配过程，这过程会调用bus->match --> bus->probe，看下serio总线是怎么样处理的。
-Serio_bus.match的函数如下：
-[cc lang="c"]
+在注册驱动的时候，会产生一次驱动与设备的匹配过程，这过程会调用`bus->match --> bus->probe`，看下serio总线是怎么样处理的。
+`serio_bus.match`的函数如下：
+```c
 static int serio_bus_match(struct device *dev, struct device_driver *drv)
 {
      struct serio *serio = to_serio_port(dev);
@@ -303,9 +307,9 @@ static int serio_bus_match(struct device *dev, struct device_driver *drv)
 
      return serio_match_port(serio_drv->id_table, serio);
 }
-[/cc]
-如果驱动或者设备指定了手动绑定，那么这次绑定是不成功的，否则调用serio_match_port()进行更细致的判断。代码如下：
-[cc lang="c"]
+```
+如果驱动或者设备指定了手动绑定，那么这次绑定是不成功的，否则调用`serio_match_port()`进行更细致的判断。代码如下：
+```c
 static int serio_match_port(const struct serio_device_id *ids, struct serio *serio)
 {
      while (ids->type || ids->proto) {
@@ -318,11 +322,11 @@ static int serio_match_port(const struct serio_device_id *ids, struct serio *ser
      }
      return 0;
 }
-[/cc]
-由此看出，只有serio device信息与serio driver的id_table中的信息匹配的时候，才会将设备和驱动绑定起来。
+```
+由此看出，只有serio device信息与serio driver的`id_table`中的信息匹配的时候，才会将设备和驱动绑定起来。
 
-Serio_bus.probe的接口函数如下示：
-[cc lang="c"]
+`serio_bus.probe`的接口函数如下示：
+```c
 static int serio_driver_probe(struct device *dev)
 {
      struct serio *serio = to_serio_port(dev);
@@ -341,11 +345,11 @@ static int serio_connect_driver(struct serio *serio, struct serio_driver *drv)
 
      return retval;
 }
-[/cc]
-即会调用设备驱动的connect()函数。
+```
+即会调用设备驱动的`connect()`函数。
 
-在注册serio driver的时候，还会产生SERIO_ATTACH_DRIVER事件，这个事件的处理是在serio_handle_event()中完成的。相应的处理接口为：
-[cc lang="c"]
+在注册serio driver的时候，还会产生`SERIO_ATTACH_DRIVER`事件，这个事件的处理是在`serio_handle_event()`中完成的。相应的处理接口为：
+```c
 static void serio_attach_driver(struct serio_driver *drv)
 {
      int error;
@@ -356,12 +360,13 @@ static void serio_attach_driver(struct serio_driver *drv)
               "serio: driver_attach() failed for %s with error %d\n",
               drv->driver.name, error);
 }
-[/cc]
+```
 可以看出，这里也是执行一次设备与驱动的匹配过程。
 
-**五：serio 的中断处理函数分析**
-serio_interrupt()在serio bus构造的驱动也是一个常用的接口，这个接口用来处理serio 设备的中断。我们来看下它的代码：
-[cc lang="c"]
+### serio 的中断处理函数分析
+
+`serio_interrupt()`在serio bus构造的驱动也是一个常用的接口，这个接口用来处理serio 设备的中断。我们来看下它的代码：
+```c
 irqreturn_t serio_interrupt(struct serio *serio,
                    unsigned char data, unsigned int dfl)
 {
@@ -380,24 +385,24 @@ irqreturn_t serio_interrupt(struct serio *serio,
          spin_unlock_irqrestore(&serio->lock, flags);
          return ret;
 }
-[/cc]
-首先，先判断当前设备是否已经关联到了驱动程序。如果已经被关联了，那么调用驱动的中断处理函数。如果没有，就会转入serio_rescan()中执行。该函数代码如下：
-[cc lang="c"]
+```
+首先，先判断当前设备是否已经关联到了驱动程序。如果已经被关联了，那么调用驱动的中断处理函数。如果没有，就会转入`serio_rescan()`中执行。该函数代码如下：
+```c
 void serio_rescan(struct serio *serio)
 {
          serio_queue_event(serio, NULL, SERIO_RESCAN_PORT);
 }
-[/cc]
-由此可见，它是执行了一个SERIO_RESCAN_PORT动作。同样，这个动作是在serio_handle_event()中处理的。相应的处理接口为：
-[cc lang="c"]
+```
+由此可见，它是执行了一个`SERIO_RESCAN_PORT`动作。同样，这个动作是在`serio_handle_event()`中处理的。相应的处理接口为：
+```c
 case SERIO_RESCAN_PORT:
         serio_disconnect_port(event->object);
         serio_find_driver(event->object);
         break;
-[/cc]
-首先调用serio_disconnect_port()解除serio设备与驱动绑定，然后调用serio_find_driver()重新执行一次设备与驱动的匹配过程。
-serio_find_driver() 代码如下：
-[cc lang="c"]
+```
+首先调用`serio_disconnect_port()`解除serio设备与驱动绑定，然后调用`serio_find_driver()`重新执行一次设备与驱动的匹配过程。  
+`serio_find_driver()` 代码如下：
+```c
 static void serio_find_driver(struct serio *serio)
 {
 	int error;
@@ -408,9 +413,10 @@ static void serio_find_driver(struct serio *serio)
 			"serio: device_attach() failed for %s (%s), error: %d\n",
 			serio->phys, serio->name, error);
 }
-[/cc]
+```
 如果有合适的驱动，就会将之与设备关联起来。
 
-**六：小结**
-来小结一下，在serio总线中，注册一个serio设备时，除了将其注册到所属的serio_bus上，还会调用设备的start()函数。在中断处理的时候，如果serio设备已经关联到驱动，则调用驱动的interrupt函数。如果没有关联，则重新匹配驱动并将其注册到总线。
+### 小结
+
+来小结一下，在serio总线中，注册一个serio设备时，除了将其注册到所属的`serio_bus`上，还会调用设备的`start()`函数。在中断处理的时候，如果serio设备已经关联到驱动，则调用驱动的`interrupt`函数。如果没有关联，则重新匹配驱动并将其注册到总线。  
 总的说来，serio 总线的代码很简单。到这里，我们已经分析过platform, serio两种虚拟总线，应该结合这两个虚拟总线的例子好好体会一下结构封装的技巧。

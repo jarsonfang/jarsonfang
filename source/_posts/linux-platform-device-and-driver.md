@@ -1,30 +1,30 @@
 ---
 title: Linux Platform Device and Driver
-tags:
-  - kernel
-categories:
-  - 设备驱动
-id: 137
 date: 2014-02-25 10:52:33
+tags:
+categories:
+  - kernel
+  - 设备驱动
 ---
 
-原文：[http://blog.csdn.net/yili_xie/article/details/5187014](http://blog.csdn.net/yili_xie/article/details/5187014)
+原文：<http://blog.csdn.net/yili_xie/article/details/5187014>
 
-从 Linux 2.6 起引入了一套新的驱动管理和注册机制: Platform_device 和 Platform_driver 。
-Linux 中大部分的设备驱动，都可以使用这套机制 , 设备用 Platform_device 表示，驱动用 Platform_driver 进行注册。
+从 Linux 2.6 起引入了一套新的驱动管理和注册机制: `platform_device` 和 `platform_driver` 。  
+Linux 中大部分的设备驱动，都可以使用这套机制 , 设备用 `platform_device` 表示，驱动用 `platform_driver` 进行注册。
 
-Linux platform driver 机制和传统的 device driver 机制 ( 通过 driver_register 函数进行注册 ) 相比，一个十分明显的优势在于 platform 机制将设备本身的资源注册进内核，由内核统一管理，在驱动程序中使用这些资源时通过 platform device 提供的标准接口进行申请并使用。这样提高了驱动和资源管理的独立性，并且拥有较好的可移植性和安全性 ( 这些标准接口是安全的 ) 。
+Linux platform driver 机制和传统的 device driver 机制 ( 通过 `driver_register` 函数进行注册 ) 相比，一个十分明显的优势在于 platform 机制将设备本身的资源注册进内核，由内核统一管理，在驱动程序中使用这些资源时通过 platform device 提供的标准接口进行申请并使用。这样提高了驱动和资源管理的独立性，并且拥有较好的可移植性和安全性 ( 这些标准接口是安全的 ) 。
 
-Platform 机制的本身使用并不复杂，由两部分组成： platform_device 和 platform_driver 。
-通过 Platform 机制开发发底层驱动的大致流程为 :
-1）定义 platform_device
-2）注册 platform_device
-3）定义 platform_driver
-4）注册 platform_driver
+Platform 机制的本身使用并不复杂，由两部分组成： `platform_device` 和 `platform_driver`。  
+通过 Platform 机制开发发底层驱动的大致流程为:  
+1）定义 `platform_device`  
+2）注册 `platform_device`  
+3）定义 `platform_driver`  
+4）注册 `platform_driver`  
 <!--more-->
-首先要确认的就是设备的资源信息，例如设备的地址，中断号等。
-在 2.6 内核中 platform 设备用结构体 platform_device 来描述，该结构体定义在 kernel/include/linux/platform_device.h 中，
-[cc lang="c"]
+
+首先要确认的就是设备的资源信息，例如设备的地址，中断号等。  
+在 2.6 内核中 platform 设备用结构体 `platform_device` 来描述，该结构体定义在 `kernel/include/linux/platform_device.h` 中，
+```c
 struct platform_device {
     const char *name;
     u32  id;
@@ -32,18 +32,18 @@ struct platform_device {
     u32  num_resources;
     struct resource *resource;
 };
-[/cc]
-该结构一个重要的元素是 resource ，该元素存入了最为重要的设备资源信息，定义在 kernel/include/linux/ioport.h 中，
-[cc lang="c"]
+```
+该结构一个重要的元素是 `resource` ，该元素存入了最为重要的设备资源信息，定义在 `kernel/include/linux/ioport.h` 中，
+```c
 struct resource {
     const char *name;
     unsigned long start, end;
     unsigned long flags;
     struct resource *parent, *sibling, *child;
 };
-[/cc]
+```
 下面举 s3c2410 平台的 i2c 驱动作为例子来说明：
-[cc lang="c"]
+```c
 /* arch/arm/mach-s3c2410/devs.c */
 /* I2C */
 static struct resource s3c_i2c_resource[ ] = {
@@ -58,25 +58,25 @@ static struct resource s3c_i2c_resource[ ] = {
                    .flags = IORESOURCE_IRQ,
          }
 };
-[/cc]
-这里定义了两组 resource ，它描述了一个 I2C 设备的资源，第 1 组描述了这个 I2C 设备所占用的总线地址范围， IORESOURCE_MEM 表示第 1 组描述的是内存类型的资源信息，第 2 组描述了这个 I2C 设备的中断号， IORESOURCE_IRQ 表示第 2 组描述的是中断资源信息。设备驱动会根据 flags 来获取相应的资源信息。
+```
+这里定义了两组 `resource` ，它描述了一个 I2C 设备的资源，第 1 组描述了这个 I2C 设备所占用的总线地址范围， `IORESOURCE_MEM` 表示第 1 组描述的是内存类型的资源信息，第 2 组描述了这个 I2C 设备的中断号， `IORESOURCE_IRQ` 表示第 2 组描述的是中断资源信息。设备驱动会根据 `flags` 来获取相应的资源信息。
 
-有了 resource 信息，就可以定义 platform_device 了： 
-[cc lang="c"]
+有了 `resource` 信息，就可以定义 `platform_device` 了：
+```c
 struct platform_device s3c_device_i2c = {
          .name = "s3c2410-i2c",
          .id = -1,
          .num_resources = ARRAY_SIZE(s3c_i2c_resource),
          .resource = s3c_i2c_resource,
 };
-[/cc]
-定义好了 platform_device 结构体后就可以调用函数 platform_add_devices 向系统中添加该设备了，之后可以调用 platform_driver_register() 进行设备注册。要注意的是，这里的 platform_device 设备的注册过程必须在相应设备驱动加载之前被调用，即执行 platform_driver_register 之前 , 原因是因为驱动注册时需要匹配内核中所以已注册的设备名。
+```
+定义好了 `platform_device` 结构体后就可以调用函数 `platform_add_devices` 向系统中添加该设备了，之后可以调用 `platform_driver_register()` 进行设备注册。要注意的是，这里的 `platform_device` 设备的注册过程必须在相应设备驱动加载之前被调用，即执行 `platform_driver_register` 之前 , 原因是因为驱动注册时需要匹配内核中所以已注册的设备名。
 
-s3c2410-i2c 的 platform_device 是在系统启动时，在 cpu.c 里的 s3c_arch_init() 函数里进行注册的，这个函数申明为 arch_initcall(s3c_arch_init); 会在系统初始化阶段被调用。
-arch_initcall 的优先级高于 module_init 。所以会在 Platform 驱动注册之前调用。 (详细参考 include/linux/init.h)
+`s3c2410-i2c` 的 `platform_device` 是在系统启动时，在 `cpu.c` 里的 `s3c_arch_init()` 函数里进行注册的，这个函数申明为 `arch_initcall(s3c_arch_init);` 会在系统初始化阶段被调用。  
+`arch_initcall` 的优先级高于 `module_init` 。所以会在 Platform 驱动注册之前调用。 (详细参考 `include/linux/init.h`)
 
-s3c_arch_init 函数如下： 
-[cc lang="c"]
+`s3c_arch_init` 函数如下：
+```c
 /* arch/arm/mach-3sc2410/cpu.c */
 static int __init s3c_arch_init( void )
 {
@@ -101,11 +101,11 @@ ret, *ptr) ;
     }
     return ret;
 }
-[/cc]
-同时被注册还有很多其他平台的 platform_device ，详细查看 arch/arm/mach-s3c2410/mach-smdk2410.c 里的 smdk2410_devices 结构体。
+```
+同时被注册还有很多其他平台的 `platform_device` ，详细查看 `arch/arm/mach-s3c2410/mach-smdk2410.c` 里的 `smdk2410_devices` 结构体。
 
-驱动程序需要实现结构体 struct platform_driver ，参考 drivers/i2c/busses 
-[cc lang="c"]
+驱动程序需要实现结构体 `struct platform_driver` ，参考 `drivers/i2c/busses`
+```c
 /* device driver for platform bus bits */
 static struct platform_driver s3c2410_i2c_driver = {
          .probe = s3c24xx_i2c_probe,
@@ -116,20 +116,20 @@ static struct platform_driver s3c2410_i2c_driver = {
                    .name = "s3c2410-i2c" ,
          } ,
 };
-[/cc]
-在驱动初始化函数中调用函数 platform_driver_register() 注册 platform_driver ，需要注意的是 s3c_device_i2c 结构中 name 元素和 s3c2410_i2c_driver 结构中 driver.name 必须是相同的，这样在 platform_driver_register() 注册时会对所有已注册的所有 platform_device 中的 name 和当前注册的 platform_driver 的 driver.name 进行比较，只有找到相同的名称的 platform_device 才能注册成功，当注册成功时会调用 platform_driver 结构元素 probe 函数指针，这里就是 s3c24xx_i2c_probe, 当进入 probe 函数后，需要获取设备的资源信息，常用获取资源的函数主要是：
-[cc lang="c"]
+```
+在驱动初始化函数中调用函数 `platform_driver_register()` 注册 `platform_driver` ，需要注意的是 `s3c_device_i2c` 结构中 `name` 元素和 `s3c2410_i2c_driver` 结构中 `driver.name` 必须是相同的，这样在 `platform_driver_register()` 注册时会对所有已注册的所有 `platform_device` 中的 `name` 和当前注册的 `platform_driver` 的 `driver.name` 进行比较，只有找到相同的名称的 `platform_device` 才能注册成功，当注册成功时会调用 `platform_driver` 结构元素 `probe` 函数指针，这里就是` s3c24xx_i2c_probe`, 当进入 `probe` 函数后，需要获取设备的资源信息，常用获取资源的函数主要是：
+```c
 struct resource *platform_get_resource(struct platform_device *dev, unsigned int type, unsigned int num);
-[/cc]
-根据参数 type 所指定类型，例如 IORESOURCE_MEM ，来获取指定的资源。
-[cc lang="c"]
+```
+根据参数 `type` 所指定类型，例如 `IORESOURCE_MEM` ，来获取指定的资源。
+```c
 struct int platform_get_irq(struct platform_device *dev, unsigned int num);
-[/cc]
+```
 获取资源中的中断号。
 
-下面举 s3c24xx_i2c_probe 函数分析 , 看看这些接口是怎么用的。
-前面已经讲了， s3c2410_i2c_driver 注册成功后会调用 s3c24xx_i2c_probe 执行，下面看代码： 
-[cc lang="c"]
+下面举 `s3c24xx_i2c_probe` 函数分析 , 看看这些接口是怎么用的。  
+前面已经讲了， `s3c2410_i2c_driver` 注册成功后会调用 `s3c24xx_i2c_probe` 执行，下面看代码：
+```c
 /* drivers/i2c/busses/i2c-s3c2410.c */
 
 static int s3c24xx_i2c_probe(struct platform_device *pdev)
@@ -203,7 +203,7 @@ static int s3c24xx_i2c_probe(struct platform_device *pdev)
 
     return ret;
 }
-[/cc]
-小思考：
-那什么情况可以使用 platform driver 机制编写驱动呢？
-我的理解是只要和内核本身运行依赖性不大的外围设备 ( 换句话说只要不在内核运行所需的一个最小系统之内的设备 ), 相对独立的 , 拥有各自独自的资源 (addresses and IRQs) ， 都可以用 platform_driver 实现。如： lcd,usb,uart 等，都可以用 platform_driver 写，而 timer,irq 等最小系统之内的设备则最好不用 platform_driver 机制，实际上内核实现也是这样的。
+```
+**小思考：**  
+那什么情况可以使用 platform driver 机制编写驱动呢？  
+我的理解是只要和内核本身运行依赖性不大的外围设备 ( 换句话说只要不在内核运行所需的一个最小系统之内的设备 ), 相对独立的 , 拥有各自独自的资源 (addresses and IRQs) ， 都可以用 `platform_driver` 实现。如： lcd,usb,uart 等，都可以用 `platform_driver` 写，而 timer,irq 等最小系统之内的设备则最好不用 `platform_driver` 机制，实际上内核实现也是这样的。
