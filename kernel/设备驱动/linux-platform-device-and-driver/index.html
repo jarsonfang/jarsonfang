@@ -1,0 +1,947 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="学习, 工作, 生活" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="原文：http://blog.csdn.net/yili_xie/article/details/5187014
+从 Linux 2.6 起引入了一套新的驱动管理和注册机制: platform_device 和 platform_driver 。Linux 中大部分的设备驱动，都可以使用这套机制 , 设备用 platform_device 表示，驱动用 platform_driver 进行注册。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux Platform Device and Driver">
+<meta property="og:url" content="https://jarsonfang.github.io/kernel/设备驱动/linux-platform-device-and-driver/index.html">
+<meta property="og:site_name" content="Jarson's Blog">
+<meta property="og:description" content="原文：http://blog.csdn.net/yili_xie/article/details/5187014
+从 Linux 2.6 起引入了一套新的驱动管理和注册机制: platform_device 和 platform_driver 。Linux 中大部分的设备驱动，都可以使用这套机制 , 设备用 platform_device 表示，驱动用 platform_driver 进行注册。">
+<meta property="og:updated_time" content="2016-12-23T15:09:36.413Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux Platform Device and Driver">
+<meta name="twitter:description" content="原文：http://blog.csdn.net/yili_xie/article/details/5187014
+从 Linux 2.6 起引入了一套新的驱动管理和注册机制: platform_device 和 platform_driver 。Linux 中大部分的设备驱动，都可以使用这套机制 , 设备用 platform_device 表示，驱动用 platform_driver 进行注册。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '6327478655802934000',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jarsonfang.github.io/kernel/设备驱动/linux-platform-device-and-driver/"/>
+
+
+
+
+
+  <title> Linux Platform Device and Driver | Jarson's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Jarson's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle">静水深流，岁月安好</p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/kernel/设备驱动/linux-platform-device-and-driver/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Jarson Fang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Jarson's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Linux Platform Device and Driver
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2014-02-25T10:52:33+08:00">
+                2014-02-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kernel/" itemprop="url" rel="index">
+                    <span itemprop="name">kernel</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kernel/设备驱动/" itemprop="url" rel="index">
+                    <span itemprop="name">设备驱动</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/kernel/设备驱动/linux-platform-device-and-driver/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="kernel/设备驱动/linux-platform-device-and-driver/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>原文：<a href="http://blog.csdn.net/yili_xie/article/details/5187014" target="_blank" rel="external">http://blog.csdn.net/yili_xie/article/details/5187014</a></p>
+<p>从 Linux 2.6 起引入了一套新的驱动管理和注册机制: <code>platform_device</code> 和 <code>platform_driver</code> 。<br>Linux 中大部分的设备驱动，都可以使用这套机制 , 设备用 <code>platform_device</code> 表示，驱动用 <code>platform_driver</code> 进行注册。</p>
+<p>Linux platform driver 机制和传统的 device driver 机制 ( 通过 <code>driver_register</code> 函数进行注册 ) 相比，一个十分明显的优势在于 platform 机制将设备本身的资源注册进内核，由内核统一管理，在驱动程序中使用这些资源时通过 platform device 提供的标准接口进行申请并使用。这样提高了驱动和资源管理的独立性，并且拥有较好的可移植性和安全性 ( 这些标准接口是安全的 ) 。</p>
+<p>Platform 机制的本身使用并不复杂，由两部分组成： <code>platform_device</code> 和 <code>platform_driver</code>。<br>通过 Platform 机制开发发底层驱动的大致流程为:<br>1）定义 <code>platform_device</code><br>2）注册 <code>platform_device</code><br>3）定义 <code>platform_driver</code><br>4）注册 <code>platform_driver</code><br><a id="more"></a></p>
+<p>首先要确认的就是设备的资源信息，例如设备的地址，中断号等。<br>在 2.6 内核中 platform 设备用结构体 <code>platform_device</code> 来描述，该结构体定义在 <code>kernel/include/linux/platform_device.h</code> 中，<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> platform_device &#123;</div><div class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *name;</div><div class="line">    u32  id;</div><div class="line">    <span class="keyword">struct</span> device dev;</div><div class="line">    u32  num_resources;</div><div class="line">    <span class="keyword">struct</span> resource *resource;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>该结构一个重要的元素是 <code>resource</code> ，该元素存入了最为重要的设备资源信息，定义在 <code>kernel/include/linux/ioport.h</code> 中，<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> resource &#123;</div><div class="line">    <span class="keyword">const</span> <span class="keyword">char</span> *name;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> start, end;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> flags;</div><div class="line">    <span class="keyword">struct</span> resource *parent, *sibling, *child;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>下面举 s3c2410 平台的 i2c 驱动作为例子来说明：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/* arch/arm/mach-s3c2410/devs.c */</span></div><div class="line"><span class="comment">/* I2C */</span></div><div class="line"><span class="keyword">static</span> <span class="keyword">struct</span> resource s3c_i2c_resource[ ] = &#123;</div><div class="line">         [<span class="number">0</span>] = &#123;</div><div class="line">                   .start = S3C24XX_PA_IIC,</div><div class="line">                   .end = S3C24XX_PA_IIC + S3C24XX_SZ_IIC - <span class="number">1</span>,</div><div class="line">                   .flags = IORESOURCE_MEM,</div><div class="line">         &#125; ,</div><div class="line">         [<span class="number">1</span>] = &#123;</div><div class="line">                   .start = IRQ_IIC, <span class="comment">//S3C2410_IRQ(27)</span></div><div class="line">                   .end = IRQ_IIC,</div><div class="line">                   .flags = IORESOURCE_IRQ,</div><div class="line">         &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>这里定义了两组 <code>resource</code> ，它描述了一个 I2C 设备的资源，第 1 组描述了这个 I2C 设备所占用的总线地址范围， <code>IORESOURCE_MEM</code> 表示第 1 组描述的是内存类型的资源信息，第 2 组描述了这个 I2C 设备的中断号， <code>IORESOURCE_IRQ</code> 表示第 2 组描述的是中断资源信息。设备驱动会根据 <code>flags</code> 来获取相应的资源信息。</p>
+<p>有了 <code>resource</code> 信息，就可以定义 <code>platform_device</code> 了：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> platform_device s3c_device_i2c = &#123;</div><div class="line">         .name = <span class="string">"s3c2410-i2c"</span>,</div><div class="line">         .id = <span class="number">-1</span>,</div><div class="line">         .num_resources = ARRAY_SIZE(s3c_i2c_resource),</div><div class="line">         .resource = s3c_i2c_resource,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>定义好了 <code>platform_device</code> 结构体后就可以调用函数 <code>platform_add_devices</code> 向系统中添加该设备了，之后可以调用 <code>platform_driver_register()</code> 进行设备注册。要注意的是，这里的 <code>platform_device</code> 设备的注册过程必须在相应设备驱动加载之前被调用，即执行 <code>platform_driver_register</code> 之前 , 原因是因为驱动注册时需要匹配内核中所以已注册的设备名。</p>
+<p><code>s3c2410-i2c</code> 的 <code>platform_device</code> 是在系统启动时，在 <code>cpu.c</code> 里的 <code>s3c_arch_init()</code> 函数里进行注册的，这个函数申明为 <code>arch_initcall(s3c_arch_init);</code> 会在系统初始化阶段被调用。<br><code>arch_initcall</code> 的优先级高于 <code>module_init</code> 。所以会在 Platform 驱动注册之前调用。 (详细参考 <code>include/linux/init.h</code>)</p>
+<p><code>s3c_arch_init</code> 函数如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/* arch/arm/mach-3sc2410/cpu.c */</span></div><div class="line"><span class="keyword">static</span> <span class="keyword">int</span> __<span class="function">init <span class="title">s3c_arch_init</span><span class="params">( <span class="keyword">void</span> )</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">int</span> ret;</div><div class="line">    ……</div><div class="line"><span class="comment">/* 这里board指针指向在mach-smdk2410.c里的定义的smdk2410_board，里面包含了预先定义的I2C Platform_device等. */</span></div><div class="line">    <span class="keyword">if</span> ( board != <span class="literal">NULL</span> ) &#123;</div><div class="line">        <span class="keyword">struct</span> platform_device **ptr = board-&gt;devices;</div><div class="line">        <span class="keyword">int</span> i;</div><div class="line"></div><div class="line">        <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; board-&gt;devices_count; i++ , ptr++ ) &#123;</div><div class="line">            ret = platform_device_register(*ptr) ;      <span class="comment">//在这里进行注册</span></div><div class="line"></div><div class="line">            <span class="keyword">if</span> (ret) &#123;</div><div class="line">                printk( KERN_ERR <span class="string">"s3c24xx: failed to add board device %s (%d) @%p/n"</span> , (*ptr)-&gt;name,</div><div class="line">ret, *ptr) ;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">         <span class="comment">/* mask any error, we may not need all these board</span></div><div class="line">         * devices */</div><div class="line">        ret = <span class="number">0</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> ret;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>同时被注册还有很多其他平台的 <code>platform_device</code> ，详细查看 <code>arch/arm/mach-s3c2410/mach-smdk2410.c</code> 里的 <code>smdk2410_devices</code> 结构体。</p>
+<p>驱动程序需要实现结构体 <code>struct platform_driver</code> ，参考 <code>drivers/i2c/busses</code><br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/* device driver for platform bus bits */</span></div><div class="line"><span class="keyword">static</span> <span class="keyword">struct</span> platform_driver s3c2410_i2c_driver = &#123;</div><div class="line">         .probe = s3c24xx_i2c_probe,</div><div class="line">         .remove = s3c24xx_i2c_remove,</div><div class="line">         .resume = s3c24xx_i2c_resume,</div><div class="line">         .driver = &#123;</div><div class="line">                   .owner = THIS_MODULE,</div><div class="line">                   .name = <span class="string">"s3c2410-i2c"</span> ,</div><div class="line">         &#125; ,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>在驱动初始化函数中调用函数 <code>platform_driver_register()</code> 注册 <code>platform_driver</code> ，需要注意的是 <code>s3c_device_i2c</code> 结构中 <code>name</code> 元素和 <code>s3c2410_i2c_driver</code> 结构中 <code>driver.name</code> 必须是相同的，这样在 <code>platform_driver_register()</code> 注册时会对所有已注册的所有 <code>platform_device</code> 中的 <code>name</code> 和当前注册的 <code>platform_driver</code> 的 <code>driver.name</code> 进行比较，只有找到相同的名称的 <code>platform_device</code> 才能注册成功，当注册成功时会调用 <code>platform_driver</code> 结构元素 <code>probe</code> 函数指针，这里就是<code>s3c24xx_i2c_probe</code>, 当进入 <code>probe</code> 函数后，需要获取设备的资源信息，常用获取资源的函数主要是：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">struct</span> resource *<span class="title">platform_get_resource</span><span class="params">(<span class="keyword">struct</span> platform_device *dev, <span class="keyword">unsigned</span> <span class="keyword">int</span> type, <span class="keyword">unsigned</span> <span class="keyword">int</span> num)</span></span>;</div></pre></td></tr></table></figure></p>
+<p>根据参数 <code>type</code> 所指定类型，例如 <code>IORESOURCE_MEM</code> ，来获取指定的资源。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">struct</span> <span class="keyword">int</span> <span class="title">platform_get_irq</span><span class="params">(<span class="keyword">struct</span> platform_device *dev, <span class="keyword">unsigned</span> <span class="keyword">int</span> num)</span></span>;</div></pre></td></tr></table></figure></p>
+<p>获取资源中的中断号。</p>
+<p>下面举 <code>s3c24xx_i2c_probe</code> 函数分析 , 看看这些接口是怎么用的。<br>前面已经讲了， <code>s3c2410_i2c_driver</code> 注册成功后会调用 <code>s3c24xx_i2c_probe</code> 执行，下面看代码：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/* drivers/i2c/busses/i2c-s3c2410.c */</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">s3c24xx_i2c_probe</span><span class="params">(<span class="keyword">struct</span> platform_device *pdev)</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">struct</span> s3c24xx_i2c *i2c = &amp;s3c24xx_i2c;</div><div class="line">    <span class="keyword">struct</span> resource *res;</div><div class="line">    <span class="keyword">int</span> ret;</div><div class="line"></div><div class="line">    <span class="comment">/* find the clock and enable it */</span></div><div class="line"></div><div class="line">    i2c-&gt;dev = &amp;pdev-&gt; dev;</div><div class="line">    i2c-&gt;clk = clk_get( &amp;pdev-&gt;dev, <span class="string">"i2c"</span> ) ;</div><div class="line">    <span class="keyword">if</span> (IS_ERR( i2c-&gt; clk) ) &#123;</div><div class="line">     dev_err(&amp;pdev-&gt;dev, <span class="string">"cannot get clock/n"</span> ) ;</div><div class="line">     ret = -ENOENT;</div><div class="line">     <span class="keyword">goto</span> out;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    dev_dbg(&amp;pdev-&gt;dev, <span class="string">"clock source %p/n"</span> , i2c-&gt;clk) ;</div><div class="line">    clk_enable(i2c-&gt;clk) ;</div><div class="line"></div><div class="line">    <span class="comment">/* map the registers */</span></div><div class="line">    res = platform_get_resource(pdev, IORESOURCE_MEM, <span class="number">0</span>) ; <span class="comment">/* 获取设备的IO资源地址 */</span></div><div class="line">    <span class="keyword">if</span> ( res == <span class="literal">NULL</span> ) &#123;</div><div class="line">     dev_err(&amp;pdev-&gt;dev, <span class="string">"cannot find IO resource/n"</span>) ;</div><div class="line">     ret = -ENOENT;</div><div class="line">     <span class="keyword">goto</span> out;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    i2c-&gt;ioarea = request_mem_region(res-&gt;start, (res-&gt;end- res-&gt;start) + <span class="number">1</span>, pdev-&gt;name) ; <span class="comment">/* 申请这块IO Region */</span></div><div class="line"></div><div class="line">    <span class="keyword">if</span> ( i2c-&gt;ioarea == <span class="literal">NULL</span> ) &#123;</div><div class="line">     dev_err(&amp;pdev-&gt;dev, <span class="string">"cannot request IO/n"</span> ) ;</div><div class="line">     ret = -ENXIO;</div><div class="line">     <span class="keyword">goto</span> out;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    i2c-&gt;regs = ioremap(res-&gt;start, (res-&gt;end- res-&gt;start) + <span class="number">1</span>) ; <span class="comment">/* 映射至内核虚拟空间 */</span></div><div class="line"></div><div class="line">    <span class="keyword">if</span> ( i2c-&gt;regs == <span class="literal">NULL</span> ) &#123;</div><div class="line">     dev_err( &amp;pdev-&gt;dev, <span class="string">"cannot map IO/n"</span> ) ;</div><div class="line">     ret = -ENXIO;</div><div class="line">     <span class="keyword">goto</span> out;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    dev_dbg(&amp;pdev-&gt;dev, <span class="string">"registers %p (%p, %p)/n"</span> , i2c-&gt;regs, i2c-&gt;ioarea, res) ;</div><div class="line"></div><div class="line">    <span class="comment">/* setup info block for the i2c core */</span></div><div class="line">    i2c-&gt;adap.algo_data = i2c;</div><div class="line">    i2c-&gt;adap.dev.parent = &amp;pdev-&gt;dev;</div><div class="line"></div><div class="line">    <span class="comment">/* initialise the i2c controller */</span></div><div class="line">    ret = s3c24xx_i2c_init(i2c) ;</div><div class="line">    <span class="keyword">if</span> (ret != <span class="number">0</span>)</div><div class="line">     <span class="keyword">goto</span> out;</div><div class="line"></div><div class="line">    <span class="comment">/* find the IRQ for this unit (note, this relies on the init call to ensure no current IRQs pending */</span></div><div class="line"></div><div class="line">    res = platform_get_resource(pdev, IORESOURCE_IRQ, <span class="number">0</span>) ; <span class="comment">/* 获取设备IRQ中断号 */</span></div><div class="line"></div><div class="line">    <span class="keyword">if</span> ( res == <span class="literal">NULL</span> ) &#123;</div><div class="line">     dev_err( &amp;pdev-&gt;dev, <span class="string">"cannot find IRQ/n"</span> ) ;</div><div class="line">     ret = -ENOENT;</div><div class="line">     <span class="keyword">goto</span> out;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ret = request_irq(res-&gt;start, s3c24xx_i2c_irq, IRQF_DISABLED, <span class="comment">/* 申请IRQ */</span></div><div class="line">     pdev-&gt;name, i2c) ;</div><div class="line"></div><div class="line">    ……</div><div class="line"></div><div class="line">    <span class="keyword">return</span> ret;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><strong>小思考：</strong><br>那什么情况可以使用 platform driver 机制编写驱动呢？<br>我的理解是只要和内核本身运行依赖性不大的外围设备 ( 换句话说只要不在内核运行所需的一个最小系统之内的设备 ), 相对独立的 , 拥有各自独自的资源 (addresses and IRQs) ， 都可以用 <code>platform_driver</code> 实现。如： lcd,usb,uart 等，都可以用 <code>platform_driver</code> 写，而 timer,irq 等最小系统之内的设备则最好不用 <code>platform_driver</code> 机制，实际上内核实现也是这样的。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/life/the-greatest-salesman-of-the-world/" rel="next" title="羊皮卷的故事（《世界上最伟大的推销员》节选）">
+                <i class="fa fa-chevron-left"></i> 羊皮卷的故事（《世界上最伟大的推销员》节选）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/kernel/设备驱动/analysis-of-platform-get-resource/" rel="prev" title="platform_get_resource 函数实现细节">
+                platform_get_resource 函数实现细节 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="kernel/设备驱动/linux-platform-device-and-driver/"
+     data-title="Linux Platform Device and Driver"
+     data-content=""
+     data-url="https://jarsonfang.github.io/kernel/设备驱动/linux-platform-device-and-driver/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="kernel/设备驱动/linux-platform-device-and-driver/"
+           data-title="Linux Platform Device and Driver" data-url="https://jarsonfang.github.io/kernel/设备驱动/linux-platform-device-and-driver/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Jarson Fang" />
+          <p class="site-author-name" itemprop="name">Jarson Fang</p>
+          <p class="site-description motion-element" itemprop="description">学习、工作、生活</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">65</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/jarsonfang" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/jarson-fang" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://tldp.org/LDP/abs/html/" title="ABS" target="_blank">ABS</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://git-scm.com/book/zh/" title="ProGit" target="_blank">ProGit</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://www.devbean.net/" title="DevBean" target="_blank">DevBean</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://coolshell.cn/" title="CoolShell" target="_blank">CoolShell</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://doc.rust-lang.org/book/" title="Rust-Book" target="_blank">Rust-Book</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/liigo/" title="Rust-庄晓立" target="_blank">Rust-庄晓立</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/rustcc/" title="Rust-中文社区" target="_blank">Rust-中文社区</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.wowotech.net/" title="蜗窝科技" target="_blank">蜗窝科技</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hexo.io/" title="Hexo" target="_blank">Hexo</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://theme-next.iissnan.com/" title="NexT" target="_blank">NexT</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://guides.github.com/features/mastering-markdown/" title="Mastering-Markdown" target="_blank">Mastering-Markdown</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.cirosantilli.com/markdown-style-guide/" title="Markdown-Style-Guide" target="_blank">Markdown-Style-Guide</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jarson Fang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"jarsonfang"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js?v=5.1.0"></script>
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

@@ -1,0 +1,1074 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="设备模型," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="Chinese translated version of Documentation/filesystems/sysfs.txt
+If you have any comment or update to the content, please contact theoriginal document maintainer directly.  However, if you have a pro">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sysfs - 用于导出内核对象(kobject)的文件系统">
+<meta property="og:url" content="https://jarsonfang.github.io/kernel/内核文档/sysfs/index.html">
+<meta property="og:site_name" content="Jarson's Blog">
+<meta property="og:description" content="Chinese translated version of Documentation/filesystems/sysfs.txt
+If you have any comment or update to the content, please contact theoriginal document maintainer directly.  However, if you have a pro">
+<meta property="og:updated_time" content="2016-12-23T15:09:36.433Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="sysfs - 用于导出内核对象(kobject)的文件系统">
+<meta name="twitter:description" content="Chinese translated version of Documentation/filesystems/sysfs.txt
+If you have any comment or update to the content, please contact theoriginal document maintainer directly.  However, if you have a pro">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '6327478655802934000',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jarsonfang.github.io/kernel/内核文档/sysfs/"/>
+
+
+
+
+
+  <title> sysfs - 用于导出内核对象(kobject)的文件系统 | Jarson's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Jarson's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle">静水深流，岁月安好</p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/kernel/内核文档/sysfs/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Jarson Fang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Jarson's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                sysfs - 用于导出内核对象(kobject)的文件系统
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2014-03-04T17:09:27+08:00">
+                2014-03-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kernel/" itemprop="url" rel="index">
+                    <span itemprop="name">kernel</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kernel/内核文档/" itemprop="url" rel="index">
+                    <span itemprop="name">内核文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/kernel/内核文档/sysfs/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="kernel/内核文档/sysfs/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Chinese translated version of Documentation/filesystems/sysfs.txt</p>
+<p>If you have any comment or update to the content, please contact the<br>original document maintainer directly.  However, if you have a problem<br>communicating in English you can also ask the Chinese maintainer for<br>help.  Contact the Chinese maintainer if this translation is outdated<br>or if there is a problem with the translation.</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Maintainer:</td>
+<td>Patrick Mochel    &lt;mochel@osdl.org&gt;</td>
+</tr>
+<tr>
+<td></td>
+<td>Mike Murphy &lt;mamurph@cs.clemson.edu&gt;</td>
+</tr>
+<tr>
+<td>Chinese maintainer:</td>
+<td>Fu Wei &lt;tekkamanninja@gmail.com&gt;</td>
+</tr>
+</tbody>
+</table>
+<p>Documentation/filesystems/sysfs.txt 的中文翻译</p>
+<p>如果想评论或更新本文的内容，请直接联系原文档的维护者。如果你使用英文<br>交流有困难的话，也可以向中文版维护者求助。如果本翻译更新不及时或者翻<br>译存在问题，请联系中文版维护者。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>英文版维护者：</td>
+<td>Patrick Mochel    &lt;mochel@osdl.org&gt;</td>
+</tr>
+<tr>
+<td></td>
+<td>Mike Murphy &lt;mamurph@cs.clemson.edu&gt;</td>
+</tr>
+<tr>
+<td>中文版维护者：</td>
+<td>傅炜 Fu Wei &lt;tekkamanninja@gmail.com&gt;</td>
+</tr>
+<tr>
+<td>中文版翻译者：</td>
+<td>傅炜 Fu Wei &lt;tekkamanninja@gmail.com&gt;</td>
+</tr>
+<tr>
+<td>中文版校译者：</td>
+<td>傅炜 Fu Wei &lt;tekkamanninja@gmail.com&gt;</td>
+</tr>
+</tbody>
+</table>
+<p>以下为正文:</p>
+<p>sysfs - 用于导出内核对象(kobject)的文件系统</p>
+<p>Patrick Mochel    <a href="&#109;&#x61;&#105;&#x6c;&#x74;&#x6f;&#58;&#x6d;&#111;&#99;&#x68;&#101;&#108;&#x40;&#111;&#x73;&#x64;&#x6c;&#46;&#111;&#114;&#103;">&#x6d;&#111;&#99;&#x68;&#101;&#108;&#x40;&#111;&#x73;&#x64;&#x6c;&#46;&#111;&#114;&#103;</a><br>Mike Murphy <a href="&#109;&#97;&#x69;&#x6c;&#116;&#111;&#x3a;&#x6d;&#97;&#109;&#117;&#114;&#112;&#104;&#x40;&#x63;&#115;&#46;&#x63;&#108;&#x65;&#x6d;&#x73;&#x6f;&#x6e;&#x2e;&#101;&#100;&#x75;">&#x6d;&#97;&#109;&#117;&#114;&#112;&#104;&#x40;&#x63;&#115;&#46;&#x63;&#108;&#x65;&#x6d;&#x73;&#x6f;&#x6e;&#x2e;&#101;&#100;&#x75;</a></p>
+<p>修订:    16 August 2011<br>原始版本:   10 January 2003<br><a id="more"></a></p>
+<h3 id="sysfs-简介"><a href="#sysfs-简介" class="headerlink" title="sysfs 简介"></a>sysfs 简介</h3><p>sysfs 是一个最初基于 <code>ramfs</code> 内存文件系统。它提供一种导出内核数据结构及其属性以及它们之间的关联到用户空间的方法。</p>
+<p>sysfs 始终与 <code>kobject</code> 的底层结构紧密相关。请阅读Documentation/kobject.txt 文档以获得更多关于 <code>kobject</code> 接口的信息。</p>
+<h3 id="使用-sysfs"><a href="#使用-sysfs" class="headerlink" title="使用 sysfs"></a>使用 sysfs</h3><p>只要内核配置中定义了 <code>CONFIG_SYSFS</code> ，sysfs 就总会被编译进内核。你可通过以下命令挂载它:<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mount -t sysfs sysfs /sys</div></pre></td></tr></table></figure></p>
+<h3 id="创建目录"><a href="#创建目录" class="headerlink" title="创建目录"></a>创建目录</h3><p>任何 <code>kobject</code> 在系统中注册，就会有一个目录在 sysfs 中被创建。这个目录是作为该 <code>kobject</code> 的父对象所在目录的子目录创建的，以准确地传递内核的对象层次到用户空间。sysfs 中的顶层目录代表着内核对象层次的共同祖先；例如：某些对象属于某个子系统。</p>
+<p>Sysfs 在与其目录关联的 <code>sysfs_dirent</code> 对象中内部保存一个指向实现目录的 <code>kobject</code> 的指针。以前，这个 <code>kobject</code> 指针被 sysfs 直接用于<code>kobject</code> 文件打开和关闭的引用计数。而现在的 sysfs 实现中，<code>kobject</code>引用计数只能通过 <code>sysfs_schedule_callback()</code> 函数直接修改。</p>
+<h3 id="属性"><a href="#属性" class="headerlink" title="属性"></a>属性</h3><p><code>kobject</code> 的属性可在文件系统中以普通文件的形式导出。Sysfs 为属性定义了面向文件 I/O 操作的方法，以提供对内核属性的读写。</p>
+<p>属性应为 ASCII 码文本文件。以一个文件只存储一个属性值为宜。但一个文件只包含一个属性值可能影响效率，所以一个包含相同数据类型的属性值数组也被广泛地接受。</p>
+<p>混合类型、表达多行数据以及一些怪异的数据格式会遭到强烈反对。这样做是很丢脸的,而且其代码会在未通知作者的情况下被重写。</p>
+<p>一个简单的属性结构定义如下:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> attribute &#123;</div><div class="line">        <span class="keyword">char</span>                    * name;</div><div class="line">        <span class="keyword">struct</span> <span class="keyword">module</span>		*owner;</div><div class="line">        <span class="keyword">umode_t</span>                 mode;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">sysfs_create_file</span><span class="params">(<span class="keyword">struct</span> kobject * kobj, <span class="keyword">const</span> <span class="keyword">struct</span> attribute * attr)</span></span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">sysfs_remove_file</span><span class="params">(<span class="keyword">struct</span> kobject * kobj, <span class="keyword">const</span> <span class="keyword">struct</span> attribute * attr)</span></span>;</div></pre></td></tr></table></figure></p>
+<p>一个单独的属性结构并不包含读写其属性值的方法。子系统最好为增删特定对象类型的属性定义自己的属性结构体和封装函数。</p>
+<p>例如:驱动程序模型定义的 <code>device_attribute</code> 结构体如下:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> device_attribute &#123;</div><div class="line">	<span class="keyword">struct</span> attribute	attr;</div><div class="line">	<span class="keyword">ssize_t</span> (*show)(<span class="keyword">struct</span> device *dev, <span class="keyword">struct</span> device_attribute *attr,</div><div class="line">			<span class="keyword">char</span> *buf);</div><div class="line">	<span class="keyword">ssize_t</span> (*store)(<span class="keyword">struct</span> device *dev, <span class="keyword">struct</span> device_attribute *attr,</div><div class="line">			 <span class="keyword">const</span> <span class="keyword">char</span> *buf, <span class="keyword">size_t</span> count);</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">device_create_file</span><span class="params">(<span class="keyword">struct</span> device *, <span class="keyword">const</span> <span class="keyword">struct</span> device_attribute *)</span></span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">device_remove_file</span><span class="params">(<span class="keyword">struct</span> device *, <span class="keyword">const</span> <span class="keyword">struct</span> device_attribute *)</span></span>;</div></pre></td></tr></table></figure></p>
+<p>为了定义设备属性，同时定义了一下辅助宏:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> DEVICE_ATTR(_name, _mode, _show, _store) \</span></div><div class="line">struct device_attribute dev_attr_##_name = __ATTR(_name, _mode, _show, _store)</div></pre></td></tr></table></figure></p>
+<p>例如:声明<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="title">DEVICE_ATTR</span><span class="params">(foo, S_IWUSR | S_IRUGO, show_foo, store_foo)</span></span>;</div></pre></td></tr></table></figure></p>
+<p>等同于如下代码：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">static</span> <span class="keyword">struct</span> device_attribute dev_attr_foo = &#123;</div><div class="line">       .attr	= &#123;</div><div class="line">		.name = <span class="string">"foo"</span>,</div><div class="line">		.mode = S_IWUSR | S_IRUGO,</div><div class="line">	&#125;,</div><div class="line">	.show = show_foo,</div><div class="line">	.store = store_foo,</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h3 id="子系统特有的回调函数"><a href="#子系统特有的回调函数" class="headerlink" title="子系统特有的回调函数"></a>子系统特有的回调函数</h3><p>当一个子系统定义一个新的属性类型时，必须实现一系列的 sysfs 操作，使读写调用指向属性所有者的显示(<code>show</code>)和储存(<code>store</code>)方法。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> sysfs_ops &#123;</div><div class="line">        <span class="keyword">ssize_t</span> (*show)(<span class="keyword">struct</span> kobject *, <span class="keyword">struct</span> attribute *, <span class="keyword">char</span> *);</div><div class="line">        <span class="keyword">ssize_t</span> (*store)(<span class="keyword">struct</span> kobject *, <span class="keyword">struct</span> attribute *, <span class="keyword">const</span> <span class="keyword">char</span> *, <span class="keyword">size_t</span>);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>[子系统应已经定义了一个 <code>struct kobj_type</code> 结构体作为这个类型的描述符，并在此保存 <code>sysfs_ops</code> 的指针。更多的信息参见 <code>kobject</code> 的文档]</p>
+<p>当一个文件被读写时，sysfs 会为这个类型调用适当的方法。这个方法会将一般的<code>kobject</code> 和 <code>attribute</code> 结构体指针转换为适当的指针类型，然后调用其关联的函数。</p>
+<p>示例:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> to_dev(obj) container_of(obj, struct device, kobj)</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> to_dev_attr(_attr) container_of(_attr, struct device_attribute, attr)</span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> ssize_t <span class="title">dev_attr_show</span><span class="params">(<span class="keyword">struct</span> kobject *kobj, <span class="keyword">struct</span> attribute *attr,</span></span></div><div class="line">                             <span class="keyword">char</span> *buf)</div><div class="line">&#123;</div><div class="line">        <span class="keyword">struct</span> device_attribute *dev_attr = to_dev_attr(attr);</div><div class="line">        <span class="keyword">struct</span> device *dev = to_dev(kobj);</div><div class="line">        <span class="keyword">ssize_t</span> ret = -EIO;</div><div class="line"></div><div class="line">        <span class="keyword">if</span> (dev_attr-&gt;show)</div><div class="line">                ret = dev_attr-&gt;show(dev, dev_attr, buf);</div><div class="line">        <span class="keyword">if</span> (ret &gt;= (<span class="keyword">ssize_t</span>)PAGE_SIZE) &#123;</div><div class="line">                print_symbol(<span class="string">"dev_attr_show: %s returned bad count\n"</span>,</div><div class="line">                                (<span class="keyword">unsigned</span> <span class="keyword">long</span>)dev_attr-&gt;show);</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> ret;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="读写属性数据"><a href="#读写属性数据" class="headerlink" title="读写属性数据"></a>读写属性数据</h3><p>在声明属性时，必须指定 <code>show()</code> 或 <code>store()</code> 方法，以实现属性的读或写。这些方法的类型应该和以下的设备属性定义一样简单。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">ssize_t</span> (*show)(<span class="keyword">struct</span> device *dev, <span class="keyword">struct</span> device_attribute *attr, <span class="keyword">char</span> *buf);</div><div class="line"><span class="keyword">ssize_t</span> (*store)(<span class="keyword">struct</span> device *dev, <span class="keyword">struct</span> device_attribute *attr,</div><div class="line">                 <span class="keyword">const</span> <span class="keyword">char</span> *buf, <span class="keyword">size_t</span> count);</div></pre></td></tr></table></figure></p>
+<p>也就是说,它们应只以一个处理对象、一个属性和一个缓冲指针作为参数。</p>
+<p>sysfs 会分配一个大小为 (<code>PAGE_SIZE</code>) 的缓冲区并传递给这个方法。Sysfs 将会为每次读写操作调用一次这个方法。这使得这些方法的实现遵循以下的行为:</p>
+<ul>
+<li>在读方面（<code>read</code>(2)），<code>show()</code> 方法应该填充整个缓冲区。回想一下，属性应只导出了一个属性值或是一个同类型属性值的数组，所以这个代价将不会不太高。这使得用户空间可以局部地读和任意的向前搜索整个文件。如果用户空间向后搜索到零或使用‘0’偏移执行一个<code>pread</code>(2)操作，<code>show()</code>方法将再次被调用，以重新填充缓存。</li>
+<li>在写方面（<code>write</code>(2)），sysfs 希望在第一次写操作时得到整个缓冲区。之后 Sysfs 传递整个缓冲区给 <code>store()</code> 方法。当要写 sysfs 文件时，用户空间进程应首先读取整个文件，修该想要改变的值，然后回写整个缓冲区。在读写属性值时，属性方法的执行应操作相同的缓冲区。<br>注记:</li>
+<li>写操作导致的 <code>show()</code> 方法重载，会忽略当前文件位置。</li>
+<li>缓冲区应总是 <code>PAGE_SIZE</code> 大小。对于i386，这个值为<code>4096</code>。</li>
+<li><code>show()</code> 方法应该返回写入缓冲区的字节数，也就是 <code>snprintf()</code>的返回值。</li>
+<li><code>show()</code> 应始终使用 <code>snprintf()</code>。</li>
+<li><code>store()</code> 应返回缓冲区的已用字节数。如果整个缓存都已使用，只需返回<code>count</code> 参数。</li>
+<li><code>show()</code> 或 <code>store()</code> 可以返回错误值。当得到一个非法值，必须返回一个错误值。</li>
+<li>一个传递给方法的对象将会通过 sysfs 引用计数其内嵌对象而驻留在内存中。尽管如此，对象代表的物理实体(如设备)可能已不存在。如有必要，应该实现一个检测机制。</li>
+</ul>
+<p>一个简单的(未经实验证实的)设备属性实现如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> ssize_t <span class="title">show_name</span><span class="params">(<span class="keyword">struct</span> device *dev, <span class="keyword">struct</span> device_attribute *attr,</span></span></div><div class="line">                         <span class="keyword">char</span> *buf)</div><div class="line">&#123;</div><div class="line">	<span class="keyword">return</span> <span class="built_in">snprintf</span>(buf, PAGE_SIZE, <span class="string">"%s\n"</span>, dev-&gt;name);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> ssize_t <span class="title">store_name</span><span class="params">(<span class="keyword">struct</span> device *dev, <span class="keyword">struct</span> device_attribute *attr,</span></span></div><div class="line">                          <span class="keyword">const</span> <span class="keyword">char</span> *buf, <span class="keyword">size_t</span> count)</div><div class="line">&#123;</div><div class="line">        <span class="built_in">snprintf</span>(dev-&gt;name, <span class="keyword">sizeof</span>(dev-&gt;name), <span class="string">"%.*s"</span>,</div><div class="line">                 (<span class="keyword">int</span>)min(count, <span class="keyword">sizeof</span>(dev-&gt;name) - <span class="number">1</span>), buf);</div><div class="line">	<span class="keyword">return</span> count;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="title">DEVICE_ATTR</span><span class="params">(name, S_IRUGO, show_name, store_name)</span></span>;</div></pre></td></tr></table></figure></p>
+<p>（注意：真正的实现不允许用户空间设置设备名。）</p>
+<h3 id="顶层目录布局"><a href="#顶层目录布局" class="headerlink" title="顶层目录布局"></a>顶层目录布局</h3><p>sysfs 目录的安排显示了内核数据结构之间的关系。</p>
+<p>顶层 sysfs 目录看起来像这样:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">block/</div><div class="line">bus/</div><div class="line">class/</div><div class="line">dev/</div><div class="line">devices/</div><div class="line">firmware/</div><div class="line">net/</div><div class="line">fs/</div></pre></td></tr></table></figure></p>
+<p><code>devices/</code> 包含了一个设备树的文件系统表示。它直接映射了内核内部的设备树，设备(<code>struct device</code>)的层次结构。</p>
+<p><code>bus/</code> 包含了内核中各种总线类型的平面目录布局。每个总线目录包含两个子目录:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">devices/</div><div class="line">drivers/</div></pre></td></tr></table></figure></p>
+<p><code>devices/</code> 包含了系统中出现的每个设备的符号链接，它们指向 <code>root/</code> 下的设备目录。</p>
+<p><code>drivers/</code> 包含了每个已为特定总线上的设备而挂载的驱动程序的目录(这里假定驱动没有跨越多个总线类型)。</p>
+<p><code>fs/</code> 包含了一个为文件系统设立的目录。现在每个想要导出属性的文件系统必须在 <code>fs/</code> 下创建自己的层次结构(参见Documentation/filesystems/fuse.txt)。</p>
+<p><code>dev/</code> 包含两个子目录： <code>char/</code> 和 <code>block/</code>。在这两个子目录中，有以<code>&lt;major&gt;:&lt;minor&gt;</code> 格式命名的符号链接。这些符号链接指向 sysfs 目录中相应的设备。<code>/sys/dev</code> 为查找某个设备提供一个通过<code>stat</code>(2) 调用快速搜索 sysfs 接口的方法。</p>
+<p>更多有关 driver-model 的特性信息可以在 Documentation/driver-model/ 中找到。</p>
+<p>TODO: 完成这一节。</p>
+<h3 id="当前接口"><a href="#当前接口" class="headerlink" title="当前接口"></a>当前接口</h3><p>以下的接口层存在于当前的sysfs中:</p>
+<h4 id="设备-include-linux-device-h"><a href="#设备-include-linux-device-h" class="headerlink" title="设备 (include/linux/device.h)"></a>设备 (include/linux/device.h)</h4><p>结构体:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> device_attribute &#123;</div><div class="line">	<span class="keyword">struct</span> attribute	attr;</div><div class="line">	<span class="keyword">ssize_t</span> (*show)(<span class="keyword">struct</span> device *dev, <span class="keyword">struct</span> device_attribute *attr,</div><div class="line">			<span class="keyword">char</span> *buf);</div><div class="line">	<span class="keyword">ssize_t</span> (*store)(<span class="keyword">struct</span> device *dev, <span class="keyword">struct</span> device_attribute *attr,</div><div class="line">			 <span class="keyword">const</span> <span class="keyword">char</span> *buf, <span class="keyword">size_t</span> count);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>声明:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">DEVICE_ATTR(_name, _mode, _show, _store);</div></pre></td></tr></table></figure></p>
+<p>增/删属性:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">device_create_file</span><span class="params">(<span class="keyword">struct</span> device *dev, <span class="keyword">const</span> <span class="keyword">struct</span> device_attribute * attr)</span></span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">device_remove_file</span><span class="params">(<span class="keyword">struct</span> device *dev, <span class="keyword">const</span> <span class="keyword">struct</span> device_attribute * attr)</span></span>;</div></pre></td></tr></table></figure></p>
+<h4 id="总线驱动程序-include-linux-device-h"><a href="#总线驱动程序-include-linux-device-h" class="headerlink" title="总线驱动程序 (include/linux/device.h)"></a>总线驱动程序 (include/linux/device.h)</h4><p>结构体:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> bus_attribute &#123;</div><div class="line">        <span class="keyword">struct</span> attribute        attr;</div><div class="line">        <span class="keyword">ssize_t</span> (*show)(<span class="keyword">struct</span> bus_type *, <span class="keyword">char</span> * buf);</div><div class="line">        <span class="keyword">ssize_t</span> (*store)(<span class="keyword">struct</span> bus_type *, <span class="keyword">const</span> <span class="keyword">char</span> * buf, <span class="keyword">size_t</span> count);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>声明:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">BUS_ATTR(_name, _mode, _show, _store)</div></pre></td></tr></table></figure></p>
+<p>增/删属性:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">bus_create_file</span><span class="params">(<span class="keyword">struct</span> bus_type *, <span class="keyword">struct</span> bus_attribute *)</span></span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">bus_remove_file</span><span class="params">(<span class="keyword">struct</span> bus_type *, <span class="keyword">struct</span> bus_attribute *)</span></span>;</div></pre></td></tr></table></figure></p>
+<h4 id="设备驱动程序-include-linux-device-h"><a href="#设备驱动程序-include-linux-device-h" class="headerlink" title="设备驱动程序 (include/linux/device.h)"></a>设备驱动程序 (include/linux/device.h)</h4><p>结构体:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> driver_attribute &#123;</div><div class="line">        <span class="keyword">struct</span> attribute        attr;</div><div class="line">        <span class="keyword">ssize_t</span> (*show)(<span class="keyword">struct</span> device_driver *, <span class="keyword">char</span> * buf);</div><div class="line">        <span class="keyword">ssize_t</span> (*store)(<span class="keyword">struct</span> device_driver *, <span class="keyword">const</span> <span class="keyword">char</span> * buf,</div><div class="line">                         <span class="keyword">size_t</span> count);</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>声明:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">DRIVER_ATTR(_name, _mode, _show, _store)</div></pre></td></tr></table></figure></p>
+<p>增/删属性：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">driver_create_file</span><span class="params">(<span class="keyword">struct</span> device_driver *, <span class="keyword">const</span> <span class="keyword">struct</span> driver_attribute *)</span></span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">driver_remove_file</span><span class="params">(<span class="keyword">struct</span> device_driver *, <span class="keyword">const</span> <span class="keyword">struct</span> driver_attribute *)</span></span>;</div></pre></td></tr></table></figure></p>
+<h3 id="文档"><a href="#文档" class="headerlink" title="文档"></a>文档</h3><p>sysfs 目录结构以及其中包含的属性定义了一个内核与用户空间之间的 ABI。对于任何 ABI，其自身的稳定和适当的文档是非常重要的。所有新的 sysfs 属性必须在 Documentation/ABI 中有文档。详见 Documentation/ABI/README。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/设备模型/" rel="tag"># 设备模型</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/kernel/内核文档/kobject/" rel="next" title="关于 kobject，kset 和 ktype 的一切">
+                <i class="fa fa-chevron-left"></i> 关于 kobject，kset 和 ktype 的一切
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/kernel/内核文档/bus/" rel="prev" title="驱动模型之总线类型">
+                驱动模型之总线类型 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="kernel/内核文档/sysfs/"
+     data-title="sysfs - 用于导出内核对象(kobject)的文件系统"
+     data-content=""
+     data-url="https://jarsonfang.github.io/kernel/内核文档/sysfs/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="kernel/内核文档/sysfs/"
+           data-title="sysfs - 用于导出内核对象(kobject)的文件系统" data-url="https://jarsonfang.github.io/kernel/内核文档/sysfs/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Jarson Fang" />
+          <p class="site-author-name" itemprop="name">Jarson Fang</p>
+          <p class="site-description motion-element" itemprop="description">学习、工作、生活</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">65</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/jarsonfang" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/jarson-fang" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://tldp.org/LDP/abs/html/" title="ABS" target="_blank">ABS</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://git-scm.com/book/zh/" title="ProGit" target="_blank">ProGit</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://www.devbean.net/" title="DevBean" target="_blank">DevBean</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://coolshell.cn/" title="CoolShell" target="_blank">CoolShell</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://doc.rust-lang.org/book/" title="Rust-Book" target="_blank">Rust-Book</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/liigo/" title="Rust-庄晓立" target="_blank">Rust-庄晓立</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/rustcc/" title="Rust-中文社区" target="_blank">Rust-中文社区</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.wowotech.net/" title="蜗窝科技" target="_blank">蜗窝科技</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hexo.io/" title="Hexo" target="_blank">Hexo</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://theme-next.iissnan.com/" title="NexT" target="_blank">NexT</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://guides.github.com/features/mastering-markdown/" title="Mastering-Markdown" target="_blank">Mastering-Markdown</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.cirosantilli.com/markdown-style-guide/" title="Markdown-Style-Guide" target="_blank">Markdown-Style-Guide</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#sysfs-简介"><span class="nav-number">1.</span> <span class="nav-text">sysfs 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用-sysfs"><span class="nav-number">2.</span> <span class="nav-text">使用 sysfs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建目录"><span class="nav-number">3.</span> <span class="nav-text">创建目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#属性"><span class="nav-number">4.</span> <span class="nav-text">属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#子系统特有的回调函数"><span class="nav-number">5.</span> <span class="nav-text">子系统特有的回调函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#读写属性数据"><span class="nav-number">6.</span> <span class="nav-text">读写属性数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#顶层目录布局"><span class="nav-number">7.</span> <span class="nav-text">顶层目录布局</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#当前接口"><span class="nav-number">8.</span> <span class="nav-text">当前接口</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#设备-include-linux-device-h"><span class="nav-number">8.1.</span> <span class="nav-text">设备 (include/linux/device.h)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总线驱动程序-include-linux-device-h"><span class="nav-number">8.2.</span> <span class="nav-text">总线驱动程序 (include/linux/device.h)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#设备驱动程序-include-linux-device-h"><span class="nav-number">8.3.</span> <span class="nav-text">设备驱动程序 (include/linux/device.h)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文档"><span class="nav-number">9.</span> <span class="nav-text">文档</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jarson Fang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"jarsonfang"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js?v=5.1.0"></script>
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

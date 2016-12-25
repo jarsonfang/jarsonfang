@@ -1,0 +1,948 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="学习, 工作, 生活" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="原文：page-cache-the-affair-between-memory-and-files作者：Gustavo Duarte
+译文：文件与内存的桥梁：Page Cache翻译：fleurer
+前面我们观察了内核为用户进程管理虚拟内存的方法，简单起见，一时忽略了文件和IO。本文则着重讨论下这块，说说文件和内存之间的暧昧关系，及其对性能的影响。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="文件与内存的桥梁：页缓存">
+<meta property="og:url" content="https://jarsonfang.github.io/kernel/内核内存管理/page-cache-the-affair-between-memory-and-files/index.html">
+<meta property="og:site_name" content="Jarson's Blog">
+<meta property="og:description" content="原文：page-cache-the-affair-between-memory-and-files作者：Gustavo Duarte
+译文：文件与内存的桥梁：Page Cache翻译：fleurer
+前面我们观察了内核为用户进程管理虚拟内存的方法，简单起见，一时忽略了文件和IO。本文则着重讨论下这块，说说文件和内存之间的暧昧关系，及其对性能的影响。">
+<meta property="og:image" content="https://jarsonfang.github.io/kernel/内核内存管理/page-cache-the-affair-between-memory-and-files/readFromPageCache.png">
+<meta property="og:image" content="https://jarsonfang.github.io/kernel/内核内存管理/page-cache-the-affair-between-memory-and-files/nonMappedFileRead.png">
+<meta property="og:image" content="https://jarsonfang.github.io/kernel/内核内存管理/page-cache-the-affair-between-memory-and-files/mappedFileRead.png">
+<meta property="og:image" content="https://jarsonfang.github.io/kernel/内核内存管理/page-cache-the-affair-between-memory-and-files/copyOnWrite.png">
+<meta property="og:image" content="https://jarsonfang.github.io/kernel/内核内存管理/page-cache-the-affair-between-memory-and-files/virtualToPhysicalMapping.png">
+<meta property="og:updated_time" content="2016-12-23T15:09:36.417Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="文件与内存的桥梁：页缓存">
+<meta name="twitter:description" content="原文：page-cache-the-affair-between-memory-and-files作者：Gustavo Duarte
+译文：文件与内存的桥梁：Page Cache翻译：fleurer
+前面我们观察了内核为用户进程管理虚拟内存的方法，简单起见，一时忽略了文件和IO。本文则着重讨论下这块，说说文件和内存之间的暧昧关系，及其对性能的影响。">
+<meta name="twitter:image" content="https://jarsonfang.github.io/kernel/内核内存管理/page-cache-the-affair-between-memory-and-files/readFromPageCache.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '6327478655802934000',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jarsonfang.github.io/kernel/内核内存管理/page-cache-the-affair-between-memory-and-files/"/>
+
+
+
+
+
+  <title> 文件与内存的桥梁：页缓存 | Jarson's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Jarson's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle">静水深流，岁月安好</p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/kernel/内核内存管理/page-cache-the-affair-between-memory-and-files/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Jarson Fang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Jarson's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                文件与内存的桥梁：页缓存
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2014-02-26T16:09:55+08:00">
+                2014-02-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kernel/" itemprop="url" rel="index">
+                    <span itemprop="name">kernel</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kernel/内核内存管理/" itemprop="url" rel="index">
+                    <span itemprop="name">内核内存管理</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/kernel/内核内存管理/page-cache-the-affair-between-memory-and-files/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="kernel/内核内存管理/page-cache-the-affair-between-memory-and-files/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>原文：<a href="http://duartes.org/gustavo/blog/post/page-cache-the-affair-between-memory-and-files" target="_blank" rel="external">page-cache-the-affair-between-memory-and-files</a><br>作者：Gustavo Duarte</p>
+<p>译文：<a href="http://sstompkins.wordpress.com/2011/04/17/%e6%96%87%e4%bb%b6%e4%b8%8e%e5%86%85%e5%ad%98%e7%9a%84%e6%a1%a5%e6%a2%81%ef%bc%9apage-cache/" target="_blank" rel="external">文件与内存的桥梁：Page Cache</a><br>翻译：fleurer</p>
+<p>前面我们观察了内核为用户进程管理虚拟内存的方法，简单起见，一时忽略了文件和IO。本文则着重讨论下这块，说说文件和内存之间的暧昧关系，及其对性能的影响。<br><a id="more"></a></p>
+<p>关于文件，有两个严肃的问题需要考虑。首先是与内存相比，硬件设备往往是发指的慢，其寻址尤然；其次是某文件只应装入物理内存一次，其内容可为不同 程序所共享。比如用Process Explorer观查Windows进程的话可以发现，有大约15MB的公用DLL在所有进程中都有装载。想下，我的Windows现在有100个进程， 要是没有共享机制，光这些公共DLL就得占去1.5GB的物理内存，显然不靠谱。同样Linux下也是几乎每个程序也都得用到ld.so和libc，一些常用的共享库也是不可或缺的。</p>
+<p>幸甚，上述两个问题能够一举解决：Page Cache，即内核以页为单位缓存文件的机制。拿例子说话，我们编写一个Linux程序render，它打开scene.dat文件，每次读取512字节，将其储存于堆里。第一次读取大约即这样：<br><img src="/kernel/内核内存管理/page-cache-the-affair-between-memory-and-files/readFromPageCache.png" alt="readFromPageCache.png" title=""><br>12kb读取完毕，它的堆和相关的页框大约这样：<br><img src="/kernel/内核内存管理/page-cache-the-affair-between-memory-and-files/nonMappedFileRead.png" alt="nonMappedFileRead.png" title=""><br>比较明显了，不过还有些地方待挖掘。首先，这个程序只是使用普通的read调用，即已有三个4kb的页作为Page Cache来存放scene.dat。可能难以置信，但事实如此：任何普通文件的读写都必须经过Page Cache。x86体系结构的Linux将文件看作是n个4kb的块相连而成的序列，即使仅仅读取一个字节，也不得不读入整个4kb大小的块到Page Cache。文件的读写往往不是几个字节就罢，这样设定有助于提升磁盘的吞吐量。每个Page Cache对应文件中的一个4kb块，并一个唯一的编号。Windows中的等价物是256kb的视图（view）。</p>
+<p>然而杯具是，普通的一个read之后，内核还要把Page Cache里的内容额外拷贝到用户态的缓冲区，既费CPU时间又污染CPU缓存，还浪费物理内存。如上图所示，scene.dat里同样的内容被储存在了 两个地方，而且每个该程序的实例都会如此重复，进一步白白浪费时间浪费空间。我们缓解了磁盘延时这一重镇的危险，却尽失其它城池。于是下一个方案呼之欲 出，即文件映射(Memory-mapped files)。<br><img src="/kernel/内核内存管理/page-cache-the-affair-between-memory-and-files/mappedFileRead.png" alt="mappedFileRead.png" title=""><br>使用文件映射时，内核会把程序的虚拟页面直接映射到Page Cache上。这一来性能就燃了：《Windows System Programming》有提及说这样比起普通的read方式，性能提升30%。《Unix环境高级编程》里对Linux和Solaris的性能测试的结 果也与之相似。情景合适的话，还可以为程序节省大量的物理内存。</p>
+<p>谈及性能，评测至上。而内存映射凭其优良的性能，值得为每个程序员所了解。API也很漂亮，一字节一字节的读内存即访问文件，甚至不用纠结可读性与 性能的trade off。*nix上有mmap，windows有CreateFileMapping，还有其它高级语言的各种封装，都不妨一试，留意下你的地址空间。在 映射文件的时候，其内容并不是一次性装入内存，而是基于Page Fault的请求调页。取一个物理页存放其内容，然后fault handler将这个虚拟页映射到Page Cache。这是缓存之前的第一次读取。</p>
+<p>提个问题：在最后一个例子程序在执行结束后，Page Cache里的内容会不会释放？可能直觉该如此，但实际上这样不好。想想，我们经常会在某程序里打开某个文件，它退出了之后第二个程序还得用它—— Page Cache必须对此有所考虑。比如需要跑那个例子程序一星期，一直缓存着scene.dat不就赚大了。既如此，那Page Cache的内容该在什么时候释放呢？永远记着磁盘的读取速度得比内存慢五个量级，能命中Page Cache自是多多益善。所以只要还有空闲的物理内存，内核就总是拿来做缓存使。Page Cache不是某个进程的私有财产，它是为整个系统所共享的资源。这就是为啥内核缓存总是不到极限不休——绝不是因为系统烂吃内存，毕竟物理内存闲着也是 闲着，缓存不嫌多。这是个很好的做法。</p>
+<p>Page Cache架构下的write()调用就只是将数据写入Page Cache再把它标记为dirty，而磁盘IO通常并不立即执行，程序也就无需为磁盘而阻塞。这样的不足就是机器一旦意外崩溃，就可能会丢失部分数据。因 此对完整性要求高的文件（比如数据库事务的log）通常会在写入后调用fsync()（唔，还有磁盘驱动器缓存需要纠结）。read通常是阻塞等待数据读 取就绪。为减少这里的阻塞，内核会一次性多读几个页，预先缓存起来，即“贪婪读取”(Eager Loading)。我们可以调整贪婪读取的参数(参见madvise(),readahead(),或windows的cache hints)，告诉内核我们读取起来是顺序还是随机。Linux会为内存映射的文件执行预读取(read-ahead)，Windows则不清楚。跳过 Page Cache也是可以的，数据库经常需要这样：Linux可以O_DIRECT，Windows可以NO_BUFFERING。</p>
+<p>文件的映射也可以设为私有，即私有映射中的内存读写不会影响到磁盘中文件的内容，也不会对影响到其它进程中的数据，而不像共享映射那样二者皆同步其 变化。内核在私有映射的实现上应用了写时复制机制。如下面的例子里，render和render3d两个程序都私有映射了同一个文件scene.dat， 随后render修改了一下文件映射的虚拟内存：<br><img src="/kernel/内核内存管理/page-cache-the-affair-between-memory-and-files/copyOnWrite.png" alt="copyOnWrite.png" title=""><br>如上这个页表项是“只读”并不意味着这个映射是只读的。这就是内核用以实现写时复制的小trick，共享物理页，不到万不得已决不复制——这个“万 不得已”由x86把关而不是内核。搞明白所谓“私有映射”仅仅是针对“更改“就好理解了。这样设计的一个结果是：在对私有映射来的页面进行修改前，其他程 序对它的修改都是可见的；一旦经过写时复制，其他程序对它的修改就不可见了。与之相对，共享映射仅仅把page cache映射到位即可，对它的修改对其它进程皆可见，文件在磁盘中也一并修改。若是只读映射就免了写时复制，Page Fault时直接一个segmentation fault。</p>
+<p>动态库也是通过文件映射装入程序的地址空间，就是普通的私有文件映射，并无特殊之处。如下是同一例子程序的两个实例，其地址空间和物理内存的样子足已囊括本文出现的很多概念：<br><img src="/kernel/内核内存管理/page-cache-the-affair-between-memory-and-files/virtualToPhysicalMapping.png" alt="virtualToPhysicalMapping.png" title=""><br>以上，内存三部曲已告一段落。希望对大家有帮助，对操作系统的相关概念有个感性认识就好。下周再一篇post说说内存的分配图，也该换换话题了，比如web2.0八卦什么的 :)</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/kernel/内核内存管理/how-the-kernel-manages-your-memory/" rel="next" title="内核是如何管理内存的">
+                <i class="fa fa-chevron-left"></i> 内核是如何管理内存的
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/kernel/设备驱动/probe-of-linux-kernel-driver-module/" rel="prev" title="linux设备模型深探">
+                linux设备模型深探 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="kernel/内核内存管理/page-cache-the-affair-between-memory-and-files/"
+     data-title="文件与内存的桥梁：页缓存"
+     data-content=""
+     data-url="https://jarsonfang.github.io/kernel/内核内存管理/page-cache-the-affair-between-memory-and-files/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="kernel/内核内存管理/page-cache-the-affair-between-memory-and-files/"
+           data-title="文件与内存的桥梁：页缓存" data-url="https://jarsonfang.github.io/kernel/内核内存管理/page-cache-the-affair-between-memory-and-files/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+
+      <section class="site-overview sidebar-panel sidebar-panel-active">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Jarson Fang" />
+          <p class="site-author-name" itemprop="name">Jarson Fang</p>
+          <p class="site-description motion-element" itemprop="description">学习、工作、生活</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">65</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/jarsonfang" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/jarson-fang" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://tldp.org/LDP/abs/html/" title="ABS" target="_blank">ABS</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://git-scm.com/book/zh/" title="ProGit" target="_blank">ProGit</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://www.devbean.net/" title="DevBean" target="_blank">DevBean</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://coolshell.cn/" title="CoolShell" target="_blank">CoolShell</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://doc.rust-lang.org/book/" title="Rust-Book" target="_blank">Rust-Book</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/liigo/" title="Rust-庄晓立" target="_blank">Rust-庄晓立</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/rustcc/" title="Rust-中文社区" target="_blank">Rust-中文社区</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.wowotech.net/" title="蜗窝科技" target="_blank">蜗窝科技</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hexo.io/" title="Hexo" target="_blank">Hexo</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://theme-next.iissnan.com/" title="NexT" target="_blank">NexT</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://guides.github.com/features/mastering-markdown/" title="Mastering-Markdown" target="_blank">Mastering-Markdown</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.cirosantilli.com/markdown-style-guide/" title="Markdown-Style-Guide" target="_blank">Markdown-Style-Guide</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jarson Fang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"jarsonfang"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js?v=5.1.0"></script>
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

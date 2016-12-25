@@ -1,0 +1,983 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="学习, 工作, 生活" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="原文链接：http://blog.chinaunix.net/uid-20543183-id-1930815.html
+前言serio总线同之前分析的platform总线一样，也是一种虚拟总线。它是Serial I/O的缩写，表示串行的输入输出设备，很多输入输出设备都是以此为基础的。同前面几篇笔记一样，下面的代码分析是基于linux kernel 2.6.25版本。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="serio总线">
+<meta property="og:url" content="https://jarsonfang.github.io/kernel/设备驱动/serio-bus/index.html">
+<meta property="og:site_name" content="Jarson's Blog">
+<meta property="og:description" content="原文链接：http://blog.chinaunix.net/uid-20543183-id-1930815.html
+前言serio总线同之前分析的platform总线一样，也是一种虚拟总线。它是Serial I/O的缩写，表示串行的输入输出设备，很多输入输出设备都是以此为基础的。同前面几篇笔记一样，下面的代码分析是基于linux kernel 2.6.25版本。">
+<meta property="og:updated_time" content="2016-12-23T15:09:36.433Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="serio总线">
+<meta name="twitter:description" content="原文链接：http://blog.chinaunix.net/uid-20543183-id-1930815.html
+前言serio总线同之前分析的platform总线一样，也是一种虚拟总线。它是Serial I/O的缩写，表示串行的输入输出设备，很多输入输出设备都是以此为基础的。同前面几篇笔记一样，下面的代码分析是基于linux kernel 2.6.25版本。">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '6327478655802934000',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jarsonfang.github.io/kernel/设备驱动/serio-bus/"/>
+
+
+
+
+
+  <title> serio总线 | Jarson's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Jarson's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle">静水深流，岁月安好</p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/kernel/设备驱动/serio-bus/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Jarson Fang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Jarson's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                serio总线
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2014-03-03T14:10:35+08:00">
+                2014-03-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kernel/" itemprop="url" rel="index">
+                    <span itemprop="name">kernel</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/kernel/设备驱动/" itemprop="url" rel="index">
+                    <span itemprop="name">设备驱动</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/kernel/设备驱动/serio-bus/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="kernel/设备驱动/serio-bus/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>原文链接：<a href="http://blog.chinaunix.net/uid-20543183-id-1930815.html" target="_blank" rel="external">http://blog.chinaunix.net/uid-20543183-id-1930815.html</a></p>
+<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>serio总线同之前分析的platform总线一样，也是一种虚拟总线。它是Serial I/O的缩写，表示串行的输入输出设备，很多输入输出设备都是以此为基础的。同前面几篇笔记一样，下面的代码分析是基于linux kernel 2.6.25版本。<br><a id="more"></a></p>
+<h3 id="serio总线的初始化"><a href="#serio总线的初始化" class="headerlink" title="serio总线的初始化"></a>serio总线的初始化</h3><p>serio总线的初始化是在<code>linux2.6.25/drivers/input/serio/serio.c</code>中完成的。代码如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">static</span> <span class="keyword">int</span> __<span class="function">init <span class="title">serio_init</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line">&#123;</div><div class="line">     <span class="keyword">int</span> error;</div><div class="line"></div><div class="line">     error = bus_register(&amp;serio_bus);</div><div class="line">     <span class="keyword">if</span> (error) &#123;</div><div class="line">         printk(KERN_ERR <span class="string">"serio: failed to register serio bus, error: %d\n"</span>, error);</div><div class="line">         <span class="keyword">return</span> error;</div><div class="line">     &#125;</div><div class="line"></div><div class="line">     serio_task = kthread_run(serio_thread, <span class="literal">NULL</span>, <span class="string">"kseriod"</span>);</div><div class="line">     <span class="keyword">if</span> (IS_ERR(serio_task)) &#123;</div><div class="line">         bus_unregister(&amp;serio_bus);</div><div class="line">         error = PTR_ERR(serio_task);</div><div class="line"></div><div class="line">         printk(KERN_ERR <span class="string">"serio: Failed to start kseriod, error: %d\n"</span>, error);</div><div class="line">         <span class="keyword">return</span> error;</div><div class="line">     &#125;</div><div class="line"></div><div class="line">     <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在这里，创建了对应<code>bus_type</code>为<code>serio_bus</code>的总线，还创建了一个名为“<code>kseriod</code>”的内核线程。我们暂且不管它是做什么的，等以后的代码涉及到再来进行分析。</p>
+<h3 id="serio设备注册"><a href="#serio设备注册" class="headerlink" title="serio设备注册"></a>serio设备注册</h3><p>serio设备对应的数据结构为<code>struct serio</code>, 对应的注册接口为：<code>serio_register_port()</code>。代码如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">void</span> <span class="title">serio_register_port</span><span class="params">(<span class="keyword">struct</span> serio *serio)</span></span></div><div class="line">&#123;</div><div class="line">     __serio_register_port(serio, THIS_MODULE);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>它是<code>__serio_register_port()</code>的一个封装函数。代码如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">void</span> __serio_register_port(<span class="keyword">struct</span> serio *serio, <span class="keyword">struct</span> <span class="keyword">module</span> *owner)</div><div class="line">&#123;</div><div class="line">     serio_init_port(serio);</div><div class="line">     serio_queue_event(serio, owner, SERIO_REGISTER_PORT);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>它先初始化一个serio设备，在<code>serio_init_port()</code>中，它指定了设备的总线类型为<code>serio_bus</code>。之后，调用<code>serio_queue_event()</code>。看这个函数的名称好像是产生了什么事件，来看一下它的代码：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">serio_queue_event</span><span class="params">(<span class="keyword">void</span> *object, <span class="keyword">struct</span> <span class="keyword">module</span> *owner,</span></span></div><div class="line">                   <span class="keyword">enum</span> serio_event_type event_type)</div><div class="line">&#123;</div><div class="line">     <span class="keyword">unsigned</span> <span class="keyword">long</span> flags;</div><div class="line">     <span class="keyword">struct</span> serio_event *event;</div><div class="line">     <span class="keyword">int</span> retval = <span class="number">0</span>;</div><div class="line"></div><div class="line">     spin_lock_irqsave(&amp;serio_event_lock, flags);</div><div class="line"></div><div class="line">     <span class="comment">/*</span></div><div class="line">      * Scan event list for the other events for the same serio port,</div><div class="line">      * starting with the most recent one. If event is the same we</div><div class="line">      * do not need add new one. If event is of different type we</div><div class="line">      * need to add this event and should not look further because</div><div class="line">      * we need to preseve sequence of distinct events.</div><div class="line">      */</div><div class="line"></div><div class="line">     list_for_each_entry_reverse(event, &amp;serio_event_list, node) &#123;</div><div class="line">         <span class="keyword">if</span> (event-&gt;object == object) &#123;</div><div class="line">              <span class="keyword">if</span> (event-&gt;type == event_type)</div><div class="line">                   <span class="keyword">goto</span> out;</div><div class="line">              <span class="keyword">break</span>;</div><div class="line">         &#125;</div><div class="line">     &#125;</div><div class="line"></div><div class="line">     event = kmalloc(<span class="keyword">sizeof</span>(<span class="keyword">struct</span> serio_event), GFP_ATOMIC);</div><div class="line">     <span class="keyword">if</span> (!event) &#123;</div><div class="line">         printk(KERN_ERR</div><div class="line">              <span class="string">"serio: Not enough memory to queue event %d\n"</span>,</div><div class="line">              event_type);</div><div class="line">         retval = -ENOMEM;</div><div class="line">         <span class="keyword">goto</span> out;</div><div class="line">     &#125;</div><div class="line"></div><div class="line">     <span class="keyword">if</span> (!try_module_get(owner)) &#123;</div><div class="line">         printk(KERN_WARNING</div><div class="line">              <span class="string">"serio: Can't get module reference, dropping event %d\n"</span>,</div><div class="line">              event_type);</div><div class="line">         kfree(event);</div><div class="line">         retval = -EINVAL;</div><div class="line">         <span class="keyword">goto</span> out;</div><div class="line">     &#125;</div><div class="line"></div><div class="line">     event-&gt;type = event_type;</div><div class="line">     event-&gt;object = object;</div><div class="line">     event-&gt;owner = owner;</div><div class="line"></div><div class="line">     list_add_tail(&amp;event-&gt;node, &amp;serio_event_list);</div><div class="line">     wake_up(&amp;serio_wait);</div><div class="line">out:</div><div class="line">     spin_unlock_irqrestore(&amp;serio_event_lock, flags);</div><div class="line">     <span class="keyword">return</span> retval;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这个函数比较简单，就是根据参数信息生成了一个<code>struct serio_event</code>结构，再将此结构链接至<code>serio_event_list</code>末尾。</p>
+<p>接着就要来寻找<code>serio_event_list</code>这个链表的处理。这个就是<code>serio_thread</code>的工作了，还记得初始化的时候所创建的线程么，不错，就是它。Kernel可能认为对serio的操作比较频繁，所以对一些操作事件化，将它以多线程处理。<br><code>serio_thread()</code>代码如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">serio_thread</span><span class="params">(<span class="keyword">void</span> *nothing)</span></span></div><div class="line">&#123;</div><div class="line">     set_freezable();</div><div class="line">     <span class="keyword">do</span> &#123;</div><div class="line">         serio_handle_event();</div><div class="line">         wait_event_freezable(serio_wait,</div><div class="line">              kthread_should_stop() || !list_empty(&amp;serio_event_list));</div><div class="line">     &#125; <span class="keyword">while</span> (!kthread_should_stop());</div><div class="line"></div><div class="line">     printk(KERN_DEBUG <span class="string">"serio: kseriod exiting\n"</span>);</div><div class="line">     <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这个函数的核心处理是<code>serio_handle_event()</code>, 代码如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">serio_handle_event</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line">&#123;</div><div class="line">     <span class="keyword">struct</span> serio_event *event;</div><div class="line">     mutex_lock(&amp;serio_mutex);</div><div class="line"></div><div class="line">     <span class="comment">/*</span></div><div class="line">      * Note that we handle only one event here to give swsusp</div><div class="line">      * a chance to freeze kseriod thread. Serio events should</div><div class="line">      * be pretty rare so we are not concerned about taking</div><div class="line">      * performance hit.</div><div class="line">      */</div><div class="line">     <span class="keyword">if</span> ((event = serio_get_event())) &#123;</div><div class="line">         <span class="keyword">switch</span> (event-&gt;type) &#123;</div><div class="line">              <span class="keyword">case</span> SERIO_REGISTER_PORT:</div><div class="line">                   serio_add_port(event-&gt;object);</div><div class="line">                   <span class="keyword">break</span>;</div><div class="line">              <span class="keyword">case</span> SERIO_RECONNECT_PORT:</div><div class="line">                   serio_reconnect_port(event-&gt;object);</div><div class="line">                   <span class="keyword">break</span>;</div><div class="line">              <span class="keyword">case</span> SERIO_RESCAN_PORT:</div><div class="line">                   serio_disconnect_port(event-&gt;object);</div><div class="line">                   serio_find_driver(event-&gt;object);</div><div class="line">                   <span class="keyword">break</span>;</div><div class="line">              <span class="keyword">case</span> SERIO_ATTACH_DRIVER:</div><div class="line">                   serio_attach_driver(event-&gt;object);</div><div class="line">                   <span class="keyword">break</span>;</div><div class="line">              <span class="keyword">default</span>:</div><div class="line">                   <span class="keyword">break</span>;</div><div class="line">         &#125;</div><div class="line"></div><div class="line">         serio_remove_duplicate_events(event);</div><div class="line">         serio_free_event(event);</div><div class="line">     &#125;</div><div class="line"></div><div class="line">     mutex_unlock(&amp;serio_mutex);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这个函数的流程大致是这样的：<br>调用<code>serio_get_event()</code>从链表中取出<code>struct serio_event</code>元素，然后对这个元素的事件类型做不同的处理，处理完了之后，调用<code>serio_remove_duplicate_events()</code>在链表中删除相同请求的<code>event</code>.<br>对应之前的<code>serio_register_port()</code>函数，它产生的事件类型是<code>SERIO_REGISTER_PORT</code>。也就是说，对于注册serio设备来说，流程会转入<code>serio_add_port()</code>。<br>代码如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">serio_add_port</span><span class="params">(<span class="keyword">struct</span> serio *serio)</span></span></div><div class="line">&#123;</div><div class="line">     <span class="keyword">int</span> error;</div><div class="line"></div><div class="line">     <span class="keyword">if</span> (serio-&gt;parent) &#123;</div><div class="line">         serio_pause_rx(serio-&gt;parent);</div><div class="line">         serio-&gt;parent-&gt;child = serio;</div><div class="line">         serio_continue_rx(serio-&gt;parent);</div><div class="line">     &#125;</div><div class="line"></div><div class="line">     list_add_tail(&amp;serio-&gt;node, &amp;serio_list);</div><div class="line">     <span class="keyword">if</span> (serio-&gt;start)</div><div class="line">         serio-&gt;start(serio);</div><div class="line">     error = device_add(&amp;serio-&gt;dev);</div><div class="line">     <span class="keyword">if</span> (error)</div><div class="line">         printk(KERN_ERR</div><div class="line">              <span class="string">"serio: device_add() failed for %s (%s), error: %d\n"</span>,</div><div class="line">              serio-&gt;phys, serio-&gt;name, error);</div><div class="line">     <span class="keyword">else</span> &#123;</div><div class="line">         serio-&gt;registered = <span class="number">1</span>;</div><div class="line"></div><div class="line">         error = sysfs_create_group(&amp;serio-&gt;dev.kobj, &amp;serio_id_attr_group);</div><div class="line">         <span class="keyword">if</span> (error)</div><div class="line">              printk(KERN_ERR</div><div class="line">                   <span class="string">"serio: sysfs_create_group() failed for %s (%s), error: %d\n"</span>,</div><div class="line">                   serio-&gt;phys, serio-&gt;name, error);</div><div class="line">     &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>我们终于看到serio device注册的庐山真面目了，它会调用设备的<code>start()</code>函数，然后调用<code>device_add()</code>将设备注册到总线上。</p>
+<p>同platform总线一样，这里的serio device注册的时候也会产生一个hotplug事件，对应就会调用总线的<code>uenvent</code>函数，<code>serio_bus</code>的<code>event</code>接口为：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">serio_uevent</span><span class="params">(<span class="keyword">struct</span> device *dev, <span class="keyword">struct</span> kobj_uevent_env *env)</span></span></div><div class="line">&#123;</div><div class="line">     <span class="keyword">struct</span> serio *serio;</div><div class="line"></div><div class="line">     <span class="keyword">if</span> (!dev)</div><div class="line">         <span class="keyword">return</span> -ENODEV;</div><div class="line"></div><div class="line">     serio = to_serio_port(dev);</div><div class="line"></div><div class="line">     SERIO_ADD_UEVENT_VAR(<span class="string">"SERIO_TYPE=%02x"</span>, serio-&gt;id.type);</div><div class="line">     SERIO_ADD_UEVENT_VAR(<span class="string">"SERIO_PROTO=%02x"</span>, serio-&gt;id.proto);</div><div class="line">     SERIO_ADD_UEVENT_VAR(<span class="string">"SERIO_ID=%02x"</span>, serio-&gt;id.id);</div><div class="line">     SERIO_ADD_UEVENT_VAR(<span class="string">"SERIO_EXTRA=%02x"</span>, serio-&gt;id.extra);</div><div class="line">     SERIO_ADD_UEVENT_VAR(<span class="string">"MODALIAS=serio:ty%02Xpr%02Xid%02Xex%02X"</span>,</div><div class="line">                   serio-&gt;id.type, serio-&gt;id.proto, serio-&gt;id.id, serio-&gt;id.extra);</div><div class="line"></div><div class="line">     <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>可见, 会在hotplug的环境变量中添加几项值。记得我们之前分析设备驱动模型的时候，在总线下面的设备都有一个属性文件，这个文件的内容就是对应<code>bus</code>和<code>kset</code>所添加的环境变量。在<code>/sys</code>文件系统中就可以看到这此环境变量。做个测试：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">[root@localhost serio0]<span class="comment"># cat /sys/bus/serio/devices/serio0/uevent</span></div><div class="line">DRIVER=atkbd</div><div class="line">PHYSDEVBUS=serio</div><div class="line">PHYSDEVDRIVER=atkbd</div><div class="line">SERIO_TYPE=06</div><div class="line">SERIO_PROTO=00</div><div class="line">SERIO_ID=00</div><div class="line">SERIO_EXTRA=00</div><div class="line">MODALIAS=serio:ty06pr00id00ex00</div></pre></td></tr></table></figure></p>
+<h3 id="serio-driver的注册"><a href="#serio-driver的注册" class="headerlink" title="serio driver的注册"></a>serio driver的注册</h3><p>对应serio driver注册的接口<code>serio_register_driver()</code>。代码如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">serio_register_driver</span><span class="params">(<span class="keyword">struct</span> serio_driver *drv)</span></span></div><div class="line">&#123;</div><div class="line">     <span class="keyword">return</span> __serio_register_driver(drv, THIS_MODULE, KBUILD_MODNAME);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>它是<code>__serio_register_driver()</code>的封装函数，代码如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> __serio_register_driver(<span class="keyword">struct</span> serio_driver *drv, <span class="keyword">struct</span> <span class="keyword">module</span> *owner, <span class="keyword">const</span> <span class="keyword">char</span> *mod_name)</div><div class="line">&#123;</div><div class="line">     <span class="keyword">int</span> manual_bind = drv-&gt;manual_bind;</div><div class="line">     <span class="keyword">int</span> error;</div><div class="line"></div><div class="line">     drv-&gt;driver.bus = &amp;serio_bus;</div><div class="line">     drv-&gt;driver.owner = owner;</div><div class="line">     drv-&gt;driver.mod_name = mod_name;</div><div class="line"></div><div class="line">     <span class="comment">/*</span></div><div class="line">      * Temporarily disable automatic binding because probing</div><div class="line">      * takes long time and we are better off doing it in kseriod</div><div class="line">      */</div><div class="line">     drv-&gt;manual_bind = <span class="number">1</span>;</div><div class="line"></div><div class="line">     error = driver_register(&amp;drv-&gt;driver);</div><div class="line">     <span class="keyword">if</span> (error) &#123;</div><div class="line">         printk(KERN_ERR</div><div class="line">              <span class="string">"serio: driver_register() failed for %s, error: %d\n"</span>,</div><div class="line">              drv-&gt;driver.name, error);</div><div class="line">         <span class="keyword">return</span> error;</div><div class="line">     &#125;</div><div class="line"></div><div class="line">     <span class="comment">/*</span></div><div class="line">      * Restore original bind mode and let kseriod bind the</div><div class="line">      * driver to free ports</div><div class="line">      */</div><div class="line">     <span class="keyword">if</span> (!manual_bind) &#123;</div><div class="line">         drv-&gt;manual_bind = <span class="number">0</span>;</div><div class="line"></div><div class="line">         error = serio_queue_event(drv, <span class="literal">NULL</span>, SERIO_ATTACH_DRIVER);</div><div class="line">         <span class="keyword">if</span> (error) &#123;</div><div class="line">              driver_unregister(&amp;drv-&gt;driver);</div><div class="line">              <span class="keyword">return</span> error;</div><div class="line">         &#125;</div><div class="line">     &#125;</div><div class="line"></div><div class="line">     <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>上面这段代码比较简单，在注册驱动的时候，将驱动的总线指定为<code>serio_bus</code>，然后调用<code>driver_register()</code>将驱动注册到总线。如果<code>drv-&gt;manual_bind</code>不为<code>1</code>，还会产生一个<code>SERIO_ATTACH_DRIVER</code>事件。<code>drv-&gt;manual_bind</code>成员的含义应该是要手动进行驱动与设备的绑定。</p>
+<p>在注册驱动的时候，会产生一次驱动与设备的匹配过程，这过程会调用<code>bus-&gt;match --&gt; bus-&gt;probe</code>，看下serio总线是怎么样处理的。<br><code>serio_bus.match</code>的函数如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">serio_bus_match</span><span class="params">(<span class="keyword">struct</span> device *dev, <span class="keyword">struct</span> device_driver *drv)</span></span></div><div class="line">&#123;</div><div class="line">     <span class="keyword">struct</span> serio *serio = to_serio_port(dev);</div><div class="line">     <span class="keyword">struct</span> serio_driver *serio_drv = to_serio_driver(drv);</div><div class="line"></div><div class="line">     <span class="keyword">if</span> (serio-&gt;manual_bind || serio_drv-&gt;manual_bind)</div><div class="line">         <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line"></div><div class="line">     <span class="keyword">return</span> serio_match_port(serio_drv-&gt;id_table, serio);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>如果驱动或者设备指定了手动绑定，那么这次绑定是不成功的，否则调用<code>serio_match_port()</code>进行更细致的判断。代码如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">serio_match_port</span><span class="params">(<span class="keyword">const</span> <span class="keyword">struct</span> serio_device_id *ids, <span class="keyword">struct</span> serio *serio)</span></span></div><div class="line">&#123;</div><div class="line">     <span class="keyword">while</span> (ids-&gt;type || ids-&gt;proto) &#123;</div><div class="line">         <span class="keyword">if</span> ((ids-&gt;type == SERIO_ANY || ids-&gt;type == serio-&gt;id.type) &amp;&amp;</div><div class="line">             (ids-&gt;proto == SERIO_ANY || ids-&gt;proto == serio-&gt;id.proto) &amp;&amp;</div><div class="line">             (ids-&gt;extra == SERIO_ANY || ids-&gt;extra == serio-&gt;id.extra) &amp;&amp;</div><div class="line">             (ids-&gt;id == SERIO_ANY || ids-&gt;id == serio-&gt;id.id))</div><div class="line">              <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">         ids++;</div><div class="line">     &#125;</div><div class="line">     <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>由此看出，只有serio device信息与serio driver的<code>id_table</code>中的信息匹配的时候，才会将设备和驱动绑定起来。</p>
+<p><code>serio_bus.probe</code>的接口函数如下示：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">serio_driver_probe</span><span class="params">(<span class="keyword">struct</span> device *dev)</span></span></div><div class="line">&#123;</div><div class="line">     <span class="keyword">struct</span> serio *serio = to_serio_port(dev);</div><div class="line">     <span class="keyword">struct</span> serio_driver *drv = to_serio_driver(dev-&gt;driver);</div><div class="line"></div><div class="line">     <span class="keyword">return</span> serio_connect_driver(serio, drv);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">serio_connect_driver</span><span class="params">(<span class="keyword">struct</span> serio *serio, <span class="keyword">struct</span> serio_driver *drv)</span></span></div><div class="line">&#123;</div><div class="line">     <span class="keyword">int</span> retval;</div><div class="line"></div><div class="line">     mutex_lock(&amp;serio-&gt;drv_mutex);</div><div class="line">     retval = drv-&gt;connect(serio, drv);</div><div class="line">     mutex_unlock(&amp;serio-&gt;drv_mutex);</div><div class="line"></div><div class="line">     <span class="keyword">return</span> retval;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>即会调用设备驱动的<code>connect()</code>函数。</p>
+<p>在注册serio driver的时候，还会产生<code>SERIO_ATTACH_DRIVER</code>事件，这个事件的处理是在<code>serio_handle_event()</code>中完成的。相应的处理接口为：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">serio_attach_driver</span><span class="params">(<span class="keyword">struct</span> serio_driver *drv)</span></span></div><div class="line">&#123;</div><div class="line">     <span class="keyword">int</span> error;</div><div class="line"></div><div class="line">     error = driver_attach(&amp;drv-&gt;driver);</div><div class="line">     <span class="keyword">if</span> (error)</div><div class="line">         printk(KERN_WARNING</div><div class="line">              <span class="string">"serio: driver_attach() failed for %s with error %d\n"</span>,</div><div class="line">              drv-&gt;driver.name, error);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>可以看出，这里也是执行一次设备与驱动的匹配过程。</p>
+<h3 id="serio-的中断处理函数分析"><a href="#serio-的中断处理函数分析" class="headerlink" title="serio 的中断处理函数分析"></a>serio 的中断处理函数分析</h3><p><code>serio_interrupt()</code>在serio bus构造的驱动也是一个常用的接口，这个接口用来处理serio 设备的中断。我们来看下它的代码：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">irqreturn_t</span> serio_interrupt(<span class="keyword">struct</span> serio *serio,</div><div class="line">                   <span class="keyword">unsigned</span> <span class="keyword">char</span> data, <span class="keyword">unsigned</span> <span class="keyword">int</span> dfl)</div><div class="line">&#123;</div><div class="line">         <span class="keyword">unsigned</span> <span class="keyword">long</span> flags;</div><div class="line">         <span class="keyword">irqreturn_t</span> ret = IRQ_NONE;</div><div class="line"></div><div class="line">         spin_lock_irqsave(&amp;serio-&gt;lock, flags);</div><div class="line"></div><div class="line">         <span class="keyword">if</span> (likely(serio-&gt;drv)) &#123;</div><div class="line">                ret = serio-&gt;drv-&gt;interrupt(serio, data, dfl);</div><div class="line">         &#125; <span class="keyword">else</span> <span class="keyword">if</span> (!dfl &amp;&amp; serio-&gt;registered) &#123;</div><div class="line">                   serio_rescan(serio);</div><div class="line">                   ret = IRQ_HANDLED;</div><div class="line">         &#125;</div><div class="line"></div><div class="line">         spin_unlock_irqrestore(&amp;serio-&gt;lock, flags);</div><div class="line">         <span class="keyword">return</span> ret;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>首先，先判断当前设备是否已经关联到了驱动程序。如果已经被关联了，那么调用驱动的中断处理函数。如果没有，就会转入<code>serio_rescan()</code>中执行。该函数代码如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">serio_rescan</span><span class="params">(<span class="keyword">struct</span> serio *serio)</span></span></div><div class="line">&#123;</div><div class="line">         serio_queue_event(serio, <span class="literal">NULL</span>, SERIO_RESCAN_PORT);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>由此可见，它是执行了一个<code>SERIO_RESCAN_PORT</code>动作。同样，这个动作是在<code>serio_handle_event()</code>中处理的。相应的处理接口为：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">case</span> SERIO_RESCAN_PORT:</div><div class="line">        serio_disconnect_port(event-&gt;object);</div><div class="line">        serio_find_driver(event-&gt;object);</div><div class="line">        <span class="keyword">break</span>;</div></pre></td></tr></table></figure></p>
+<p>首先调用<code>serio_disconnect_port()</code>解除serio设备与驱动绑定，然后调用<code>serio_find_driver()</code>重新执行一次设备与驱动的匹配过程。<br><code>serio_find_driver()</code> 代码如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">serio_find_driver</span><span class="params">(<span class="keyword">struct</span> serio *serio)</span></span></div><div class="line">&#123;</div><div class="line">	<span class="keyword">int</span> error;</div><div class="line"></div><div class="line">	error = device_attach(&amp;serio-&gt;dev);</div><div class="line">	<span class="keyword">if</span> (error &lt; <span class="number">0</span>)</div><div class="line">		printk(KERN_WARNING</div><div class="line">			<span class="string">"serio: device_attach() failed for %s (%s), error: %d\n"</span>,</div><div class="line">			serio-&gt;phys, serio-&gt;name, error);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>如果有合适的驱动，就会将之与设备关联起来。</p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>来小结一下，在serio总线中，注册一个serio设备时，除了将其注册到所属的<code>serio_bus</code>上，还会调用设备的<code>start()</code>函数。在中断处理的时候，如果serio设备已经关联到驱动，则调用驱动的<code>interrupt</code>函数。如果没有关联，则重新匹配驱动并将其注册到总线。<br>总的说来，serio 总线的代码很简单。到这里，我们已经分析过platform, serio两种虚拟总线，应该结合这两个虚拟总线的例子好好体会一下结构封装的技巧。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/kernel/设备驱动/platform-bus/" rel="next" title="platform总线">
+                <i class="fa fa-chevron-left"></i> platform总线
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/kernel/内核文档/codingstyle/" rel="prev" title="Linux内核代码风格">
+                Linux内核代码风格 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="kernel/设备驱动/serio-bus/"
+     data-title="serio总线"
+     data-content=""
+     data-url="https://jarsonfang.github.io/kernel/设备驱动/serio-bus/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="kernel/设备驱动/serio-bus/"
+           data-title="serio总线" data-url="https://jarsonfang.github.io/kernel/设备驱动/serio-bus/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Jarson Fang" />
+          <p class="site-author-name" itemprop="name">Jarson Fang</p>
+          <p class="site-description motion-element" itemprop="description">学习、工作、生活</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">65</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">16</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/jarsonfang" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/jarson-fang" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://tldp.org/LDP/abs/html/" title="ABS" target="_blank">ABS</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://git-scm.com/book/zh/" title="ProGit" target="_blank">ProGit</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://www.devbean.net/" title="DevBean" target="_blank">DevBean</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://coolshell.cn/" title="CoolShell" target="_blank">CoolShell</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://doc.rust-lang.org/book/" title="Rust-Book" target="_blank">Rust-Book</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/liigo/" title="Rust-庄晓立" target="_blank">Rust-庄晓立</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/rustcc/" title="Rust-中文社区" target="_blank">Rust-中文社区</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.wowotech.net/" title="蜗窝科技" target="_blank">蜗窝科技</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hexo.io/" title="Hexo" target="_blank">Hexo</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://theme-next.iissnan.com/" title="NexT" target="_blank">NexT</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://guides.github.com/features/mastering-markdown/" title="Mastering-Markdown" target="_blank">Mastering-Markdown</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.cirosantilli.com/markdown-style-guide/" title="Markdown-Style-Guide" target="_blank">Markdown-Style-Guide</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#serio总线的初始化"><span class="nav-number">2.</span> <span class="nav-text">serio总线的初始化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#serio设备注册"><span class="nav-number">3.</span> <span class="nav-text">serio设备注册</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#serio-driver的注册"><span class="nav-number">4.</span> <span class="nav-text">serio driver的注册</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#serio-的中断处理函数分析"><span class="nav-number">5.</span> <span class="nav-text">serio 的中断处理函数分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小结"><span class="nav-number">6.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jarson Fang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"jarsonfang"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js?v=5.1.0"></script>
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>
