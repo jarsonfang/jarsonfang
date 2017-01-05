@@ -2,9 +2,9 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://jarsonfang.github.io/tools/github/setting-up-a-custom-domain-with-github-pages-site/</loc>
+    <loc>https://jarsonfang.github.io/tools/github/setting-up-a-custom-domain/</loc>
     
-    <lastmod>2017-01-05T15:27:42.515Z</lastmod>
+    <lastmod>2017-01-05T15:37:55.798Z</lastmod>
     
   </url>
   
@@ -268,13 +268,6 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/kconfig-and-makefile/</loc>
-    
-    <lastmod>2016-12-23T15:09:36.405Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/kfifo/</loc>
     
     <lastmod>2016-12-23T15:09:36.405Z</lastmod>
@@ -282,14 +275,21 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/how-to-analysis-kernel-source-2/</loc>
+    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/kconfig-and-makefile/</loc>
+    
+    <lastmod>2016-12-23T15:09:36.405Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://jarsonfang.github.io/tools/Hexo/hexo-operations/</loc>
     
     <lastmod>2016-12-23T15:09:36.397Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/how-to-analysis-kernel-source-1/</loc>
+    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/how-to-analysis-kernel-source-2/</loc>
     
     <lastmod>2016-12-23T15:09:36.397Z</lastmod>
     
@@ -310,14 +310,7 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/tools/Hexo/hexo-tag-plugins/</loc>
-    
-    <lastmod>2016-12-23T15:09:36.397Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jarsonfang.github.io/tools/Hexo/hexo-operations/</loc>
+    <loc>https://jarsonfang.github.io/uncategorized/how-to-write-makefile/</loc>
     
     <lastmod>2016-12-23T15:09:36.397Z</lastmod>
     
@@ -331,6 +324,13 @@
   </url>
   
   <url>
+    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/how-to-analysis-kernel-source-1/</loc>
+    
+    <lastmod>2016-12-23T15:09:36.397Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://jarsonfang.github.io/tools/Hexo/hexo-commands/</loc>
     
     <lastmod>2016-12-23T15:09:36.397Z</lastmod>
@@ -338,9 +338,16 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/uncategorized/how-to-write-makefile/</loc>
+    <loc>https://jarsonfang.github.io/tools/Hexo/hexo-tag-plugins/</loc>
     
     <lastmod>2016-12-23T15:09:36.397Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://jarsonfang.github.io/tools/Hexo/hexo-asset-folders/</loc>
+    
+    <lastmod>2016-12-23T15:09:36.393Z</lastmod>
     
   </url>
   
@@ -353,13 +360,6 @@
   
   <url>
     <loc>https://jarsonfang.github.io/tools/VCS/git-save-empty-dir/</loc>
-    
-    <lastmod>2016-12-23T15:09:36.393Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jarsonfang.github.io/tools/Hexo/hexo-asset-folders/</loc>
     
     <lastmod>2016-12-23T15:09:36.393Z</lastmod>
     
@@ -380,13 +380,6 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/programming/APUE/file-io/</loc>
-    
-    <lastmod>2016-12-23T15:09:36.381Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://jarsonfang.github.io/tools/VCS/everyday-git/</loc>
     
     <lastmod>2016-12-23T15:09:36.381Z</lastmod>
@@ -395,6 +388,13 @@
   
   <url>
     <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/dt-usage/</loc>
+    
+    <lastmod>2016-12-23T15:09:36.381Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://jarsonfang.github.io/programming/APUE/file-io/</loc>
     
     <lastmod>2016-12-23T15:09:36.381Z</lastmod>
     
@@ -422,7 +422,7 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/binary-search-and-printk/</loc>
+    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/binding/</loc>
     
     <lastmod>2016-12-23T15:09:36.377Z</lastmod>
     
@@ -457,7 +457,7 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/binding/</loc>
+    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/binary-search-and-printk/</loc>
     
     <lastmod>2016-12-23T15:09:36.377Z</lastmod>
     

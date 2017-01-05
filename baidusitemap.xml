@@ -4,11 +4,11 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/tools/github/setting-up-a-custom-domain-with-github-pages-site/</loc>
-    <lastmod>2017-01-05T15:27:42.515Z</lastmod>
+    <loc>https://jarsonfang.github.io/tools/github/setting-up-a-custom-domain/</loc>
+    <lastmod>2017-01-05T15:37:55.798Z</lastmod>
     <data>
         <display>
-        <title>Setting up a custom domain with github pages site</title>
+        <title>Setting up a custom domain</title>
         <pubTime>2017-01-05T15:08:39.000Z</pubTime>
         
         <tag>github</tag>
@@ -783,27 +783,6 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/kconfig-and-makefile/</loc>
-    <lastmod>2016-12-23T15:09:36.405Z</lastmod>
-    <data>
-        <display>
-        <title>Kernel地图：Kconfig与Makefile</title>
-        <pubTime>2014-04-17T02:18:09.000Z</pubTime>
-        
-         
-           
-             
-              <breadCrumb title="kernel" url="https://jarsonfang.github.io/categories/kernel/"/>
-          
-             
-              <breadCrumb title="内核修炼之道" url="https://jarsonfang.github.io/categories/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/kfifo/</loc>
     <lastmod>2016-12-23T15:09:36.405Z</lastmod>
     <data>
@@ -825,12 +804,12 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/how-to-analysis-kernel-source-2/</loc>
-    <lastmod>2016-12-23T15:09:36.397Z</lastmod>
+    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/kconfig-and-makefile/</loc>
+    <lastmod>2016-12-23T15:09:36.405Z</lastmod>
     <data>
         <display>
-        <title>分析内核源码如何入手（下）</title>
-        <pubTime>2014-04-17T04:46:02.000Z</pubTime>
+        <title>Kernel地图：Kconfig与Makefile</title>
+        <pubTime>2014-04-17T02:18:09.000Z</pubTime>
         
          
            
@@ -846,12 +825,35 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/how-to-analysis-kernel-source-1/</loc>
+    <loc>https://jarsonfang.github.io/tools/Hexo/hexo-operations/</loc>
     <lastmod>2016-12-23T15:09:36.397Z</lastmod>
     <data>
         <display>
-        <title>分析内核源码如何入手（上）</title>
-        <pubTime>2014-04-17T02:40:37.000Z</pubTime>
+        <title>Hexo 基本操作</title>
+        <pubTime>2016-10-01T12:33:03.000Z</pubTime>
+        
+        <tag>Hexo</tag>
+         
+         
+           
+             
+              <breadCrumb title="tools" url="https://jarsonfang.github.io/categories/tools/"/>
+          
+             
+              <breadCrumb title="Hexo" url="https://jarsonfang.github.io/categories/tools/Hexo/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/how-to-analysis-kernel-source-2/</loc>
+    <lastmod>2016-12-23T15:09:36.397Z</lastmod>
+    <data>
+        <display>
+        <title>分析内核源码如何入手（下）</title>
+        <pubTime>2014-04-17T04:46:02.000Z</pubTime>
         
          
            
@@ -909,46 +911,15 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/tools/Hexo/hexo-tag-plugins/</loc>
+    <loc>https://jarsonfang.github.io/uncategorized/how-to-write-makefile/</loc>
     <lastmod>2016-12-23T15:09:36.397Z</lastmod>
     <data>
         <display>
-        <title>Hexo 标签插件</title>
-        <pubTime>2016-10-01T13:40:05.000Z</pubTime>
+        <title>跟我一起写Makefile</title>
+        <pubTime>2016-09-18T07:22:32.000Z</pubTime>
         
-        <tag>Hexo</tag>
-         
          
            
-             
-              <breadCrumb title="tools" url="https://jarsonfang.github.io/categories/tools/"/>
-          
-             
-              <breadCrumb title="Hexo" url="https://jarsonfang.github.io/categories/tools/Hexo/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://jarsonfang.github.io/tools/Hexo/hexo-operations/</loc>
-    <lastmod>2016-12-23T15:09:36.397Z</lastmod>
-    <data>
-        <display>
-        <title>Hexo 基本操作</title>
-        <pubTime>2016-10-01T12:33:03.000Z</pubTime>
-        
-        <tag>Hexo</tag>
-         
-         
-           
-             
-              <breadCrumb title="tools" url="https://jarsonfang.github.io/categories/tools/"/>
-          
-             
-              <breadCrumb title="Hexo" url="https://jarsonfang.github.io/categories/tools/Hexo/"/>
-          
         </display>
     </data>
     </url>
@@ -971,6 +942,27 @@
           
              
               <breadCrumb title="Hexo" url="https://jarsonfang.github.io/categories/tools/Hexo/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/how-to-analysis-kernel-source-1/</loc>
+    <lastmod>2016-12-23T15:09:36.397Z</lastmod>
+    <data>
+        <display>
+        <title>分析内核源码如何入手（上）</title>
+        <pubTime>2014-04-17T02:40:37.000Z</pubTime>
+        
+         
+           
+             
+              <breadCrumb title="kernel" url="https://jarsonfang.github.io/categories/kernel/"/>
+          
+             
+              <breadCrumb title="内核修炼之道" url="https://jarsonfang.github.io/categories/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/"/>
           
         </display>
     </data>
@@ -1001,15 +993,46 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/uncategorized/how-to-write-makefile/</loc>
+    <loc>https://jarsonfang.github.io/tools/Hexo/hexo-tag-plugins/</loc>
     <lastmod>2016-12-23T15:09:36.397Z</lastmod>
     <data>
         <display>
-        <title>跟我一起写Makefile</title>
-        <pubTime>2016-09-18T07:22:32.000Z</pubTime>
+        <title>Hexo 标签插件</title>
+        <pubTime>2016-10-01T13:40:05.000Z</pubTime>
         
+        <tag>Hexo</tag>
+         
          
            
+             
+              <breadCrumb title="tools" url="https://jarsonfang.github.io/categories/tools/"/>
+          
+             
+              <breadCrumb title="Hexo" url="https://jarsonfang.github.io/categories/tools/Hexo/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://jarsonfang.github.io/tools/Hexo/hexo-asset-folders/</loc>
+    <lastmod>2016-12-23T15:09:36.393Z</lastmod>
+    <data>
+        <display>
+        <title>Hexo 资源文件夹</title>
+        <pubTime>2016-10-02T01:17:33.000Z</pubTime>
+        
+        <tag>Hexo</tag>
+         
+         
+           
+             
+              <breadCrumb title="tools" url="https://jarsonfang.github.io/categories/tools/"/>
+          
+             
+              <breadCrumb title="Hexo" url="https://jarsonfang.github.io/categories/tools/Hexo/"/>
+          
         </display>
     </data>
     </url>
@@ -1062,29 +1085,6 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/tools/Hexo/hexo-asset-folders/</loc>
-    <lastmod>2016-12-23T15:09:36.393Z</lastmod>
-    <data>
-        <display>
-        <title>Hexo 资源文件夹</title>
-        <pubTime>2016-10-02T01:17:33.000Z</pubTime>
-        
-        <tag>Hexo</tag>
-         
-         
-           
-             
-              <breadCrumb title="tools" url="https://jarsonfang.github.io/categories/tools/"/>
-          
-             
-              <breadCrumb title="Hexo" url="https://jarsonfang.github.io/categories/tools/Hexo/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>https://jarsonfang.github.io/tools/VCS/git-in-common/</loc>
     <lastmod>2016-12-23T15:09:36.389Z</lastmod>
     <data>
@@ -1114,29 +1114,6 @@
         <display>
         <title>文件和目录</title>
         <pubTime>2014-04-17T02:02:30.000Z</pubTime>
-        
-        <tag>APUE</tag>
-         
-         
-           
-             
-              <breadCrumb title="programming" url="https://jarsonfang.github.io/categories/programming/"/>
-          
-             
-              <breadCrumb title="APUE" url="https://jarsonfang.github.io/categories/programming/APUE/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://jarsonfang.github.io/programming/APUE/file-io/</loc>
-    <lastmod>2016-12-23T15:09:36.381Z</lastmod>
-    <data>
-        <display>
-        <title>文件 I/O</title>
-        <pubTime>2014-04-13T02:05:59.000Z</pubTime>
         
         <tag>APUE</tag>
          
@@ -1193,6 +1170,29 @@
           
              
               <breadCrumb title="内核设备树" url="https://jarsonfang.github.io/categories/kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://jarsonfang.github.io/programming/APUE/file-io/</loc>
+    <lastmod>2016-12-23T15:09:36.381Z</lastmod>
+    <data>
+        <display>
+        <title>文件 I/O</title>
+        <pubTime>2014-04-13T02:05:59.000Z</pubTime>
+        
+        <tag>APUE</tag>
+         
+         
+           
+             
+              <breadCrumb title="programming" url="https://jarsonfang.github.io/categories/programming/"/>
+          
+             
+              <breadCrumb title="APUE" url="https://jarsonfang.github.io/categories/programming/APUE/"/>
           
         </display>
     </data>
@@ -1269,20 +1269,22 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/binary-search-and-printk/</loc>
+    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/binding/</loc>
     <lastmod>2016-12-23T15:09:36.377Z</lastmod>
     <data>
         <display>
-        <title>二分法与printk()</title>
-        <pubTime>2014-04-17T07:10:23.000Z</pubTime>
+        <title>驱动模型之驱动绑定</title>
+        <pubTime>2014-03-05T06:58:34.000Z</pubTime>
         
+        <tag>设备模型</tag>
+         
          
            
              
               <breadCrumb title="kernel" url="https://jarsonfang.github.io/categories/kernel/"/>
           
              
-              <breadCrumb title="内核修炼之道" url="https://jarsonfang.github.io/categories/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/"/>
+              <breadCrumb title="内核文档" url="https://jarsonfang.github.io/categories/kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/"/>
           
         </display>
     </data>
@@ -1378,22 +1380,20 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/binding/</loc>
+    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/binary-search-and-printk/</loc>
     <lastmod>2016-12-23T15:09:36.377Z</lastmod>
     <data>
         <display>
-        <title>驱动模型之驱动绑定</title>
-        <pubTime>2014-03-05T06:58:34.000Z</pubTime>
+        <title>二分法与printk()</title>
+        <pubTime>2014-04-17T07:10:23.000Z</pubTime>
         
-        <tag>设备模型</tag>
-         
          
            
              
               <breadCrumb title="kernel" url="https://jarsonfang.github.io/categories/kernel/"/>
           
              
-              <breadCrumb title="内核文档" url="https://jarsonfang.github.io/categories/kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/"/>
+              <breadCrumb title="内核修炼之道" url="https://jarsonfang.github.io/categories/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/"/>
           
         </display>
     </data>
