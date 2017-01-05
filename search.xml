@@ -8,8 +8,8 @@
       <url>https://jarsonfang.github.io/tools/github/setting-up-a-custom-domain/</url>
       <content type="html"><![CDATA[<ol>
 <li><a href="https://help.github.com/articles/quick-start-setting-up-a-custom-domain/" target="_blank" rel="external">Quick start: Setting up a custom domain</a></li>
-<li>Add the custom domain name into <code>CNAME</code> file, and put it under <code>source</code> directory</li>
-<li>Use <code>hexo d -g</code> command to deploy the website</li>
+<li>Add the custom domain name into <code>CNAME</code>, and put it under the <code>source</code> directory.</li>
+<li>Use <code>hexo d -g</code> command to deploy the website.</li>
 </ol>
 ]]></content>
     </entry>
@@ -3721,7 +3721,7 @@ bus_type</code>中的<code>drivers</code>和<code>devices</code>分别表示了�
 </table>
 <p>以下为正文:</p>
 <p>sysfs - 用于导出内核对象(kobject)的文件系统</p>
-<p>Patrick Mochel    <a href="&#109;&#97;&#105;&#108;&#x74;&#111;&#x3a;&#109;&#111;&#99;&#104;&#101;&#x6c;&#x40;&#x6f;&#115;&#x64;&#x6c;&#x2e;&#x6f;&#x72;&#103;">&#109;&#111;&#99;&#104;&#101;&#x6c;&#x40;&#x6f;&#115;&#x64;&#x6c;&#x2e;&#x6f;&#x72;&#103;</a><br>Mike Murphy <a href="&#x6d;&#x61;&#x69;&#108;&#x74;&#x6f;&#x3a;&#109;&#x61;&#109;&#117;&#114;&#x70;&#104;&#x40;&#x63;&#x73;&#46;&#x63;&#x6c;&#x65;&#x6d;&#115;&#111;&#110;&#x2e;&#101;&#100;&#x75;">&#109;&#x61;&#109;&#117;&#114;&#x70;&#104;&#x40;&#x63;&#x73;&#46;&#x63;&#x6c;&#x65;&#x6d;&#115;&#111;&#110;&#x2e;&#101;&#100;&#x75;</a></p>
+<p>Patrick Mochel    <a href="&#109;&#x61;&#x69;&#108;&#x74;&#111;&#x3a;&#x6d;&#111;&#99;&#104;&#101;&#x6c;&#64;&#111;&#x73;&#100;&#x6c;&#x2e;&#111;&#x72;&#103;">&#x6d;&#111;&#99;&#104;&#101;&#x6c;&#64;&#111;&#x73;&#100;&#x6c;&#x2e;&#111;&#x72;&#103;</a><br>Mike Murphy <a href="&#109;&#97;&#105;&#x6c;&#x74;&#111;&#x3a;&#x6d;&#97;&#109;&#117;&#114;&#112;&#104;&#x40;&#x63;&#x73;&#46;&#x63;&#108;&#x65;&#109;&#x73;&#x6f;&#110;&#x2e;&#101;&#100;&#117;">&#x6d;&#97;&#109;&#117;&#114;&#112;&#104;&#x40;&#x63;&#x73;&#46;&#x63;&#108;&#x65;&#109;&#x73;&#x6f;&#110;&#x2e;&#101;&#100;&#117;</a></p>
 <p>修订:    16 August 2011<br>原始版本:   10 January 2003<br><a id="more"></a></p>
 <h3 id="sysfs-简介"><a href="#sysfs-简介" class="headerlink" title="sysfs 简介"></a>sysfs 简介</h3><p>sysfs 是一个最初基于 <code>ramfs</code> 内存文件系统。它提供一种导出内核数据结构及其属性以及它们之间的关联到用户空间的方法。</p>
 <p>sysfs 始终与 <code>kobject</code> 的底层结构紧密相关。请阅读Documentation/kobject.txt 文档以获得更多关于 <code>kobject</code> 接口的信息。</p>
