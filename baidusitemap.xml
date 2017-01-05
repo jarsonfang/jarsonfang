@@ -5,7 +5,7 @@
     
   <url>
     <loc>https://jarsonfang.github.io/tools/github/setting-up-a-custom-domain/</loc>
-    <lastmod>2017-01-05T15:37:55.798Z</lastmod>
+    <lastmod>2017-01-05T15:49:25.978Z</lastmod>
     <data>
         <display>
         <title>Setting up a custom domain</title>
@@ -825,12 +825,12 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/tools/Hexo/hexo-operations/</loc>
+    <loc>https://jarsonfang.github.io/tools/Hexo/hexo-deploy/</loc>
     <lastmod>2016-12-23T15:09:36.397Z</lastmod>
     <data>
         <display>
-        <title>Hexo 基本操作</title>
-        <pubTime>2016-10-01T12:33:03.000Z</pubTime>
+        <title>Hexo 部署</title>
+        <pubTime>2016-10-02T14:16:29.000Z</pubTime>
         
         <tag>Hexo</tag>
          
@@ -926,12 +926,12 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/tools/Hexo/hexo-deploy/</loc>
+    <loc>https://jarsonfang.github.io/tools/Hexo/hexo-operations/</loc>
     <lastmod>2016-12-23T15:09:36.397Z</lastmod>
     <data>
         <display>
-        <title>Hexo 部署</title>
-        <pubTime>2016-10-02T14:16:29.000Z</pubTime>
+        <title>Hexo 基本操作</title>
+        <pubTime>2016-10-01T12:33:03.000Z</pubTime>
         
         <tag>Hexo</tag>
          
@@ -1131,29 +1131,6 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/tools/VCS/everyday-git/</loc>
-    <lastmod>2016-12-23T15:09:36.381Z</lastmod>
-    <data>
-        <display>
-        <title>开发者日常使用的 Git 命令</title>
-        <pubTime>2014-05-22T08:31:13.000Z</pubTime>
-        
-        <tag>git</tag>
-         
-         
-           
-             
-              <breadCrumb title="tools" url="https://jarsonfang.github.io/categories/tools/"/>
-          
-             
-              <breadCrumb title="VCS" url="https://jarsonfang.github.io/categories/tools/VCS/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/dt-usage/</loc>
     <lastmod>2016-12-23T15:09:36.381Z</lastmod>
     <data>
@@ -1170,6 +1147,29 @@
           
              
               <breadCrumb title="内核设备树" url="https://jarsonfang.github.io/categories/kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://jarsonfang.github.io/tools/VCS/everyday-git/</loc>
+    <lastmod>2016-12-23T15:09:36.381Z</lastmod>
+    <data>
+        <display>
+        <title>开发者日常使用的 Git 命令</title>
+        <pubTime>2014-05-22T08:31:13.000Z</pubTime>
+        
+        <tag>git</tag>
+         
+         
+           
+             
+              <breadCrumb title="tools" url="https://jarsonfang.github.io/categories/tools/"/>
+          
+             
+              <breadCrumb title="VCS" url="https://jarsonfang.github.io/categories/tools/VCS/"/>
           
         </display>
     </data>
@@ -1269,22 +1269,20 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/binding/</loc>
+    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/binary-search-and-printk/</loc>
     <lastmod>2016-12-23T15:09:36.377Z</lastmod>
     <data>
         <display>
-        <title>驱动模型之驱动绑定</title>
-        <pubTime>2014-03-05T06:58:34.000Z</pubTime>
+        <title>二分法与printk()</title>
+        <pubTime>2014-04-17T07:10:23.000Z</pubTime>
         
-        <tag>设备模型</tag>
-         
          
            
              
               <breadCrumb title="kernel" url="https://jarsonfang.github.io/categories/kernel/"/>
           
              
-              <breadCrumb title="内核文档" url="https://jarsonfang.github.io/categories/kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/"/>
+              <breadCrumb title="内核修炼之道" url="https://jarsonfang.github.io/categories/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/"/>
           
         </display>
     </data>
@@ -1380,20 +1378,22 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/binary-search-and-printk/</loc>
+    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/binding/</loc>
     <lastmod>2016-12-23T15:09:36.377Z</lastmod>
     <data>
         <display>
-        <title>二分法与printk()</title>
-        <pubTime>2014-04-17T07:10:23.000Z</pubTime>
+        <title>驱动模型之驱动绑定</title>
+        <pubTime>2014-03-05T06:58:34.000Z</pubTime>
         
+        <tag>设备模型</tag>
+         
          
            
              
               <breadCrumb title="kernel" url="https://jarsonfang.github.io/categories/kernel/"/>
           
              
-              <breadCrumb title="内核修炼之道" url="https://jarsonfang.github.io/categories/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/"/>
+              <breadCrumb title="内核文档" url="https://jarsonfang.github.io/categories/kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/"/>
           
         </display>
     </data>

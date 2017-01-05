@@ -4,7 +4,7 @@
   <url>
     <loc>https://jarsonfang.github.io/tools/github/setting-up-a-custom-domain/</loc>
     
-    <lastmod>2017-01-05T15:37:55.798Z</lastmod>
+    <lastmod>2017-01-05T15:49:25.978Z</lastmod>
     
   </url>
   
@@ -282,7 +282,7 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/tools/Hexo/hexo-operations/</loc>
+    <loc>https://jarsonfang.github.io/tools/Hexo/hexo-deploy/</loc>
     
     <lastmod>2016-12-23T15:09:36.397Z</lastmod>
     
@@ -317,7 +317,7 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/tools/Hexo/hexo-deploy/</loc>
+    <loc>https://jarsonfang.github.io/tools/Hexo/hexo-operations/</loc>
     
     <lastmod>2016-12-23T15:09:36.397Z</lastmod>
     
@@ -380,14 +380,14 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/tools/VCS/everyday-git/</loc>
+    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/dt-usage/</loc>
     
     <lastmod>2016-12-23T15:09:36.381Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/dt-usage/</loc>
+    <loc>https://jarsonfang.github.io/tools/VCS/everyday-git/</loc>
     
     <lastmod>2016-12-23T15:09:36.381Z</lastmod>
     
@@ -422,7 +422,7 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/binding/</loc>
+    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/binary-search-and-printk/</loc>
     
     <lastmod>2016-12-23T15:09:36.377Z</lastmod>
     
@@ -457,7 +457,7 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/binary-search-and-printk/</loc>
+    <loc>https://jarsonfang.github.io/kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/binding/</loc>
     
     <lastmod>2016-12-23T15:09:36.377Z</lastmod>
     
