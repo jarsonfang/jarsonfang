@@ -2,10 +2,10 @@
 title: Setting up a custom domain
 date: 2017-01-05 23:08:39
 tags:
-  - github
+  - Github
 categories:
-  - tools
-  - github
+  - Tools
+  - Github
 ---
 
 1. [Quick start: Setting up a custom domain](https://help.github.com/articles/quick-start-setting-up-a-custom-domain/)

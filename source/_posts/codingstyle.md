@@ -2,7 +2,7 @@
 title: Linux内核代码风格
 tags:
 categories:
-  - kernel
+  - Kernel
   - 内核文档
 date: 2014-03-04 09:07:17
 ---

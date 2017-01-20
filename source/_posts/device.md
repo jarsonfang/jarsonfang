@@ -3,7 +3,7 @@ title: 驱动模型之设备结构
 tags:
   - 设备模型
 categories:
-  - kernel
+  - Kernel
   - 内核文档
 date: 2014-03-05 13:10:52
 ---

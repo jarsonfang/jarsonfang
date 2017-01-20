@@ -4,7 +4,7 @@ date: 2016-10-01 20:33:03
 tags:
   - Hexo
 categories:
-  - tools
+  - Tools
   - Hexo
 ---
 

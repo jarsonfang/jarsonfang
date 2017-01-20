@@ -3,7 +3,7 @@ title: linux中文件描述符fd和文件指针filp的理解
 tags:
   - VFS
 categories:
-  - kernel
+  - Kernel
   - 内核文件系统
 date: 2014-02-25 16:18:57
 ---

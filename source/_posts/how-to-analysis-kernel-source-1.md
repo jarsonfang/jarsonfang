@@ -2,7 +2,7 @@
 title: 分析内核源码如何入手（上）
 tags:
 categories:
-  - kernel
+  - Kernel
   - 内核修炼之道
 date: 2014-04-17 10:40:37
 ---

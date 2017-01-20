@@ -2,9 +2,9 @@
 title: git常用命令
 date: 2014-05-22 11:00:27
 tags:
-  - git
+  - Git
 categories:
-  - tools
+  - Tools
   - VCS
 ---
 

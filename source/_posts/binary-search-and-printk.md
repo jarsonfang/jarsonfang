@@ -2,7 +2,7 @@
 title: 二分法与printk()
 tags:
 categories:
-  - kernel
+  - Kernel
   - 内核修炼之道
 date: 2014-04-17 15:10:23
 ---

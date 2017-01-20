@@ -2,7 +2,7 @@
 title: 驱动模型之平台设备
 tags:
 categories:
-  - kernel
+  - Kernel
   - 内核文档
 date: 2014-03-05 16:08:08
 ---

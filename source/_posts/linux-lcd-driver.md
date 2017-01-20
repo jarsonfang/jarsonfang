@@ -3,7 +3,7 @@ title: Linux LCD 驱动学习
 date: 2015-04-04 22:45:09
 tags:
 categories:
-  - kernel
+  - Kernel
   - 设备驱动
 ---
 

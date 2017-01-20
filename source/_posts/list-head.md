@@ -2,7 +2,7 @@
 title: linux内核链表之list_head
 tags:
 categories:
-  - kernel
+  - Kernel
   - 内核数据结构
 date: 2014-03-07 16:58:28
 ---

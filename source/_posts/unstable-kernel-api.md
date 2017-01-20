@@ -2,7 +2,7 @@
 title: 不稳定的内核API
 tags:
 categories:
-  - kernel
+  - Kernel
   - 内核修炼之道
 date: 2014-04-17 14:45:34
 ---

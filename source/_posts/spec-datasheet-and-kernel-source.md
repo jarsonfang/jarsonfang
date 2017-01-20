@@ -2,7 +2,7 @@
 title: 驱动开发三宝：spec、datasheet与内核源码
 tags:
 categories:
-  - kernel
+  - Kernel
   - 内核修炼之道
 date: 2014-04-17 14:32:09
 ---

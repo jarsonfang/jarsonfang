@@ -3,7 +3,7 @@ title: linux设备模型深探
 tags:
   - 设备模型
 categories:
-  - kernel
+  - Kernel
   - 设备驱动
 date: 2014-02-27 15:23:42
 ---

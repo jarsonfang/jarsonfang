@@ -2,9 +2,9 @@
 title: 用git保存空目录
 date: 2016-03-22 11:07:36
 tags:
-  - git
+  - Git
 categories:
-  - tools
+  - Tools
   - VCS
 ---
 

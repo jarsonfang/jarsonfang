@@ -3,7 +3,7 @@ title: Linux Platform Device and Driver
 date: 2014-02-25 10:52:33
 tags:
 categories:
-  - kernel
+  - Kernel
   - 设备驱动
 ---
 

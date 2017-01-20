@@ -3,7 +3,7 @@ title: linux设备模型
 tags:
   - 设备模型
 categories:
-  - kernel
+  - Kernel
   - 内核修炼之道
 date: 2014-04-17 14:17:28
 ---

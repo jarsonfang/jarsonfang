@@ -3,7 +3,7 @@ title: serio总线
 date: 2014-03-03 14:10:35
 tags:
 categories:
-  - kernel
+  - Kernel
   - 设备驱动
 ---
 

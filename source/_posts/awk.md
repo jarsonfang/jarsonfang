@@ -4,7 +4,7 @@ date: 2016-09-22 11:08:36
 tags:
   - awk
 categories:
-  - tools
+  - Tools
   - sed & awk
 ---
 

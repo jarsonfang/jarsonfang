@@ -3,7 +3,7 @@ title: Device Tree（二）：基本概念
 tags:
   - DevTree
 categories:
-  - kernel
+  - Kernel
   - 内核设备树
 date: 2015-04-19 16:42:42
 ---

@@ -1,9 +1,9 @@
 ---
 title: 羊皮卷的故事（《世界上最伟大的推销员》节选）
 tags:
-  - life
+  - Life
 categories:
-  - life
+  - Life
 date: 2014-02-25 08:53:32
 ---
 

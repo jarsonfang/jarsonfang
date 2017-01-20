@@ -3,7 +3,7 @@ title: linux字符设备模块加载脚本
 date: 2014-03-13 13:31:38
 tags:
 categories:
-  - kernel
+  - Kernel
   - 设备驱动
 ---
 

@@ -5,7 +5,7 @@ tags:
   - sed
   - awk
 categories:
-  - tools
+  - Tools
   - sed & awk
 ---
 

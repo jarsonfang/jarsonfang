@@ -2,9 +2,9 @@
 title: 开发者日常使用的 Git 命令
 date: 2014-05-22 16:31:13
 tags:
-  - git
+  - Git
 categories:
-  - tools
+  - Tools
   - VCS
 ---
 

@@ -4,7 +4,7 @@ tags:
   - VFS
   - 设备模型
 categories:
-  - kernel
+  - Kernel
   - 内核文件系统
 date: 2014-02-28 11:01:21
 ---

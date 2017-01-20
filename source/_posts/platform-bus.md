@@ -2,7 +2,7 @@
 title: platform总线
 tags:
 categories:
-  - kernel
+  - Kernel
   - 设备驱动
 date: 2014-03-02 22:54:37
 ---

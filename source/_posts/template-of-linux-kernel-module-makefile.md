@@ -3,7 +3,7 @@ title: Linux内核模块编译Makefile模板
 date: 2014-03-13 12:09:20
 tags:
 categories:
-  - kernel
+  - Kernel
   - 设备驱动
 ---
 

@@ -2,7 +2,7 @@
 title: Sparse 简介
 tags:
 categories:
-  - kernel
+  - Kernel
   - 内核文档
 date: 2014-05-14 12:07:03
 ---

@@ -3,7 +3,7 @@ title: Device Tree（三）：代码分析
 tags:
   - DevTree
 categories:
-  - kernel
+  - Kernel
   - 内核设备树
 date: 2015-04-22 23:34:30
 ---

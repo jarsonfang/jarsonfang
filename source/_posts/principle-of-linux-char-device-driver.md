@@ -3,7 +3,7 @@ title: 字符设备驱动原理图解
 date: 2014-03-13 10:05:38
 tags:
 categories:
-  - kernel
+  - Kernel
   - 设备驱动
 ---
 

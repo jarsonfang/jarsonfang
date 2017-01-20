@@ -2,7 +2,7 @@
 title: 文件与内存的桥梁：页缓存
 tags:
 categories:
-  - kernel
+  - Kernel
   - 内核内存管理
 date: 2014-02-26 16:09:55
 ---

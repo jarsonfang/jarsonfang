@@ -3,7 +3,7 @@ title: sysfs - 用于导出内核对象(kobject)的文件系统
 tags:
   - 设备模型
 categories:
-  - kernel
+  - Kernel
   - 内核文档
 date: 2014-03-04 17:09:27
 ---

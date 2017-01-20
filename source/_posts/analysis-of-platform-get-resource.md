@@ -2,7 +2,7 @@
 title: platform_get_resource 函数实现细节
 tags:
 categories:
-  - kernel
+  - Kernel
   - 设备驱动
 date: 2014-02-25 10:58:26
 ---
