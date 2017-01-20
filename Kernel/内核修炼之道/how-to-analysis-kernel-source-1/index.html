@@ -1,0 +1,978 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="学习, 工作, 生活" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="原文：《Linux内核修炼之道》精华分享与讨论（6）——分析内核源码如何入手？（上） 
+透过现象看本质，兽兽门无非就是一些人体艺术展示。同样往本质里看过去，学习内核，就是学习内核的源代码，任何内核有关的书籍都是基于内核，而又不高于内核的。
+既然要学习内核源码，就要经常对内核代码进行分析，而内核代码千千万，还前仆后继的不断往里加，这就让大部分人都有种雾里看花花不见的无助感。不过不要怕，孔老夫子早就留">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分析内核源码如何入手（上）">
+<meta property="og:url" content="https://jarsonfang.github.io/Kernel/内核修炼之道/how-to-analysis-kernel-source-1/index.html">
+<meta property="og:site_name" content="Jarson's Blog">
+<meta property="og:description" content="原文：《Linux内核修炼之道》精华分享与讨论（6）——分析内核源码如何入手？（上） 
+透过现象看本质，兽兽门无非就是一些人体艺术展示。同样往本质里看过去，学习内核，就是学习内核的源代码，任何内核有关的书籍都是基于内核，而又不高于内核的。
+既然要学习内核源码，就要经常对内核代码进行分析，而内核代码千千万，还前仆后继的不断往里加，这就让大部分人都有种雾里看花花不见的无助感。不过不要怕，孔老夫子早就留">
+<meta property="og:updated_time" content="2017-01-20T12:32:12.355Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="分析内核源码如何入手（上）">
+<meta name="twitter:description" content="原文：《Linux内核修炼之道》精华分享与讨论（6）——分析内核源码如何入手？（上） 
+透过现象看本质，兽兽门无非就是一些人体艺术展示。同样往本质里看过去，学习内核，就是学习内核的源代码，任何内核有关的书籍都是基于内核，而又不高于内核的。
+既然要学习内核源码，就要经常对内核代码进行分析，而内核代码千千万，还前仆后继的不断往里加，这就让大部分人都有种雾里看花花不见的无助感。不过不要怕，孔老夫子早就留">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '6327478655802934000',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jarsonfang.github.io/Kernel/内核修炼之道/how-to-analysis-kernel-source-1/"/>
+
+
+
+
+
+  <title> 分析内核源码如何入手（上） | Jarson's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Jarson's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle">静水深流，岁月安好</p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核修炼之道/how-to-analysis-kernel-source-1/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Jarson Fang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Jarson's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                分析内核源码如何入手（上）
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2014-04-17T10:40:37+08:00">
+                2014-04-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kernel/" itemprop="url" rel="index">
+                    <span itemprop="name">Kernel</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kernel/内核修炼之道/" itemprop="url" rel="index">
+                    <span itemprop="name">内核修炼之道</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/Kernel/内核修炼之道/how-to-analysis-kernel-source-1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/内核修炼之道/how-to-analysis-kernel-source-1/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>原文：<a href="http://blog.csdn.net/fudan_abc/article/details/5347687" target="_blank" rel="external">《Linux内核修炼之道》精华分享与讨论（6）——分析内核源码如何入手？（上） </a></p>
+<p>透过现象看本质，兽兽门无非就是一些人体艺术展示。同样往本质里看过去，学习内核，就是学习内核的源代码，任何内核有关的书籍都是基于内核，而又不高于内核的。</p>
+<p>既然要学习内核源码，就要经常对内核代码进行分析，而内核代码千千万，还前仆后继的不断往里加，这就让大部分人都有种雾里看花花不见的无助感。不过不要怕，孔老夫子早就留给我们了应对之策：敏于事而慎于言，就有道而正焉，可谓好学也已。这就是说，做事要踏实才是好学生好同志，要遵循严谨的态度，去理解每一段代码的实现，多问多想多记。如果抱着走马观花，得过且过的态度，结果极有可能就是一边看一边丢，没有多大的收获<br><a id="more"></a><br>下面就以USB子系统的实现分析为标本看看分析内核源码应该如何入手。</p>
+<h2 id="分析README"><a href="#分析README" class="headerlink" title="分析README"></a>分析README</h2><p>内核中USB子系统的代码位于目录drivers/usb，进入到该目录，执行命令ls，结果显示如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">atm  class  core  gadget  host  image  misc  mon  serial  storage Kconfig</div><div class="line">Makefile  README usb-skeleton.c</div></pre></td></tr></table></figure></p>
+<p>目录drivers/usb共包含有10个子目录和4个文件，usb-skeleton.c是一个简单的USB driver的框架，感兴趣的可以去看看，目前来说，它还吸引不了我们的眼球。那么首先应该关注什么？如果迎面走来一个ppmm，你会首先看脸、脚还是其它？当然答案依据每个人的癖好会有所不同。不过这里的问题应该只有一个答案，那就是Kconfig、Makefile、README。</p>
+<p>README里有关于这个目录下内容的一般性描述，它不是关键，只是帮助你了解。再说了，面对“read我吧read我吧”这么热情奔放的呼唤，善良的我们是不可能无动于衷的，所以先来看看里面都有些什么内容。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">Here is a list of what each subdirectory here is, and what is contained in</div><div class="line">them.</div><div class="line"></div><div class="line">core/        - This is for the core USB host code, including the</div><div class="line">            usbfs files and the hub class driver (&quot;khubd&quot;).</div><div class="line"></div><div class="line">host/        - This is for USB host controller drivers.  This</div><div class="line">            includes UHCI, OHCI, EHCI, and others that might</div><div class="line">            be used with more specialized &quot;embedded&quot; systems.</div><div class="line"></div><div class="line">gadget/        - This is for USB peripheral controller drivers and</div><div class="line">            the various gadget drivers which talk to them.</div><div class="line"></div><div class="line"></div><div class="line">Individual USB driver directories.  A new driver should be added to the</div><div class="line">first subdirectory in the list below that it fits into.</div><div class="line"></div><div class="line">image/        - This is for still image drivers, like scanners or</div><div class="line">            digital cameras.</div><div class="line">input/        - This is for any driver that uses the input subsystem,</div><div class="line">            like keyboard, mice, touchscreens, tablets, etc.</div><div class="line">media/        - This is for multimedia drivers, like video cameras,</div><div class="line">            radios, and any other drivers that talk to the v4l</div><div class="line">            subsystem.</div><div class="line">net/        - This is for network drivers.</div><div class="line">serial/        - This is for USB to serial drivers.</div><div class="line">storage/    - This is for USB mass-storage drivers.</div><div class="line">class/        - This is for all USB device drivers that do not fit</div><div class="line">            into any of the above categories, and work for a range</div><div class="line">            of USB Class specified devices.</div><div class="line">misc/        - This is for all USB device drivers that do not fit</div><div class="line">            into any of the above categories.</div></pre></td></tr></table></figure></p>
+<p>这个README文件描述了前边使用ls命令列出的那10个文件夹的用途。那么什么是USB Core？Linux内核开发者们，专门写了一些代码，负责实现一些核心的功能，为别的设备驱动程序提供服务，比如申请内存，比如实现一些所有的设备都会需要的公共的函数，并美其名曰USB Core。</p>
+<p>时代总在发展，当年胖杨贵妃照样迷死唐明皇，而如今人们欣赏的则是林志玲这样的魔鬼身材。同样，早期的Linux内核，其结构并不是如今天这般有层次感，远不像今天这般错落有致，那时候drivers/usb/这个目录下边放了很多很多文件，USB Core与其他各种设备的驱动程序的代码都堆砌在这里，后来，怎奈世间万千的变幻，总爱把有情的人分两端。于是在drivers/usb/目录下面出来了一个core目录，就专门放一些核心的代码，比如初始化整个USB系统，初始化Root Hub，初始化主机控制器的代码，再后来甚至把主机控制器相关的代码也单独建了一个目录，叫host目录，这是因为USB主机控制器随着时代的发展，也开始有了好几种，不再像刚开始那样只有一种，所以呢，设计者们把一些主机控制器公共的代码仍然留在core目录下，而一些各主机控制器单独的代码则移到host目录下面让负责各种主机控制器的人去维护。</p>
+<p>那么USB gadget那？gadget白了说就是配件的意思，主要就是一些内部运行Linux的嵌入式设备，比如PDA，设备本身有USB设备控制器（USB Device Controller），可以将PC，也就是我们的主机作为master端，将这样的设备作为slave端和主机通过USB进行通信。从主机的观点来看，主机系统的USB驱动程序控制插入其中的USB设备，而USB gadget的驱动程序控制外围设备如何作为一个USB设备和主机通信。比如，我们的嵌入式板子上支持SD卡，如果我们希望在将板子通过USB连接到PC之后，这个SD卡被模拟成U盘，那么就要通过USB gadget架构的驱动。</p>
+<p>剩下的几个目录分门别类的放了各种USB设备的驱动，比如U盘的驱动在storage目录下，触摸屏和USB键盘鼠标的驱动在input目录下，等等。</p>
+<p>我们响应了README的热情呼唤，它便给予了我们想要的，通过它我们了解了USB目录里的那些文件夹都有着什么样的角色。到现在为止，就只剩下内核的地图——Kconfig与Makefile两个文件了。有地图在手，对于在内核中游荡的我们来说，是件很愉悦的事情，不过，因为我们的目的是研究内核对USB子系统的实现，而不是特定设备或host controller的驱动，所以这里的定位很明显，USB Core就是我们需要关注的对象，那么接下来就是要对core目录中的内容进行定位了。</p>
+<h2 id="分析Kconfig和Makefile"><a href="#分析Kconfig和Makefile" class="headerlink" title="分析Kconfig和Makefile"></a>分析Kconfig和Makefile</h2><p>进入到drivers/usb/core目录，执行命令ls，结果显示如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">Kconfig  Makefile  buffer.c  config.c  devices.c  devio.c  driver.c</div><div class="line">endpoint.c  file.c  generic.c  hcd-pci.c  hcd.c  hcd.h  hub.c  hub.h</div><div class="line">inode.c  message.c  notify.c  otg_whitelist.h  quirks.c  sysfs.c  urb.c</div><div class="line">usb.c  usb.h</div></pre></td></tr></table></figure></p>
+<p>然后执行wc命令，如下所示。<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="comment"># wc –l ./*</span></div><div class="line">   148 buffer.c</div><div class="line">   607 config.c</div><div class="line">   706 devices.c</div><div class="line">  1677 devio.c</div><div class="line">  1569 driver.c</div><div class="line">   357 endpoint.c</div><div class="line">   248 file.c</div><div class="line">   238 generic.c</div><div class="line">  1759 hcd.c</div><div class="line">   458 hcd.h</div><div class="line">   433 hcd-pci.c</div><div class="line">  3046 hub.c</div><div class="line">   195 hub.h</div><div class="line">   758 inode.c</div><div class="line">   144 Kconfig</div><div class="line">    21 Makefile</div><div class="line">  1732 message.c</div><div class="line">    68 notify.c</div><div class="line">   112 otg_whitelist.h</div><div class="line">   161 quirks.c</div><div class="line">   710 sysfs.c</div><div class="line">   589 urb.c</div><div class="line">   984 usb.c</div><div class="line">   160 usb.h</div><div class="line"> 16880 total</div></pre></td></tr></table></figure></p>
+<p>drivers/usb/core目录共包括24个文件，16880行代码。core不愧是core，为大家默默的做这么多事。不过这么多文件里不一定都是我们所需要关注的，先拿咱们的地图来看看接下来该怎么走。先看看Kconfig文件，可以看到下面的选项。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">config USB_DEVICEFS</div><div class="line">        bool &quot;USB device filesystem&quot;</div><div class="line">        depends on USB</div><div class="line">        ---help---</div><div class="line">          If you say Y here (and to &quot;/proc file system support&quot; in the &quot;File</div><div class="line">          systems&quot; section, above), you will get a file /proc/bus/usb/devices</div><div class="line">          which lists the devices currently connected to your USB bus or</div><div class="line">          busses, and for every connected device a file named</div><div class="line">          &quot;/proc/bus/usb/xxx/yyy&quot;, where xxx is the bus number and yyy the</div><div class="line">          device number; the latter files can be used by user space programs</div><div class="line">          to talk directly to the device. These files are &quot;virtual&quot;, meaning</div><div class="line">          they are generated on the fly and not stored on the hard drive.</div><div class="line"></div><div class="line">          You may need to mount the usbfs file system to see the files, use</div><div class="line">          mount -t usbfs none /proc/bus/usb</div><div class="line"></div><div class="line">          For the format of the various /proc/bus/usb/ files, please read</div><div class="line">          &lt;file:Documentation/usb/proc_usb_info.txt&gt;.</div><div class="line"></div><div class="line">          Usbfs files can&apos;t handle Access Control Lists (ACL), which are the</div><div class="line">          default way to grant access to USB devices for untrusted users of a</div><div class="line">          desktop system. The usbfs functionality is replaced by real</div><div class="line">          device-nodes managed by udev. These nodes live in /dev/bus/usb and</div><div class="line">          are used by libusb.</div></pre></td></tr></table></figure></p>
+<p>选项USB_DEVICEFS与usbfs文件系统有关。usbfs文件系统挂载在/proc/bus/usb目录，显示了当前连接的所有USB设备及总线的各种信息，每个连接的USB设备在其中都会有一个对应的文件进行描述。比如文件/proc/bus/usb/xxx/yyy，xxx表示总线的序号，yyy表示设备所在总线的地址。不过不能够依赖它们来稳定地访问设备，因为同一设备两次连接对应的描述文件可能会不同，比如，第一次连接一个设备时，它可能是002/027，一段时间后再次连接，它可能就已经改变为002/048。</p>
+<p>就好比好不容易你暗恋的mm今天见你的时候对你抛了个媚眼，你心花怒放，赶快去买了100块彩票庆祝，到第二天再见到她的时候，她对你说你是谁啊，你悲痛欲绝的刮开那100块彩票，上面清一色的谢谢你。</p>
+<p>因为usbfs文件系统并不属于USB子系统实现的核心部分，与之相关的代码我们可以不必关注。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">74 config USB_SUSPEND</div><div class="line">75       bool &quot;USB selective suspend/resume and wakeup (EXPERIMENTAL)&quot;</div><div class="line">76       depends on USB &amp;&amp; PM &amp;&amp; EXPERIMENTAL</div><div class="line">77       help</div><div class="line">78         If you say Y here, you can use driver calls or the sysfs</div><div class="line">79         &quot;power/state&quot; file to suspend or resume individual USB</div><div class="line">80         peripherals.</div><div class="line">81</div><div class="line">82         Also, USB &quot;remote wakeup&quot; signaling is supported, whereby some</div><div class="line">83         USB devices (like keyboards and network adapters) can wake up</div><div class="line">84         their parent hub.  That wakeup cascades up the USB tree, and</div><div class="line">85         could wake the system from states like suspend-to-RAM.</div><div class="line">86</div><div class="line">87         If you are unsure about this, say N here.</div></pre></td></tr></table></figure></p>
+<p>这一项是有关USB设备的挂起和恢复。开发USB的人都是节电节能的好孩子，所以协议里就规定了，所有的设备都必须支持挂起状态，就是说为了达到节电的目的，当设备在指定的时间内，如果没有发生总线传输，就要进入挂起状态。当它收到一个non-idle的信号时，就会被唤醒。节约用电从USB做起。不过这个与主题也没太大关系，相关代码也可以不用关注了。</p>
+<p>剩下的还有几项，不过似乎与咱们关系也不大，还是去看看Makefile。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">usbcore-objs    := usb.o hub.o hcd.o urb.o message.o driver.o /</div><div class="line">                        config.o file.o buffer.o sysfs.o endpoint.o /</div><div class="line">                        devio.o notify.o generic.o quirks.o</div><div class="line"></div><div class="line">ifeq ($(CONFIG_PCI),y)</div><div class="line">         usbcore-objs    += hcd-pci.o</div><div class="line"> endif</div><div class="line"></div><div class="line"> ifeq ($(CONFIG_USB_DEVICEFS),y)</div><div class="line">         usbcore-objs    += inode.o devices.o</div><div class="line"> endif</div><div class="line"></div><div class="line"> obj-$(CONFIG_USB)       += usbcore.o</div><div class="line"></div><div class="line"> ifeq ($(CONFIG_USB_DEBUG),y)</div><div class="line"> EXTRA_CFLAGS += -DDEBUG</div><div class="line"> endif</div></pre></td></tr></table></figure></p>
+<p>Makefile可比Kconfig简略多了，所以看起来也更亲切点，咱们总是拿的money越多越好，看的代码越少越好。这里之所以会出现CONFIG_PCI，是因为通常USB的Root Hub包含在一个PCI设备中。hcd-pci和hcd顾名而思义就知道是说主机控制器的，它们实现了主机控制器公共部分，按协议里的说法它们就是HCDI（HCD的公共接口），host目录下则实现了各种不同的主机控制器。</p>
+<p>CONFIG_USB_DEVICEFS前面的Kconfig文件里也见到了，关于usbfs的，与咱们的主题无关，inode.c和devices.c两个文件也可以不用管了。</p>
+<p>那么我们可以得出结论，为了理解内核对USB子系统的实现，我们需要研究buffer.c、config.c、driver.c、endpoint.c、file.c、generic.c、hcd.c  hcd.h、hub.c、message.c、notify.c、otg_whitelist.h、quirks.c、sysfs.c、urb.c 和usb.c文件。这么看来，好像大都需要关注的样子，没有减轻多少压力，不过这里本身就是USB Core部分，是要做很多的事为咱们分忧的，所以多点也是可以理解的。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/Kernel/内核修炼之道/kconfig-and-makefile/" rel="next" title="Kernel地图：Kconfig与Makefile">
+                <i class="fa fa-chevron-left"></i> Kernel地图：Kconfig与Makefile
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/Kernel/内核修炼之道/how-to-analysis-kernel-source-2/" rel="prev" title="分析内核源码如何入手（下）">
+                分析内核源码如何入手（下） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="Kernel/内核修炼之道/how-to-analysis-kernel-source-1/"
+     data-title="分析内核源码如何入手（上）"
+     data-content=""
+     data-url="https://jarsonfang.github.io/Kernel/内核修炼之道/how-to-analysis-kernel-source-1/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="Kernel/内核修炼之道/how-to-analysis-kernel-source-1/"
+           data-title="分析内核源码如何入手（上）" data-url="https://jarsonfang.github.io/Kernel/内核修炼之道/how-to-analysis-kernel-source-1/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Jarson Fang" />
+          <p class="site-author-name" itemprop="name">Jarson Fang</p>
+          <p class="site-description motion-element" itemprop="description">学习、工作、生活</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">68</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/jarsonfang" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/jarson-fang" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://tldp.org/LDP/abs/html/" title="ABS" target="_blank">ABS</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://git-scm.com/book/zh/" title="ProGit" target="_blank">ProGit</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://www.devbean.net/" title="DevBean" target="_blank">DevBean</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://coolshell.cn/" title="CoolShell" target="_blank">CoolShell</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://doc.rust-lang.org/book/" title="Rust-Book" target="_blank">Rust-Book</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/liigo/" title="Rust-庄晓立" target="_blank">Rust-庄晓立</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/rustcc/" title="Rust-中文社区" target="_blank">Rust-中文社区</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.wowotech.net/" title="蜗窝科技" target="_blank">蜗窝科技</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hexo.io/" title="Hexo" target="_blank">Hexo</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://theme-next.iissnan.com/" title="NexT" target="_blank">NexT</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://guides.github.com/features/mastering-markdown/" title="Mastering-Markdown" target="_blank">Mastering-Markdown</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.cirosantilli.com/markdown-style-guide/" title="Markdown-Style-Guide" target="_blank">Markdown-Style-Guide</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#分析README"><span class="nav-number">1.</span> <span class="nav-text">分析README</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分析Kconfig和Makefile"><span class="nav-number">2.</span> <span class="nav-text">分析Kconfig和Makefile</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jarson Fang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"jarsonfang"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js?v=5.1.0"></script>
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

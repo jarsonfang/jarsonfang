@@ -1,0 +1,991 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="VFS," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="原文出处：http://www.ibm.com/developerworks/cn/linux/l-cn-vfs/
+简介： Linux 允许众多不同的文件系统共存，并支持跨文件系统的文件操作，这是因为有虚拟文件系统的存在。虚拟文件系统交换器，即VFS（Virtual Filesystem Switch）是 Linux 内核中的一个软件抽象层。它通过一些数据结构及其方法向实际的文件系统如 ext2，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从文件 I/O 看 Linux 的虚拟文件系统">
+<meta property="og:url" content="https://jarsonfang.github.io/Kernel/内核文件系统/linux-vfs/index.html">
+<meta property="og:site_name" content="Jarson's Blog">
+<meta property="og:description" content="原文出处：http://www.ibm.com/developerworks/cn/linux/l-cn-vfs/
+简介： Linux 允许众多不同的文件系统共存，并支持跨文件系统的文件操作，这是因为有虚拟文件系统的存在。虚拟文件系统交换器，即VFS（Virtual Filesystem Switch）是 Linux 内核中的一个软件抽象层。它通过一些数据结构及其方法向实际的文件系统如 ext2，">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/内核文件系统/linux-vfs/vfs-fig1.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/内核文件系统/linux-vfs/vfs-fig2.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/内核文件系统/linux-vfs/vfs-fig3.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/内核文件系统/linux-vfs/vfs-fig4.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/内核文件系统/linux-vfs/vfs-fig5.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/内核文件系统/linux-vfs/vfs-fig6.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/内核文件系统/linux-vfs/vfs-fig7.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/内核文件系统/linux-vfs/vfs-fig8.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/内核文件系统/linux-vfs/vfs-fig9.jpg">
+<meta property="og:updated_time" content="2017-01-20T12:32:12.355Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从文件 I/O 看 Linux 的虚拟文件系统">
+<meta name="twitter:description" content="原文出处：http://www.ibm.com/developerworks/cn/linux/l-cn-vfs/
+简介： Linux 允许众多不同的文件系统共存，并支持跨文件系统的文件操作，这是因为有虚拟文件系统的存在。虚拟文件系统交换器，即VFS（Virtual Filesystem Switch）是 Linux 内核中的一个软件抽象层。它通过一些数据结构及其方法向实际的文件系统如 ext2，">
+<meta name="twitter:image" content="https://jarsonfang.github.io/Kernel/内核文件系统/linux-vfs/vfs-fig1.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '6327478655802934000',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jarsonfang.github.io/Kernel/内核文件系统/linux-vfs/"/>
+
+
+
+
+
+  <title> 从文件 I/O 看 Linux 的虚拟文件系统 | Jarson's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Jarson's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle">静水深流，岁月安好</p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核文件系统/linux-vfs/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Jarson Fang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Jarson's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                从文件 I/O 看 Linux 的虚拟文件系统
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2014-02-25T14:53:28+08:00">
+                2014-02-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kernel/" itemprop="url" rel="index">
+                    <span itemprop="name">Kernel</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kernel/内核文件系统/" itemprop="url" rel="index">
+                    <span itemprop="name">内核文件系统</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/Kernel/内核文件系统/linux-vfs/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/内核文件系统/linux-vfs/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>原文出处：<a href="http://www.ibm.com/developerworks/cn/linux/l-cn-vfs/" target="_blank" rel="external">http://www.ibm.com/developerworks/cn/linux/l-cn-vfs/</a></p>
+<p><strong>简介：</strong> Linux 允许众多不同的文件系统共存，并支持跨文件系统的文件操作，这是因为有虚拟文件系统的存在。<span style="color: #ff0102;">虚拟文件系统交换器</span>，即VFS（<span style="color: #ff0102;">Virtual Filesystem Switch</span>）是 Linux 内核中的一个软件抽象层。它通过一些数据结构及其方法向实际的文件系统如 ext2，vfat 提供接口机制。本文在简要介绍 VFS 的相关数据结构后，以文件 I/O 为切入点深入 Linux 内核源代码，追踪了 sys_open 和 sys_read 两个系统调用的代码结构，并在追踪的过程中理清了跨文件系统的文件操作的基本原理和“一切皆是文件”的口号得以实现的根本。<br><a id="more"></a></p>
+<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>Linux 中允许众多不同的文件系统共存，如 ext2, ext3, vfat 等。通过使用同一套文件 I/O 系统 调用即可对 Linux 中的任意文件进行操作而无需考虑其所在的具体文件系统格式；更进一步，对文件的 操作可以跨文件系统而执行。如图 1 所示，我们可以使用 cp 命令从 vfat 文件系统格式的硬盘拷贝数据到 ext3 文件系统格式的硬盘；而这样的操作涉及到两个不同的文件系统。<br>图 1. 跨文件系统的文件操作<br><img src="/Kernel/内核文件系统/linux-vfs/vfs-fig1.jpg" alt="vfs-fig1.jpg" title=""><br>“一切皆是文件”是 Unix/Linux 的基本哲学之一。不仅普通的文件，目录、字符设备、块设备、 套接字等在 Unix/Linux 中都是以文件被对待；它们虽然类型不同，但是对其提供的却是同一套操作界面。<br>图 2. 一切皆是文件<br><img src="/Kernel/内核文件系统/linux-vfs/vfs-fig2.jpg" alt="vfs-fig2.jpg" title=""><br>而虚拟文件系统正是实现上述两点 Linux 特性的关键所在。虚拟文件系统交换器（<span style="color:red">Virtual Filesystem Switch</span>， 简称 VFS）， 是 Linux 内核中的一个软件层，用于给用户空间的程序提供文件系统接口；同时，它也提供了内核中的一个 抽象功能，允许不同的文件系统共存。系统中所有的文件系统不但依赖 VFS 共存，而且也依靠 VFS 协同工作。<br>为了能够支持各种实际文件系统，VFS 定义了所有文件系统都支持的基本的、概念上的接口和数据 结构；同时实际文件系统也提供 VFS 所期望的抽象接口和数据结构，将自身的诸如文件、目录等概念在形式 上与VFS的定义保持一致。换句话说，一个实际的文件系统想要被 Linux 支持，就必须提供一个符合VFS标准 的接口，才能与 VFS 协同工作。实际文件系统在统一的接口和数据结构下隐藏了具体的实现细节，所以在VFS 层和内核的其他部分看来，所有文件系统都是相同的。图3显示了VFS在内核中与实际的文件系统的协同关系。<br>图3. VFS在内核中与其他的内核模块的协同关系<br><img src="/Kernel/内核文件系统/linux-vfs/vfs-fig3.jpg" alt="vfs-fig3.jpg" title=""><br>我们已经知道，正是由于在内核中引入了VFS，跨文件系统的文件操作才能实现，“一切皆是文件” 的口号才能承诺。而为什么引入了VFS，就能实现这两个特性呢？在接下来，我们将以这样的一个思路来切入文章的正题：我们将先简要介绍下用以描述VFS模型的一些数据结构，总结出这些数据结构相互间的关系；然后 选择两个具有代表性的文件I/O操作<code>sys_open()</code>和<code>sys_read()</code>来详细说明内核是如何借助VFS和具体的文件系统打 交道以实现跨文件系统的文件操作和承诺“一切皆是文件”的口号</p>
+<h2 id="VFS数据结构"><a href="#VFS数据结构" class="headerlink" title="VFS数据结构"></a>VFS数据结构</h2><h3 id="一些基本概念"><a href="#一些基本概念" class="headerlink" title="一些基本概念"></a>一些基本概念</h3><p>从本质上讲，文件系统是特殊的数据分层存储结构，它包含文件、目录和相关的控制信息。为了描述 这个结构，Linux引入了一些基本概念:<br><strong>文件</strong> 一组在逻辑上具有完整意义的信息项的系列。在Linux中，除了普通文件，其他诸如目录、设备、套接字等 也以文件被对待。总之，“一切皆文件”。<br><strong>目录</strong> 目录好比一个文件夹，用来容纳相关文件。因为目录可以包含子目录，所以目录是可以层层嵌套，形成 文件路径。在Linux中，目录也是以一种特殊文件被对待的，所以用于文件的操作同样也可以用在目录上。<br><strong>目录项</strong> 在一个文件路径中，路径中的每一部分都被称为目录项；如路径/home/source/helloworld.c中，目录 /, home, source和文件 helloworld.c都是一个目录项。<br><strong>索引节点</strong> 用于存储文件的元数据的一个数据结构。文件的元数据，也就是文件的相关信息，和文件本身是两个不同 的概念。它包含的是诸如文件的大小、拥有者、创建时间、磁盘位置等和文件相关的信息。<br><strong>超级块</strong> 用于存储文件系统的控制信息的数据结构。描述文件系统的状态、文件系统类型、大小、区块数、索引节 点数等，存放于磁盘的特定扇区中。<br>如上的几个概念在磁盘中的位置关系如图4所示。<br>图4. 磁盘与文件系统<br><img src="/Kernel/内核文件系统/linux-vfs/vfs-fig4.jpg" alt="vfs-fig4.jpg" title=""><br>关于文件系统的三个易混淆的概念：<br><strong>创建</strong> 以某种方式格式化磁盘的过程就是在其之上建立一个文件系统的过程。创建文现系统时，会在磁盘的特定位置写入 关于该文件系统的控制信息。<br><strong>注册</strong> 向内核报到，声明自己能被内核支持。一般在编译内核的时侯注册；也可以加载模块的方式手动注册。注册过程实 际上是将表示各实际文件系统的数据结构<code>struct file_system_type</code>实例化。<br><strong>安装</strong> 也就是我们熟悉的mount操作，将文件系统加入到Linux的根文件系统的目录树结构上；这样文件系统才能被访问。</p>
+<h3 id="VFS数据结构-1"><a href="#VFS数据结构-1" class="headerlink" title="VFS数据结构"></a>VFS数据结构</h3><p>VFS依靠四个主要的数据结构和一些辅助的数据结构来描述其结构信息，这些数据结构表现得就像是对象；每个主要对象中都包含由操作函数表构成的操作对象，这些操作对象描述了内核针对这几个主要的对象可以进行的操作。</p>
+<h4 id="超级块对象"><a href="#超级块对象" class="headerlink" title="超级块对象"></a>超级块对象</h4><p>存储一个已安装的文件系统的控制信息，代表一个已安装的文件系统；每次一个实际的文件系统被安装时，内核会从磁盘的特定位置读取一些控制信息来填充内存中的超级块对象。一个安装实例和一个超级块对象一一对应。 超级块通过其结构中的一个域<code>s_type</code>记录它所属的文件系统类型。<br>根据第三部分追踪源代码的需要，以下是对该超级块结构的部分相关成员域的描述，（如下同）：<br>清单1. 超级块<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> super_block &#123; <span class="comment">//超级块数据结构</span></div><div class="line">       <span class="keyword">struct</span> list_head s_list;                <span class="comment">/*指向超级块链表的指针*/</span></div><div class="line">        ……</div><div class="line">       <span class="keyword">struct</span> file_system_type  *s_type;       <span class="comment">/*文件系统类型*/</span></div><div class="line">       <span class="keyword">struct</span> super_operations  *s_op;         <span class="comment">/*超级块方法*/</span></div><div class="line">        ……</div><div class="line">        <span class="keyword">struct</span> list_head         s_instances;   <span class="comment">/*该类型文件系统*/</span></div><div class="line">        ……</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">struct</span> super_operations &#123; <span class="comment">//超级块方法</span></div><div class="line">        ……</div><div class="line">        <span class="comment">//该函数在给定的超级块下创建并初始化一个新的索引节点对象</span></div><div class="line">        <span class="keyword">struct</span> inode *(*alloc_inode)(<span class="keyword">struct</span> super_block *sb);</div><div class="line">       ……</div><div class="line">        <span class="comment">//该函数从磁盘上读取索引节点，并动态填充内存中对应的索引节点对象的剩余部分</span></div><div class="line">        <span class="keyword">void</span> (*read_inode) (<span class="keyword">struct</span> inode *);</div><div class="line">       ……</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h4 id="索引节点对象"><a href="#索引节点对象" class="headerlink" title="索引节点对象"></a>索引节点对象</h4><p>索引节点对象存储了文件的相关信息，代表了存储设备上的一个实际的物理文件。当一个文件首次被访问时，内核会在内存中组装相应的索引节点对象，以便向内核提供对一个文件进行操作时所必需的全部信息；这些信息一部分存储在磁盘特定位置，另外一部分是在加载时动态填充的。<br>清单2. 索引节点<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> inode &#123; <span class="comment">//索引节点结构</span></div><div class="line">      ……</div><div class="line">     <span class="keyword">struct</span> inode_operations  *i_op;     <span class="comment">/*索引节点操作表*/</span></div><div class="line">     <span class="keyword">struct</span> file_operations   *i_fop;	 <span class="comment">/*该索引节点对应文件的文件操作集*/</span></div><div class="line">     <span class="keyword">struct</span> super_block       *i_sb;     <span class="comment">/*相关的超级块*/</span></div><div class="line">     ……</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">struct</span> inode_operations &#123; <span class="comment">//索引节点方法</span></div><div class="line">     ……</div><div class="line">     <span class="comment">//该函数为dentry对象所对应的文件创建一个新的索引节点，主要是由open()系统调用来调用</span></div><div class="line">     <span class="keyword">int</span> (*create) (<span class="keyword">struct</span> inode *,<span class="keyword">struct</span> dentry *,<span class="keyword">int</span>, <span class="keyword">struct</span> nameidata *);</div><div class="line"></div><div class="line">     <span class="comment">//在特定目录中寻找dentry对象所对应的索引节点</span></div><div class="line">     <span class="keyword">struct</span> dentry * (*lookup) (<span class="keyword">struct</span> inode *,<span class="keyword">struct</span> dentry *, <span class="keyword">struct</span> nameidata *);</div><div class="line">     ……</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h4 id="目录项对象"><a href="#目录项对象" class="headerlink" title="目录项对象"></a>目录项对象</h4><p>引入目录项的概念主要是出于方便查找文件的目的。一个路径的各个组成部分，不管是目录还是 普通的文件，都是一个目录项对象。如，在路径/home/source/test.c中，目录 /, home, source和文件test.c都对应一个目录项对象。不同于前面的两个对象，目录项对象没有对应的磁盘数据结构，VFS在遍 历路径名的过程中现场将它们逐个地解析成目录项对象。<br>清单3. 目录项<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> dentry &#123; <span class="comment">//目录项结构</span></div><div class="line">     ……</div><div class="line">    <span class="keyword">struct</span> inode *d_inode;           <span class="comment">/*相关的索引节点*/</span></div><div class="line">    <span class="keyword">struct</span> dentry *d_parent;         <span class="comment">/*父目录的目录项对象*/</span></div><div class="line">    <span class="keyword">struct</span> qstr d_name;              <span class="comment">/*目录项的名字*/</span></div><div class="line">    ……</div><div class="line">     <span class="keyword">struct</span> list_head d_subdirs;      <span class="comment">/*子目录*/</span></div><div class="line">    ……</div><div class="line">     <span class="keyword">struct</span> dentry_operations *d_op;  <span class="comment">/*目录项操作表*/</span></div><div class="line">    <span class="keyword">struct</span> super_block *d_sb;        <span class="comment">/*文件超级块*/</span></div><div class="line">    ……</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">struct</span> dentry_operations &#123;</div><div class="line">    <span class="comment">//判断目录项是否有效;</span></div><div class="line">    <span class="keyword">int</span> (*d_revalidate)(<span class="keyword">struct</span> dentry *, <span class="keyword">struct</span> nameidata *);</div><div class="line">    <span class="comment">//为目录项生成散列值;</span></div><div class="line">    <span class="keyword">int</span> (*d_hash) (<span class="keyword">struct</span> dentry *, <span class="keyword">struct</span> qstr *);</div><div class="line">    ……</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h4 id="文件对象"><a href="#文件对象" class="headerlink" title="文件对象"></a>文件对象</h4><p>文件对象是已打开的文件在内存中的表示，主要用于建立进程和磁盘上的文件的对应关系。它由<code>sys_open()</code>现场创建，由<code>sys_close()</code>销毁。文件对象和物理文件的关系有点像进程和程序的关系一样。当我们站在用户空间来看待VFS，我们像是只需与文件对象打交道，而无须关心超级块，索引节点或目录项。因为多个进程可以同时打开和操作同一个文件，所以同一个文件也可能存在多个对应的文件对象。文件对象仅仅在进程观点上代表已经打开的文件，它反过来指向目录项对象（反过来指向索引节点）。一个文件对应的文件对象可能不是惟一的，但是其对应的索引节点和目录项对象无疑是惟一的。<br>清单4. 文件对象<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> file &#123;</div><div class="line">    ……</div><div class="line">    <span class="keyword">struct</span> list_head        f_list;        <span class="comment">/*文件对象链表*/</span></div><div class="line">    <span class="keyword">struct</span> dentry          *f_dentry;      <span class="comment">/*相关目录项对象*/</span></div><div class="line">    <span class="keyword">struct</span> vfsmount        *f_vfsmnt;      <span class="comment">/*相关的安装文件系统*/</span></div><div class="line">    <span class="keyword">struct</span> file_operations *f_op;          <span class="comment">/*文件操作表*/</span></div><div class="line">    ……</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">struct</span> file_operations &#123;</div><div class="line">    ……</div><div class="line">    <span class="comment">//文件读操作</span></div><div class="line">    <span class="keyword">ssize_t</span> (*read) (<span class="keyword">struct</span> file *, <span class="keyword">char</span> __user *, <span class="keyword">size_t</span>, <span class="keyword">loff_t</span> *);</div><div class="line">    ……</div><div class="line">    <span class="comment">//文件写操作</span></div><div class="line">    <span class="keyword">ssize_t</span> (*write) (<span class="keyword">struct</span> file *, <span class="keyword">const</span> <span class="keyword">char</span> __user *, <span class="keyword">size_t</span>, <span class="keyword">loff_t</span> *);</div><div class="line">    ……</div><div class="line">    <span class="keyword">int</span> (*readdir) (<span class="keyword">struct</span> file *, <span class="keyword">void</span> *, <span class="keyword">filldir_t</span>);</div><div class="line">    ……</div><div class="line">    <span class="comment">//文件打开操作</span></div><div class="line">    <span class="keyword">int</span> (*open) (<span class="keyword">struct</span> inode *, <span class="keyword">struct</span> file *);</div><div class="line">    ……</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h4 id="其他VFS对象"><a href="#其他VFS对象" class="headerlink" title="其他VFS对象"></a>其他VFS对象</h4><h5 id="和文件系统相关"><a href="#和文件系统相关" class="headerlink" title="和文件系统相关"></a><span style="color:red">和文件系统相关</span></h5><p>根据文件系统所在的物理介质和数据在物理介质上的组织方式来区分不同的文件系统类型的。<code>file_system_type</code>结构用于描述具体的文件系统的类型信息。被Linux支持的文件系统，都有且仅有一个<code>file_system_type</code>结构而不管它有零个或多个实例被安装到系统中。<br>而与此对应的是每当一个文件系统被实际安装，就有一个<code>vfsmount</code>结构体被创建，这个结构体对应一个安装点。<br>清单5. 和文件系统相关<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> file_system_type &#123;</div><div class="line">        <span class="keyword">const</span> <span class="keyword">char</span> *name;                <span class="comment">/*文件系统的名字*/</span></div><div class="line">        <span class="keyword">struct</span> subsystem subsys;         <span class="comment">/*sysfs子系统对象*/</span></div><div class="line">        <span class="keyword">int</span> fs_flags;                    <span class="comment">/*文件系统类型标志*/</span></div><div class="line"></div><div class="line">        <span class="comment">/*在文件系统被安装时，从磁盘中读取超级块,在内存中组装超级块对象*/</span></div><div class="line">        <span class="keyword">struct</span> super_block *(*get_sb) (<span class="keyword">struct</span> file_system_type*,</div><div class="line">                                        <span class="keyword">int</span>, <span class="keyword">const</span> <span class="keyword">char</span>*, <span class="keyword">void</span> *);</div><div class="line"></div><div class="line">        <span class="keyword">void</span> (*kill_sb) (<span class="keyword">struct</span> super_block *);  <span class="comment">/*终止访问超级块*/</span></div><div class="line">        <span class="keyword">struct</span> <span class="keyword">module</span> *owner;                    <span class="comment">/*文件系统模块*/</span></div><div class="line">        <span class="keyword">struct</span> file_system_type * next;          <span class="comment">/*链表中的下一个文件系统类型*/</span></div><div class="line">        <span class="keyword">struct</span> list_head fs_supers;              <span class="comment">/*具有同一种文件系统类型的超级块对象链表*/</span></div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">struct</span> vfsmount</div><div class="line">&#123;</div><div class="line">        <span class="keyword">struct</span> list_head mnt_hash;               <span class="comment">/*散列表*/</span></div><div class="line">        <span class="keyword">struct</span> vfsmount *mnt_parent;             <span class="comment">/*父文件系统*/</span></div><div class="line">        <span class="keyword">struct</span> dentry *mnt_mountpoint;           <span class="comment">/*安装点的目录项对象*/</span></div><div class="line">        <span class="keyword">struct</span> dentry *mnt_root;                 <span class="comment">/*该文件系统的根目录项对象*/</span></div><div class="line">        <span class="keyword">struct</span> super_block *mnt_sb;              <span class="comment">/*该文件系统的超级块*/</span></div><div class="line">        <span class="keyword">struct</span> list_head mnt_mounts;             <span class="comment">/*子文件系统链表*/</span></div><div class="line">        <span class="keyword">struct</span> list_head mnt_child;              <span class="comment">/*子文件系统链表*/</span></div><div class="line">        <span class="keyword">atomic_t</span> mnt_count;                      <span class="comment">/*使用计数*/</span></div><div class="line">        <span class="keyword">int</span> mnt_flags;                           <span class="comment">/*安装标志*/</span></div><div class="line">        <span class="keyword">char</span> *mnt_devname;                       <span class="comment">/*设备文件名*/</span></div><div class="line">        <span class="keyword">struct</span> list_head mnt_list;               <span class="comment">/*描述符链表*/</span></div><div class="line">        <span class="keyword">struct</span> list_head mnt_fslink;             <span class="comment">/*具体文件系统的到期列表*/</span></div><div class="line">        <span class="keyword">struct</span> <span class="keyword">namespace</span> *mnt_namespace;         <span class="comment">/*相关的名字空间*/</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h5 id="和进程相关"><a href="#和进程相关" class="headerlink" title="和进程相关"></a><span style="color:red">和进程相关</span></h5><p>清单6. 打开的文件集<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> files_struct &#123;<span class="comment">//打开的文件集</span></div><div class="line">        <span class="keyword">atomic_t</span> count;              <span class="comment">/*结构的使用计数*/</span></div><div class="line">        ……</div><div class="line">        <span class="keyword">int</span> max_fds;                 <span class="comment">/*文件对象数的上限*/</span></div><div class="line">        <span class="keyword">int</span> max_fdset;               <span class="comment">/*文件描述符的上限*/</span></div><div class="line">        <span class="keyword">int</span> next_fd;                 <span class="comment">/*下一个文件描述符*/</span></div><div class="line">        <span class="keyword">struct</span> file ** fd;           <span class="comment">/*全部文件对象数组*/</span></div><div class="line">        ……</div><div class="line"> &#125;;</div><div class="line"></div><div class="line"><span class="keyword">struct</span> fs_struct &#123;<span class="comment">//建立进程与文件系统的关系</span></div><div class="line">         <span class="keyword">atomic_t</span> count;              <span class="comment">/*结构的使用计数*/</span></div><div class="line">        <span class="keyword">rwlock_t</span> lock;               <span class="comment">/*保护该结构体的锁*/</span></div><div class="line">        <span class="keyword">int</span> umask；                  <span class="comment">/*默认的文件访问权限*/</span></div><div class="line">        <span class="keyword">struct</span> dentry * root;        <span class="comment">/*根目录的目录项对象*/</span></div><div class="line">        <span class="keyword">struct</span> dentry * pwd;         <span class="comment">/*当前工作目录的目录项对象*/</span></div><div class="line">        <span class="keyword">struct</span> dentry * altroot；    <span class="comment">/*可供选择的根目录的目录项对象*/</span></div><div class="line">        <span class="keyword">struct</span> vfsmount * rootmnt;   <span class="comment">/*根目录的安装点对象*/</span></div><div class="line">        <span class="keyword">struct</span> vfsmount * pwdmnt;    <span class="comment">/*pwd的安装点对象*/</span></div><div class="line">        <span class="keyword">struct</span> vfsmount * altrootmnt;<span class="comment">/*可供选择的根目录的安装点对象*/</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h5 id="和路径查找相关"><a href="#和路径查找相关" class="headerlink" title="和路径查找相关"></a><span style="color:red">和路径查找相关</span></h5><p>清单7. 辅助查找<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> nameidata &#123;</div><div class="line">        <span class="keyword">struct</span> dentry  *dentry;     <span class="comment">/*目录项对象的地址*/</span></div><div class="line">        <span class="keyword">struct</span> vfsmount  *mnt;      <span class="comment">/*安装点的数据*/</span></div><div class="line">        <span class="keyword">struct</span> qstr  last;          <span class="comment">/*路径中的最后一个component*/</span></div><div class="line">        <span class="keyword">unsigned</span> <span class="keyword">int</span>  flags;        <span class="comment">/*查找标识*/</span></div><div class="line">        <span class="keyword">int</span>  last_type;             <span class="comment">/*路径中的最后一个component的类型*/</span></div><div class="line">        <span class="keyword">unsigned</span>  depth;            <span class="comment">/*当前symbolic link的嵌套深度，不能大于6*/</span></div><div class="line">        <span class="keyword">char</span>   *saved_names[MAX_NESTED_LINKS + <span class="number">1</span>];/</div><div class="line">                                    <span class="comment">/*和嵌套symbolic link 相关的pathname*/</span></div><div class="line">        <span class="keyword">union</span> &#123;</div><div class="line">            <span class="keyword">struct</span> open_intent open; <span class="comment">/*说明文件该如何访问*/</span></div><div class="line">        &#125; intent;   <span class="comment">/*专用数据*/</span></div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h4 id="对象间的联系"><a href="#对象间的联系" class="headerlink" title="对象间的联系"></a>对象间的联系</h4><p>如上的数据结构并不是孤立存在的。正是通过它们的有机联系，VFS才能正常工作。如下的几张图是对它们之间的联系的描述。<br>如图5所示，被Linux支持的文件系统，都有且仅有一个<code>file_system_type</code>结构而不管它有零个或多个实例被安装到系统中。每安装一个文件系统，就对应有一个超级块和安装点。超级块通过它的一个域<code>s_type</code>指向其对应的具体的文件系统类型。具体的文件系统通过<code>file_system_type</code>中的一个域<code>fs_supers</code>链接具有同一种文件类型的超级块。同一种文件系统类型的超级块通过域<code>s_instances</code>链接。<br>图5. 超级块、安装点和具体的文件系统的关系<br><img src="/Kernel/内核文件系统/linux-vfs/vfs-fig5.jpg" alt="vfs-fig5.jpg" title=""><br>从图6可知：进程通过<code>task_struct</code>中的一个域<code>files_struct files</code>来了解它当前所打开的文件对象；而我们通常所说的文件描述符其实是进程打开的文件对象数组的索引值。文件对象通过域<code>f_dentry</code>找到它对应的<code>dentry</code>对象，再由<code>dentry</code>对象的域<code>d_inode</code>找到它对应的索引结点，这样就建立了文件对象与实际的物理文件的关联。最后，还有一点很重要的是,文件对象所对应的文件操作函数列表是通过索引结点的域<code>i_fop</code>得到的。图6对第三部分源码的理解起到很大的作用。<br>图6. 进程与超级块、文件、索引结点、目录项的关系<br><img src="/Kernel/内核文件系统/linux-vfs/vfs-fig6.jpg" alt="vfs-fig6.jpg" title=""></p>
+<h2 id="基于VFS的文件I-O"><a href="#基于VFS的文件I-O" class="headerlink" title="基于VFS的文件I/O"></a>基于VFS的文件I/O</h2><p>到目前为止，文章主要都是从理论上来讲述VFS的运行机制；接下来我们将深入源代码层中，通过阐述两个具有代表性的系统调用<code>sys_open()</code>和<code>sys_read()</code>来更好地理解VFS向具体文件系统提供的接口机制。由于本文更关注的是文件操作的整个流程体制，所以我们在追踪源代码时，对一些细节性的处理不予关心。又由于篇幅所限，只列出相关代码。本文中的源代码来自于linux-2.6.17内核版本。<br>在深入<code>sys_open()</code>和<code>sys_read()</code>之前，我们先概览下调用<code>sys_read()</code>的上下文。图7描述了从用户空间的<code>read()</code>调用到数据从磁盘读出的整个流程。当在用户应用程序调用文件I/O <code>read()</code>操作时，系统调用<code>sys_read()</code>被激发，<code>sys_read()</code>找到文件所在的具体文件系统，把控制权传给该文件系统，最后由具体文件系统与物理介质交互，从介质中读出数据。<br>图7. 从物理介质读数据的过程<br><img src="/Kernel/内核文件系统/linux-vfs/vfs-fig7.jpg" alt="vfs-fig7.jpg" title=""></p>
+<h3 id="sys-open"><a href="#sys-open" class="headerlink" title="sys_open()"></a>sys_open()</h3><p><code>sys_open()</code>系统调用打开或创建一个文件，成功返回该文件的文件描述符。图8是<code>sys_open()</code>实现代码中主要的函数调用关系图<br>图8. <code>sys_open</code>函数调用关系图<br><img src="/Kernel/内核文件系统/linux-vfs/vfs-fig8.jpg" alt="vfs-fig8.jpg" title=""><br>由于<code>sys_open()</code>的代码量大，函数调用关系复杂，以下主要是对该函数做整体的解析；而对其中的一些关键点，则列出其关键代码。<br><strong>a. 从<code>sys_open()</code>的函数调用关系图可以看到，<code>sys_open()</code>在做了一些简单的参数检验后，就把接力棒传给<code>do_sys_open()</code>：</strong><br>1）、首先，<code>get_unused_fd()</code>得到一个可用的文件描述符；通过该函数，可知文件描述符实质是进程打开文件列表中对应某个文件对象的索引值；<br>2）、接着，<code>do_filp_open()</code>打开文件，返回一个<code>file</code>对象，代表由该进程打开的一个文件；进程通过这样的一个数据结构对物理文件进行读写操作。<br>3）、最后，<code>fd_install()</code>建立文件描述符与<code>file</code>对象的联系，以后进程对文件的读写都是通过操纵该文件描述符而进行。<br><strong>b. <code>do_filp_open()</code>用于打开文件，返回一个<code>file</code>对象；而打开之前需要先找到该文件：</strong><br>1）、<code>open_namei()</code>用于根据文件路径名查找文件，借助一个持有路径信息的数据结构<code>nameidata</code>而进行；<br>2）、查找结束后将填充有路径信息的<code>nameidata</code>返回给接下来的函数<code>nameidata_to_filp()</code>从而得到最终的<code>file</code>对象；当达到目的后，<code>nameidata</code>这个数据结构将会马上被释放。<br><strong>c. <code>open_namei()</code>用于查找一个文件：</strong><br>1）、<code>path_lookup_open()</code>实现文件的查找功能；要打开的文件若不存在，还需要有一个新建的过程，则调用<code>path_lookup_create()</code>，后者和前者封装的是同一个实际的路径查找函数，只是参数不一样，使它们在处理细节上有所偏差；<br>2）、当是以新建文件的方式打开文件时，即设置了<code>O_CREAT</code>标识时需要创建一个新的索引节点，代表创建一个文件。在<code>vfs_create()</code>里的一句核心语句<code>dir-&gt;i_op-&gt;create(dir, dentry, mode, nd)</code>可知它调用了具体的文件系统所提供的创建索引节点的方法。注意：这边的索引节点的概念，还只是位于内存之中，它和磁盘上的物理的索引节点的关系就像位于内存中和位于磁盘中的文件一样。此时新建的索引节点还不能完全标志一个物理文件的成功创建，只有当把索引节点回写到磁盘上才是一个物理文件的真正创建。想想我们以新建的方式打开一个文件，对其读写但最终没有保存而关闭，则位于内存中的索引节点会经历从新建到消失的过程，而磁盘却始终不知道有人曾经想过创建一个文件，这是因为索引节点没有回写的缘故。<br>3）、<code>path_to_nameidata()</code>填充<code>nameidata</code>数据结构；<br>4）、<code>may_open()</code>检查是否可以打开该文件；一些文件如链接文件和只有写权限的目录是不能被打开的，先检查<code>nd-&gt;dentry-&gt;inode</code>所指的文件是否是这一类文件，是的话则错误返回。还有一些文件是不能以<code>TRUNC</code>的方式打开的，若<code>nd-&gt;dentry-&gt;inode</code>所指的文件属于这一类，则显式地关闭<code>TRUNC</code>标志位。接着如果有以<code>TRUNC</code>方式打开文件的，则更新<code>nd-&gt;dentry-&gt;inode</code>的信息</p>
+<h4 id="path-lookup-intent-open"><a href="#path-lookup-intent-open" class="headerlink" title="__path_lookup_intent_open()"></a>__path_lookup_intent_open()</h4><p>不管是<code>path_lookup_open()</code>还是<code>path_lookup_create()</code>最终都是调用<code>__path_lookup_intent_open()</code>来实现查找文件的功能。查找时，在遍历路径的过程中，会逐层地将各个路径组成部分解析成目录项对象，如果此目录项对象在目录项缓存中，则直接从缓存中获得；如果该目录项在缓存中不存在，则进行一次实际的读盘操作，从磁盘中读取该目录项所对应的索引节点。得到索引节点后，则建立索引节点与该目录项的联系。如此循环，直到最终找到目标文件对应的目录项，也就找到了索引节点，而由索引节点找到对应的超级块对象就可知道该文件所在的文件系统的类型。从磁盘中读取该目录项所对应的索引节点；这将引发VFS和实际的文件系统的一次交互。从前面的VFS理论介绍可知，读索引节点方法是由超级块来提供的。而当安装一个实际的文件系统时，在内存中创建的超级块的信息是由一个实际文件系统的相关信息来填充的，这里的相关信息就包括了实际文件系统所定义的超级块的操作函数列表，当然也就包括了读索引节点的具体执行方式。当继续追踪一个实际文件系统ext3的ext3_read_inode()时，可发现这个函数很重要的一个工作就是为不同的文件类型设置不同的索引节点操作函数表和文件操作函数表。<br>清单8. <code>ext3_read_inode</code><br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">ext3_read_inode</span><span class="params">(<span class="keyword">struct</span> inode * inode)</span></span></div><div class="line">    &#123;</div><div class="line">       ……</div><div class="line">       <span class="comment">//是普通文件</span></div><div class="line">       <span class="keyword">if</span> (S_ISREG(inode-&gt;i_mode)) &#123;</div><div class="line">          inode-&gt;i_op = &amp;ext3_file_inode_operations;</div><div class="line">          inode-&gt;i_fop = &amp;ext3_file_operations;</div><div class="line">          ext3_set_aops(inode);</div><div class="line">       &#125; <span class="keyword">else</span> <span class="keyword">if</span> (S_ISDIR(inode-&gt;i_mode)) &#123;</div><div class="line">          <span class="comment">//是目录文件</span></div><div class="line">          inode-&gt;i_op = &amp;ext3_dir_inode_operations;</div><div class="line">          inode-&gt;i_fop = &amp;ext3_dir_operations;</div><div class="line">       &#125; <span class="keyword">else</span> <span class="keyword">if</span> (S_ISLNK(inode-&gt;i_mode)) &#123;</div><div class="line">          <span class="comment">// 是连接文件</span></div><div class="line">          ……</div><div class="line">       &#125; <span class="keyword">else</span> &#123;</div><div class="line">          <span class="comment">// 如果以上三种情况都排除了，则是设备驱动</span></div><div class="line">          <span class="comment">//这里的设备还包括套结字、FIFO等伪设备</span></div><div class="line">          ……</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h4 id="nameidata-to-filp子函数：-dentry-open"><a href="#nameidata-to-filp子函数：-dentry-open" class="headerlink" title="nameidata_to_filp子函数：__dentry_open"></a>nameidata_to_filp子函数：__dentry_open</h4><p>这是VFS与实际的文件系统联系的一个关键点。从3.1.1小节分析中可知，调用实际文件系统读取索引节点的方法读取索引节点时，实际文件系统会根据文件的不同类型赋予索引节点不同的文件操作函数集，如普通文件有普通文件对应的一套操作函数，设备文件有设备文件对应的一套操作函数。这样当把对应的索引节点的文件操作函数集赋予文件对象，以后对该文件进行操作时，比如读操作，VFS虽然对各种不同文件都是执行同一个read()操作界面，但是真正读时，内核却知道怎么区分对待不同的文件类型。<br>清单9. <code>__dentry_open</code><br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">    <span class="keyword">static</span> <span class="keyword">struct</span> file *__dentry_open(<span class="keyword">struct</span> dentry *dentry, <span class="keyword">struct</span> vfsmount *mnt,</div><div class="line">					<span class="keyword">int</span> flags, <span class="keyword">struct</span> file *f,</div><div class="line">					<span class="keyword">int</span> (*open)(<span class="keyword">struct</span> inode *, <span class="keyword">struct</span> file *))</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">struct</span> inode *inode;</div><div class="line">        ……</div><div class="line">        <span class="comment">//整个函数的工作在于填充一个file对象</span></div><div class="line">        ……</div><div class="line">         f-&gt;f_mapping = inode-&gt;i_mapping;</div><div class="line">        f-&gt;f_dentry = dentry;</div><div class="line">        f-&gt;f_vfsmnt = mnt;</div><div class="line">        f-&gt;f_pos = <span class="number">0</span>;</div><div class="line">        <span class="comment">//将对应的索引节点的文件操作函数集赋予文件对象的操作列表</span></div><div class="line">        f-&gt;f_op = fops_get(inode-&gt;i_fop);</div><div class="line">        ……</div><div class="line">        <span class="comment">//若文件自己定义了open操作，则执行这个特定的open操作。</span></div><div class="line">        <span class="keyword">if</span> (!open &amp;&amp; f-&gt;f_op)</div><div class="line">           open = f-&gt;f_op-&gt;open;</div><div class="line">        <span class="keyword">if</span> (open) &#123;</div><div class="line">           error = open(inode, f);</div><div class="line">           <span class="keyword">if</span> (error)</div><div class="line">              <span class="keyword">goto</span> cleanup_all;</div><div class="line">        ……</div><div class="line">        <span class="keyword">return</span> f;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="sys-read"><a href="#sys-read" class="headerlink" title="sys_read()"></a>sys_read()</h3><p><code>sys_read()</code>系统调用用于从已打开的文件读取数据。如read成功，则返回读到的字节数。如已到达文件的尾端，则返回0。图9是<code>sys_read()</code>实现代码中的函数调用关系图。<br>图9. <code>sys_read</code>函数调用关系图<br><img src="/Kernel/内核文件系统/linux-vfs/vfs-fig9.jpg" alt="vfs-fig9.jpg" title=""><br>对文件进行读操作时，需要先打开它。从3.1小结可知，打开一个文件时，会在内存组装一个文件对象，希望对该文件执行的操作方法已在文件对象设置好。所以对文件进行读操作时，VFS在做了一些简单的转换后（由文件描述符得到其对应的文件对象；其核心思想是返回<code>current-&gt;files-&gt;fd[fd]</code>所指向的文件对象），就可以通过语句<code>file-&gt;f_op-&gt;read(file, buf, count, pos)</code>轻松调用实际文件系统的相应方法对文件进行读操作了。</p>
+<h2 id="4-解决问题"><a href="#4-解决问题" class="headerlink" title="4 解决问题"></a>4 解决问题</h2><h3 id="跨文件系统的文件操作的基本原理"><a href="#跨文件系统的文件操作的基本原理" class="headerlink" title="跨文件系统的文件操作的基本原理"></a>跨文件系统的文件操作的基本原理</h3><p>到此，我们也就能够解释在Linux中为什么能够跨文件系统地操作文件了。举个例子，将vfat格式的磁盘上的一个文件a.txt拷贝到ext3格式的磁盘上，命名为b.txt。这包含两个过程，对a.txt进行读操作，对b.txt进行写操作。读写操作前，需要先打开文件。由前面的分析可知，打开文件时，VFS会知道该文件对应的文件系统格式，以后操作该文件时，VFS会调用其对应的实际文件系统的操作方法。所以，VFS调用vfat的读文件方法将a.txt的数据读入内存；在将a.txt在内存中的数据映射到b.txt对应的内存空间后，VFS调用ext3的写文件方法将b.txt写入磁盘；从而实现了最终的跨文件系统的复制操作。</p>
+<h3 id="“一切皆是文件”的实现根本"><a href="#“一切皆是文件”的实现根本" class="headerlink" title="“一切皆是文件”的实现根本"></a>“一切皆是文件”的实现根本</h3><p>不论是普通的文件，还是特殊的目录、设备等，VFS都将它们同等看待成文件，通过同一套文件操作界面来对它们进行操作。操作文件时需先打开；打开文件时，VFS会知道该文件对应的文件系统格式；当VFS把控制权传给实际的文件系统时，实际的文件系统再做出具体区分，对不同的文件类型执行不同的操作。这也就是“一切皆是文件”的根本所在。</p>
+<h2 id="5-总结"><a href="#5-总结" class="headerlink" title="5 总结"></a>5 总结</h2><p>VFS即虚拟文件系统是Linux文件系统中的一个抽象软件层；因为它的支持，众多不同的实际文件系统才能在Linux中共存，跨文件系统操作才能实现。VFS借助它四个主要的数据结构即超级块、索引节点、目录项和文件对象以及一些辅助的数据结构，向Linux中不管是普通的文件还是目录、设备、套接字等都提供同样的操作界面，如打开、读写、关闭等。只有当把控制权传给实际的文件系统时，实际的文件系统才会做出区分，对不同的文件类型执行不同的操作。由此可见，正是有了VFS的存在，跨文件系统操作才能执行，Unix/Linux中的“一切皆是文件”的口号才能够得以实现。</p>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><p>[1].Claudia Salzberg Rodriguez, Gordon Fischer, Steven Smolski. The Linux Kernel Primer.机械工业出版社.2006.7<br>[2].Robert Love.Linux内核设计与实现(第二版).机械工业出版社.2007.1<br>[3].Stevens W.Richard.Unix环境高级编程(第二版).人民邮电出版社.2006<br>[4].杨芙清，陈向群.操作系统教程.北京大学出版社.2005.7<br>[5].Linux-2.6.17.13内核源代码</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/VFS/" rel="tag"># VFS</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/Kernel/设备驱动/analysis-of-platform-get-resource/" rel="next" title="platform_get_resource 函数实现细节">
+                <i class="fa fa-chevron-left"></i> platform_get_resource 函数实现细节
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/Kernel/内核文件系统/linux-fd/" rel="prev" title="linux中文件描述符fd和文件指针filp的理解">
+                linux中文件描述符fd和文件指针filp的理解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="Kernel/内核文件系统/linux-vfs/"
+     data-title="从文件 I/O 看 Linux 的虚拟文件系统"
+     data-content=""
+     data-url="https://jarsonfang.github.io/Kernel/内核文件系统/linux-vfs/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="Kernel/内核文件系统/linux-vfs/"
+           data-title="从文件 I/O 看 Linux 的虚拟文件系统" data-url="https://jarsonfang.github.io/Kernel/内核文件系统/linux-vfs/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Jarson Fang" />
+          <p class="site-author-name" itemprop="name">Jarson Fang</p>
+          <p class="site-description motion-element" itemprop="description">学习、工作、生活</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">68</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/jarsonfang" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/jarson-fang" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://tldp.org/LDP/abs/html/" title="ABS" target="_blank">ABS</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://git-scm.com/book/zh/" title="ProGit" target="_blank">ProGit</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://www.devbean.net/" title="DevBean" target="_blank">DevBean</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://coolshell.cn/" title="CoolShell" target="_blank">CoolShell</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://doc.rust-lang.org/book/" title="Rust-Book" target="_blank">Rust-Book</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/liigo/" title="Rust-庄晓立" target="_blank">Rust-庄晓立</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/rustcc/" title="Rust-中文社区" target="_blank">Rust-中文社区</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.wowotech.net/" title="蜗窝科技" target="_blank">蜗窝科技</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hexo.io/" title="Hexo" target="_blank">Hexo</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://theme-next.iissnan.com/" title="NexT" target="_blank">NexT</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://guides.github.com/features/mastering-markdown/" title="Mastering-Markdown" target="_blank">Mastering-Markdown</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.cirosantilli.com/markdown-style-guide/" title="Markdown-Style-Guide" target="_blank">Markdown-Style-Guide</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#引言"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VFS数据结构"><span class="nav-number">2.</span> <span class="nav-text">VFS数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#一些基本概念"><span class="nav-number">2.1.</span> <span class="nav-text">一些基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#VFS数据结构-1"><span class="nav-number">2.2.</span> <span class="nav-text">VFS数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#超级块对象"><span class="nav-number">2.2.1.</span> <span class="nav-text">超级块对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#索引节点对象"><span class="nav-number">2.2.2.</span> <span class="nav-text">索引节点对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#目录项对象"><span class="nav-number">2.2.3.</span> <span class="nav-text">目录项对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件对象"><span class="nav-number">2.2.4.</span> <span class="nav-text">文件对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#其他VFS对象"><span class="nav-number">2.2.5.</span> <span class="nav-text">其他VFS对象</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#和文件系统相关"><span class="nav-number">2.2.5.1.</span> <span class="nav-text">和文件系统相关</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#和进程相关"><span class="nav-number">2.2.5.2.</span> <span class="nav-text">和进程相关</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#和路径查找相关"><span class="nav-number">2.2.5.3.</span> <span class="nav-text">和路径查找相关</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对象间的联系"><span class="nav-number">2.2.6.</span> <span class="nav-text">对象间的联系</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基于VFS的文件I-O"><span class="nav-number">3.</span> <span class="nav-text">基于VFS的文件I/O</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sys-open"><span class="nav-number">3.1.</span> <span class="nav-text">sys_open()</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#path-lookup-intent-open"><span class="nav-number">3.1.1.</span> <span class="nav-text">__path_lookup_intent_open()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nameidata-to-filp子函数：-dentry-open"><span class="nav-number">3.1.2.</span> <span class="nav-text">nameidata_to_filp子函数：__dentry_open</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sys-read"><span class="nav-number">3.2.</span> <span class="nav-text">sys_read()</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-解决问题"><span class="nav-number">4.</span> <span class="nav-text">4 解决问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#跨文件系统的文件操作的基本原理"><span class="nav-number">4.1.</span> <span class="nav-text">跨文件系统的文件操作的基本原理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#“一切皆是文件”的实现根本"><span class="nav-number">4.2.</span> <span class="nav-text">“一切皆是文件”的实现根本</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-总结"><span class="nav-number">5.</span> <span class="nav-text">5 总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考文献"><span class="nav-number">6.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jarson Fang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"jarsonfang"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js?v=5.1.0"></script>
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

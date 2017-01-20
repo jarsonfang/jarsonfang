@@ -1,0 +1,981 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="学习, 工作, 生活" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="翻译原文链接：http://m.blog.csdn.net/blog/guoshaobei/4971881内核文档：Documentation/driver-model/platform.txt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="驱动模型之平台设备">
+<meta property="og:url" content="https://jarsonfang.github.io/Kernel/内核文档/platform/index.html">
+<meta property="og:site_name" content="Jarson's Blog">
+<meta property="og:description" content="翻译原文链接：http://m.blog.csdn.net/blog/guoshaobei/4971881内核文档：Documentation/driver-model/platform.txt">
+<meta property="og:updated_time" content="2017-01-20T12:32:12.359Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="驱动模型之平台设备">
+<meta name="twitter:description" content="翻译原文链接：http://m.blog.csdn.net/blog/guoshaobei/4971881内核文档：Documentation/driver-model/platform.txt">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '6327478655802934000',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jarsonfang.github.io/Kernel/内核文档/platform/"/>
+
+
+
+
+
+  <title> 驱动模型之平台设备 | Jarson's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Jarson's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle">静水深流，岁月安好</p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核文档/platform/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Jarson Fang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Jarson's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                驱动模型之平台设备
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2014-03-05T16:08:08+08:00">
+                2014-03-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kernel/" itemprop="url" rel="index">
+                    <span itemprop="name">Kernel</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kernel/内核文档/" itemprop="url" rel="index">
+                    <span itemprop="name">内核文档</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/Kernel/内核文档/platform/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/内核文档/platform/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>翻译原文链接：<a href="http://m.blog.csdn.net/blog/guoshaobei/4971881" target="_blank" rel="external">http://m.blog.csdn.net/blog/guoshaobei/4971881</a><br>内核文档：Documentation/driver-model/platform.txt<br><a id="more"></a></p>
+<h2 id="平台设备与驱动"><a href="#平台设备与驱动" class="headerlink" title="平台设备与驱动"></a>平台设备与驱动</h2><p>查看<linux platform_device.h="">中关于平台总线的驱动模型接口：平台设备和平台驱动。这个伪总线用于连接具有最小基础设施的总线上的设备，例如SOC上的用于集成外设的总线，或者是老式的PC互联总线，但是不包括大型的有规范定义的总线，比如PCI或者USB。</linux></p>
+<h3 id="平台设备"><a href="#平台设备" class="headerlink" title="平台设备"></a>平台设备</h3><p>平台设备是系统中一些典型的自治设备(autonomous entities)。包括老式的基于端口的设备，外设总线上的北桥(host bridge)，以及SOC上的绝大多数控制器。罕见地，一个平台设备通过一段其他类型的总线连接到系统，而它的寄存器仍然是直接寻址的。</p>
+<p>平台设备有一个’<code>name</code>‘域，用于驱动绑定；以及一个<code>resource</code>链表，诸如地址和IRQs。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> platform_device &#123;</div><div class="line">    <span class="keyword">const</span> <span class="keyword">char</span>    *name;</div><div class="line">    u32        id;</div><div class="line">    <span class="keyword">struct</span> device    dev;</div><div class="line">    u32        num_resources;</div><div class="line">    <span class="keyword">struct</span> resource    *resource;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<h3 id="平台驱动"><a href="#平台驱动" class="headerlink" title="平台驱动"></a>平台驱动</h3><p>平台驱动遵循标准驱动模型惯例，检测/枚举在驱动之外处理，而驱动提供<code>probe()</code>和<code>remove()</code>方法。它们使用标准惯例接口来支持电源管理和关闭通知。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> platform_driver &#123;</div><div class="line">    <span class="keyword">int</span> (*probe)(<span class="keyword">struct</span> platform_device *);</div><div class="line">    <span class="keyword">int</span> (*remove)(<span class="keyword">struct</span> platform_device *);</div><div class="line">    <span class="keyword">void</span> (*shutdown)(<span class="keyword">struct</span> platform_device *);</div><div class="line">    <span class="keyword">int</span> (*suspend)(<span class="keyword">struct</span> platform_device *, <span class="keyword">pm_message_t</span> state);</div><div class="line">    <span class="keyword">int</span> (*suspend_late)(<span class="keyword">struct</span> platform_device *, <span class="keyword">pm_message_t</span> state);</div><div class="line">    <span class="keyword">int</span> (*resume_early)(<span class="keyword">struct</span> platform_device *);</div><div class="line">    <span class="keyword">int</span> (*resume)(<span class="keyword">struct</span> platform_device *);</div><div class="line">    <span class="keyword">struct</span> device_driver driver;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>记住<code>probe()</code>函数应当验证指定的硬件设备的确存在；有时平台设置代码不能确认这一点。<code>probe()</code>能够使用设备的资源，包括时钟和设备平台数据(device platform_data)。</p>
+<p>平台驱动用下面正常的方式来注册它们自己：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">platform_driver_register</span><span class="params">(<span class="keyword">struct</span> platform_driver *drv)</span></span>;</div></pre></td></tr></table></figure></p>
+<p>或者，在设备没有热插拔功能的情况下，<code>probe()</code>函数可以放置到init section，以减少驱动在运行时的内存过度占用：<br><figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">int platform_driver_probe(struct platform_driver *drv,</div><div class="line">          int (*probe)(struct platform_device *))</div></pre></td></tr></table></figure></p>
+<h2 id="设备枚举"><a href="#设备枚举" class="headerlink" title="设备枚举"></a>设备枚举</h2><p>一般来说，平台相关(以及板极相关)的设置代码使用下列函数接口注册平台设备：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">platform_device_register</span><span class="params">(<span class="keyword">struct</span> platform_device *pdev)</span></span>;</div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">platform_add_devices</span><span class="params">(<span class="keyword">struct</span> platform_device **pdevs, <span class="keyword">int</span> ndev)</span></span>;</div></pre></td></tr></table></figure></p>
+<p>这个通用规则仅注册那些实际存在的设备，但在一些案例里其他的设备也可以注册。例如，内核也许需要配置来驱动一个额外的网络适配器工作，但是这个适配器并不是在所有的目标板上实际存在；类似地，内核也许需要配置来驱动一个集成的控制器，但是这个控制器在一些目标板上并没有挂载任何实际外设。</p>
+<p>在一些案例里，启动固件会导出一个表(tables)，来描述在一个给定的目标板上实际存在的设备。没有这样的表的话，通常系统设置代码来设置设备的唯一办法就是为特定的目标板编译一个特定内核。在嵌入式以及定制的系统开发里，编译针对某个特定目标板的内核是常用的方法。</p>
+<p>在许多案例中，与设备相关的内存和IRQ资源并不足以让设备驱动工作。板极设置代码将使用设备的 <code>platform_data</code>域来提供一些其他的重要的设备信息。</p>
+<p>嵌入式系统中的平台设备经常需要一个或者多个时钟，这些时钟除了在实际被用到的时候，通常保持关闭状态(节省电源)。系统也会设置这些与设备关联的时钟，通过调用<code>clk_get(&amp;pdev-&gt;dev, clock_name)</code>来返回所需要的时钟。</p>
+<h2 id="老式驱动：设备检测"><a href="#老式驱动：设备检测" class="headerlink" title="老式驱动：设备检测"></a>老式驱动：设备检测</h2><p>一些驱动并没有完全转换到新的设备驱动模型，因为他们还承担着一个驱动之外的职责：由驱动注册自己的平台设备，而不由系统基础设施完成。这样的驱动不能被热插拔或者冷插拔，因为热/冷插拔机制要求设备的创建放置在一些不同的系统组件里而不是驱动里。</p>
+<p>这种做法唯一’好’的理由是用于处理一些老式的系统设计，比如像以前的IBM PC机，依赖于容易出错的”probe-the-hardware”模型来进行硬件配置。新的系统设计已经取缔这种模式，更倾向于总线级的动态配置支持（PCI，USB），或者是由启动固件提供的设备列表（例如PNPACPI on x86）。关于什么东西出现在哪儿有太多冲突的可能,即使由操作系统来做有根据的猜测, 也难免因频繁出错而惹麻烦.</p>
+<p>这种驱动模型是不鼓励使用的。如果你在更新这样的驱动，请试图将设备枚举移植到一个更适合的地方，驱动之外。这样的据测可以使驱动净化，一开始处于正常的驱动模型，设备节点由PNP或者平台设备设置代码来完成。</p>
+<p>尽管如此，内核依然保留一些APIs来支持老式的驱动。尽量少用这些调用，除非你的驱动缺乏热插拔支持。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">struct</span> platform_device *<span class="title">platform_device_alloc</span><span class="params">(</span></span></div><div class="line">        <span class="keyword">const</span> <span class="keyword">char</span> *name, <span class="keyword">int</span> id);</div></pre></td></tr></table></figure></p>
+<p>你可以使用<code>platform_device_alloc()</code>来动态地分配一个设备，用它进行资源初始化和<code>platform_device_register()</code>调用。<br>通常一个更好的解决方案是：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">struct</span> platform_device *<span class="title">platform_device_register_simple</span><span class="params">(</span></span></div><div class="line">        <span class="keyword">const</span> <span class="keyword">char</span> *name, <span class="keyword">int</span> id,</div><div class="line">        <span class="keyword">struct</span> resource *res, <span class="keyword">unsigned</span> <span class="keyword">int</span> nres);</div></pre></td></tr></table></figure></p>
+<p>你可以使用<code>platform_device_register_simple()</code>调用，一步完成分配和注册一个设备。</p>
+<h2 id="设备命名和驱动绑定"><a href="#设备命名和驱动绑定" class="headerlink" title="设备命名和驱动绑定"></a>设备命名和驱动绑定</h2><p><code>platform_device.dev.bus_id</code>是设备的真正名称。它由两部分组成：</p>
+<ul>
+<li><code>platform_device.name</code> … 用于驱动匹配。</li>
+<li><code>platform_device.id</code> … 设备实例化号码，置为”-1“表示仅有一个设备。</li>
+</ul>
+<p>这两部分是连接在一起的，所以<code>name/id</code> “<code>serial/0</code>“表示了总线的<code>bus_id</code>是”<code>serial.0</code>“，”<code>serial/3</code>“表示了总线的<code>bus_id</code>是”<code>serial.3</code>“；他们都使用了名称为”<code>serial</code>“的平台驱动。而”<code>my_rtc/-1</code>“表示的<code>bus_id</code>是”<code>my_rtc</code>“(没有用id做后缀)，它使用了名称为”<code>my_rtc</code>“的平台驱动。</p>
+<p>驱动绑定由驱动核心(driver core)自动执行，当在设备和驱动之间查找到匹配时会调用驱动的<code>probe()</code>函数。如果<code>probe()</code>调用成功，驱动和设备绑定成功。有如下三种不同的方法来查找匹配：</p>
+<ul>
+<li>当一个设备注册后，总线的驱动就会被检测是否匹配。平台设备应当在系统启动的早期注册。</li>
+<li>当一个驱动使用<code>platform_driver_register()</code>注册后，总线上的所有的未绑定设备都会被检测是否匹配。驱动通常会在系统启动晚期注册，或者通过模块加载。</li>
+<li>使用<code>platform_driver_probe()</code>注册驱动与使用<code>platform_driver_register()</code>注册驱动差不多，唯一例外的是使用前者注册驱动后，如果之后有其他设备注册，该驱动不会被检测是否配。(这是可以的，因为这种接口仅用于没有热插拔功能的设备上)</li>
+</ul>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/Kernel/内核文档/devclass/" rel="next" title="驱动模型之设备类">
+                <i class="fa fa-chevron-left"></i> 驱动模型之设备类
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/Kernel/内核文档/kref/" rel="prev" title="记录内核对象生命周期的kref">
+                记录内核对象生命周期的kref <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="Kernel/内核文档/platform/"
+     data-title="驱动模型之平台设备"
+     data-content=""
+     data-url="https://jarsonfang.github.io/Kernel/内核文档/platform/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="Kernel/内核文档/platform/"
+           data-title="驱动模型之平台设备" data-url="https://jarsonfang.github.io/Kernel/内核文档/platform/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Jarson Fang" />
+          <p class="site-author-name" itemprop="name">Jarson Fang</p>
+          <p class="site-description motion-element" itemprop="description">学习、工作、生活</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">68</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/jarsonfang" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/jarson-fang" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://tldp.org/LDP/abs/html/" title="ABS" target="_blank">ABS</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://git-scm.com/book/zh/" title="ProGit" target="_blank">ProGit</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://www.devbean.net/" title="DevBean" target="_blank">DevBean</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://coolshell.cn/" title="CoolShell" target="_blank">CoolShell</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://doc.rust-lang.org/book/" title="Rust-Book" target="_blank">Rust-Book</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/liigo/" title="Rust-庄晓立" target="_blank">Rust-庄晓立</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/rustcc/" title="Rust-中文社区" target="_blank">Rust-中文社区</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.wowotech.net/" title="蜗窝科技" target="_blank">蜗窝科技</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hexo.io/" title="Hexo" target="_blank">Hexo</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://theme-next.iissnan.com/" title="NexT" target="_blank">NexT</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://guides.github.com/features/mastering-markdown/" title="Mastering-Markdown" target="_blank">Mastering-Markdown</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.cirosantilli.com/markdown-style-guide/" title="Markdown-Style-Guide" target="_blank">Markdown-Style-Guide</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#平台设备与驱动"><span class="nav-number">1.</span> <span class="nav-text">平台设备与驱动</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#平台设备"><span class="nav-number">1.1.</span> <span class="nav-text">平台设备</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#平台驱动"><span class="nav-number">1.2.</span> <span class="nav-text">平台驱动</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设备枚举"><span class="nav-number">2.</span> <span class="nav-text">设备枚举</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#老式驱动：设备检测"><span class="nav-number">3.</span> <span class="nav-text">老式驱动：设备检测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设备命名和驱动绑定"><span class="nav-number">4.</span> <span class="nav-text">设备命名和驱动绑定</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jarson Fang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"jarsonfang"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js?v=5.1.0"></script>
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

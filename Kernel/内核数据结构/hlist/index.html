@@ -1,0 +1,1016 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="学习, 工作, 生活" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="在Linux内核中，hlist（哈希链表）使用非常广泛，本文将对其数据结构和核心函数进行分析。
+和hlist相关的数据结构有两个
+
+hlist_head
+hlist_node1234567struct hlist_head &amp;#123;        struct hlist_node *first;&amp;#125;;struct hlist_node &amp;#123;        struct hli">
+<meta property="og:type" content="article">
+<meta property="og:title" content="linux内核链表之hlist">
+<meta property="og:url" content="https://jarsonfang.github.io/Kernel/内核数据结构/hlist/index.html">
+<meta property="og:site_name" content="Jarson's Blog">
+<meta property="og:description" content="在Linux内核中，hlist（哈希链表）使用非常广泛，本文将对其数据结构和核心函数进行分析。
+和hlist相关的数据结构有两个
+
+hlist_head
+hlist_node1234567struct hlist_head &amp;#123;        struct hlist_node *first;&amp;#125;;struct hlist_node &amp;#123;        struct hli">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/内核数据结构/hlist/hlist.jpg">
+<meta property="og:updated_time" content="2017-01-20T12:32:12.355Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="linux内核链表之hlist">
+<meta name="twitter:description" content="在Linux内核中，hlist（哈希链表）使用非常广泛，本文将对其数据结构和核心函数进行分析。
+和hlist相关的数据结构有两个
+
+hlist_head
+hlist_node1234567struct hlist_head &amp;#123;        struct hlist_node *first;&amp;#125;;struct hlist_node &amp;#123;        struct hli">
+<meta name="twitter:image" content="https://jarsonfang.github.io/Kernel/内核数据结构/hlist/hlist.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '6327478655802934000',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jarsonfang.github.io/Kernel/内核数据结构/hlist/"/>
+
+
+
+
+
+  <title> linux内核链表之hlist | Jarson's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Jarson's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle">静水深流，岁月安好</p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核数据结构/hlist/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Jarson Fang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Jarson's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                linux内核链表之hlist
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2014-03-08T11:54:51+08:00">
+                2014-03-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kernel/" itemprop="url" rel="index">
+                    <span itemprop="name">Kernel</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kernel/内核数据结构/" itemprop="url" rel="index">
+                    <span itemprop="name">内核数据结构</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/Kernel/内核数据结构/hlist/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/内核数据结构/hlist/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>在Linux内核中，hlist（哈希链表）使用非常广泛，本文将对其数据结构和核心函数进行分析。</p>
+<p>和hlist相关的数据结构有两个</p>
+<ol>
+<li>hlist_head</li>
+<li>hlist_node<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> hlist_head &#123;</div><div class="line">        <span class="keyword">struct</span> hlist_node *first;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">struct</span> hlist_node &#123;</div><div class="line">        <span class="keyword">struct</span> hlist_node *next, **pprev;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>顾名思义，<code>hlist_head</code>表示哈希表的头结点。哈希表中每一个 entry (hlist_head) 所对应的都是一个链表（hlist)，该链表的结点由<code>hlist_node</code>表示。<br><img src="/Kernel/内核数据结构/hlist/hlist.jpg" alt="hlist.jpg" title=""><br><code>hlist_head</code> 结构体只有一个域，即<code>first</code>。<code>first</code>指针指向该 hlist 链表的第一个节点。</p>
+<p><code>hlist_node</code>结构体有两个域，<code>next</code>和<code>pprev</code>。 <code>next</code>指针很容易理解，它指向下个<code>hlist_node</code>结点，倘若该节点是链表的最后一个节点，<code>next</code>指向<code>NULL</code>。</p>
+<p><code>pprev</code>是一个二级指针，为什么我们需要这样一个指针呢？它的好处是什么？<br><a id="more"></a></p>
+<p>在回答这个问题之前，我们先研究另一个问题：为什么散列表的实现需要两个不同的数据结构？</p>
+<p>散列表的目的是为了方便快速的查找，所以散列表通常是一个比较大的数组，否则“冲突”的概率会非常大，这样也就失去了散列表的意义。如何做到既能维护一张大表，又能不使用过多的内存呢？这就只能从数据结构上下功夫了。所以对于散列表的每个entry，它的结构体中只存放一个指针，解决了占用空间的问题。现在又出现了另一个问题：数据结构不一致。显然，如果<code>hlist_node</code>采用传统的<code>next</code>, <code>prev</code>指针，对于第一个节点和后面其他节点的处理会不一致。这样并不优雅，而且效率上也有损失。</p>
+<p><code>hlist_node</code>巧妙地将<code>pprev</code>指向上一个节点的<code>next</code>指针的地址，由于<code>hlist_head</code>和<code>hlist_node</code>指向的下一个节点的指针类型相同，这样就解决了通用性！</p>
+<p>下面我们再来看一看<code>hlist_node</code>这样设计之后，插入、删除这些基本操作会有什么不一样。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">void</span> __hlist_del(<span class="keyword">struct</span> hlist_node *n)</div><div class="line">&#123;</div><div class="line">        <span class="keyword">struct</span> hlist_node *next = n-&gt;next;</div><div class="line">        <span class="keyword">struct</span> hlist_node **pprev = n-&gt;pprev;</div><div class="line">        *pprev = next;</div><div class="line">        <span class="keyword">if</span> (next)</div><div class="line">                next-&gt;pprev = pprev;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>__hlist_del</code>用于删除节点<code>n</code>。</p>
+<p>首先获取<code>n</code>的下一个节点<code>next</code>，<code>n-&gt;pprev</code>指向<code>n</code>的前一个节点的<code>next</code>指针的地址，这样<code>*pprev</code>就代表<code>n</code>前一个节点的下一个节点（现在即<code>n</code>本身），第三行代码<code>*pprev=next;</code>就将<code>n</code>的前一个节点和下一个节点关联起来了。至此，<code>n</code> 节点的前一个节点的关联工作就完成了，现在再来完成后一个节点的关联工作。如果<code>n</code>是链表的最后一个节点，那么<code>n-&gt;next</code>即为空，则无需任何操作，否则，<code>next-&gt;pprev = pprev</code>。</p>
+<p>给链表增加一个节点需要考虑两个条件：</p>
+<ol>
+<li>链表首节点</li>
+<li>链表普通节点</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">void</span> <span class="title">hlist_add_head</span><span class="params">(<span class="keyword">struct</span> hlist_node *n, <span class="keyword">struct</span> hlist_head *h)</span></span></div><div class="line"> &#123;</div><div class="line">         <span class="keyword">struct</span> hlist_node *first = h-&gt;first;</div><div class="line">         n-&gt;next = first;</div><div class="line">         <span class="keyword">if</span> (first)</div><div class="line">                 first-&gt;pprev = &amp;n-&gt;next;</div><div class="line">         h-&gt;first = n;</div><div class="line">         n-&gt;pprev = &amp;h-&gt;first;</div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+<p>首先讨论条件1：<br><code>first = h-&gt;first;</code>获取当前链表的首个节点；<br><code>n-&gt;next = fist;</code> 将<code>n</code>作为链表的首个节点，让<code>first</code>往后靠；<br>先来看最后一行<code>n-&gt;pprev = &amp;h-&gt;first;</code>将<code>n</code>的<code>pprev</code>指向<code>hlist_head</code>的<code>first</code>指针，至此关于节点<code>n</code>的关联工作就做完了。<br>再来看倒数第二行<code>h-&gt;first = n;</code>将节点<code>h</code>的关联工作做完；<br>最后我们再来看原先的第一个节点的关联工作，对于它来说，仅仅需要更新一下<code>pprev</code>的关联信息：<code>first-&gt;pprev = &amp;n-&gt;next;</code></p>
+<p>接下来讨论条件2，这里也包括两种情况：<br>a) 插在当前节点的前面<br>b) 插在当前节点的后面</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/* next must be != NULL */</span></div><div class="line"> <span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">void</span> <span class="title">hlist_add_before</span><span class="params">(<span class="keyword">struct</span> hlist_node *n,</span></span></div><div class="line">                                         <span class="keyword">struct</span> hlist_node *next)</div><div class="line"> &#123;</div><div class="line">         n-&gt;pprev = next-&gt;pprev;</div><div class="line">         n-&gt;next = next;</div><div class="line">         next-&gt;pprev = &amp;n-&gt;next;</div><div class="line">         *(n-&gt;pprev) = n;</div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+<p>先讨论情况 a)：将节点<code>n</code>插到<code>next</code>之前（<code>n</code>是新插入的节点)</p>
+<p>还是一个一个节点的搞定（一共三个节点），先搞定节点<code>n</code>，</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">n-&gt;pprev = next-&gt;prev;</div></pre></td></tr></table></figure>
+<p>将<code>next</code>的<code>pprev</code>赋值给<code>n-&gt;pprev</code>，<code>n</code>取代<code>next</code>的位置，</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">n-&gt;next = next;</div></pre></td></tr></table></figure>
+<p>将<code>next</code>作为<code>n</code>的下一个节点，至此节点<code>n</code>的关联动作完成。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">next-&gt;pprev = &amp;n-&gt;next;</div></pre></td></tr></table></figure>
+<p><code>next</code>的关联动作完成。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">*(n-&gt;pprev) = n;</div></pre></td></tr></table></figure>
+<p><code>n-&gt;pprev</code>表示<code>n</code>的前一个节点的next指针，<code>*(n-&gt;pprev)</code>则表示<code>n</code>的前一个节点<code>next</code>指针所指向下一个节点的内容，这里将<code>n</code>赋值给它，正好完成它的关联工作。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">void</span> <span class="title">hlist_add_after</span><span class="params">(<span class="keyword">struct</span> hlist_node *n,</span></span></div><div class="line">                                         <span class="keyword">struct</span> hlist_node *next)</div><div class="line"> &#123;</div><div class="line">         next-&gt;next = n-&gt;next;</div><div class="line">         n-&gt;next = next;</div><div class="line">         next-&gt;pprev = &amp;n-&gt;next;</div><div class="line"></div><div class="line">         <span class="keyword">if</span>(next-&gt;next)</div><div class="line">                 next-&gt;next-&gt;pprev  = &amp;next-&gt;next;</div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+<p>再来看情况 b)：将结点<code>next</code>插入到n之后(<code>next</code>是新插入的节点）<br>具体步骤就不分析了，应该也很容易。</p>
+<p>下面我还要介绍一个函数：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">hlist_unhashed</span><span class="params">(<span class="keyword">const</span> <span class="keyword">struct</span> hlist_node *h)</span></span></div><div class="line"> &#123;</div><div class="line">         <span class="keyword">return</span> !h-&gt;pprev;</div><div class="line"> &#125;</div></pre></td></tr></table></figure></p>
+<p>这个函数的目的是判断该节点是否已经存在hash表中。这里处理得很巧妙，判断指向前一个节点的next指针的地址是否为空。</p>
+<h2 id="其他接口"><a href="#其他接口" class="headerlink" title="其他接口"></a>其他接口</h2><p><strong>初始化</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> HLIST_HEAD_INIT &#123; .first = NULL &#125;</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> HLIST_HEAD(name) struct hlist_head name = &#123;  .first = NULL &#125;</span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> INIT_HLIST_HEAD(ptr) ((ptr)-&gt;first = NULL)</span></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">void</span> <span class="title">INIT_HLIST_NODE</span><span class="params">(<span class="keyword">struct</span> hlist_node *h)</span></span></div><div class="line">&#123;</div><div class="line">        h-&gt;next = <span class="literal">NULL</span>;</div><div class="line">        h-&gt;pprev = <span class="literal">NULL</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><strong>链表判空</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">int</span> <span class="title">hlist_empty</span><span class="params">(<span class="keyword">const</span> <span class="keyword">struct</span> hlist_head *h)</span></span></div><div class="line">&#123;</div><div class="line">        <span class="keyword">return</span> !h-&gt;first;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><strong>节点删除</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">void</span> <span class="title">hlist_del</span><span class="params">(<span class="keyword">struct</span> hlist_node *n)</span></span></div><div class="line">&#123;</div><div class="line">        __hlist_del(n);</div><div class="line">        n-&gt;next = LIST_POISON1;</div><div class="line">        n-&gt;pprev = LIST_POISON2;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">inline</span> <span class="keyword">void</span> <span class="title">hlist_del_init</span><span class="params">(<span class="keyword">struct</span> hlist_node *n)</span></span></div><div class="line">&#123;</div><div class="line">        <span class="keyword">if</span> (!hlist_unhashed(n)) &#123;</div><div class="line">                __hlist_del(n);</div><div class="line">                INIT_HLIST_NODE(n);</div><div class="line">        &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h2 id="链表遍历"><a href="#链表遍历" class="headerlink" title="链表遍历"></a>链表遍历</h2><p><strong>hlist_entry</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> hlist_entry(ptr, type, member) container_of(ptr,type,member)</span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> hlist_entry_safe(ptr, type, member) \</span></div><div class="line">        (&#123; typeof(ptr) ____ptr = (ptr); \</div><div class="line">           ____ptr ? hlist_entry(____ptr, type, member) : NULL; \</div><div class="line">        &#125;)</div></pre></td></tr></table></figure>
+<p><strong>hlist_for_each</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> hlist_for_each(pos, head) \</span></div><div class="line">        for (pos = (head)-&gt;first; pos ; pos = pos-&gt;next)</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> hlist_for_each_safe(pos, n, head) \</span></div><div class="line">        for (pos = (head)-&gt;first; pos &amp;&amp; (&#123; n = pos-&gt;next; 1; &#125;); \</div><div class="line">             pos = n)</div></pre></td></tr></table></figure>
+<p><strong>hlist_for_each_entry</strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * hlist_for_each_entry - iterate over list of given type</div><div class="line"> * @pos:        the type * to use as a loop cursor.</div><div class="line"> * @head:       the head for your list.</div><div class="line"> * @member:     the name of the hlist_node within the struct.</div><div class="line"> */</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> hlist_for_each_entry(pos, head, member)                         \</span></div><div class="line">        for (pos = hlist_entry_safe((head)-&gt;first, typeof(*(pos)), member);\</div><div class="line">             pos;                                                       \</div><div class="line">             pos = hlist_entry_safe((pos)-&gt;member.next, typeof(*(pos)), member))</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * hlist_for_each_entry_continue - iterate over a hlist continuing after current point</div><div class="line"> * @pos:        the type * to use as a loop cursor.</div><div class="line"> * @member:     the name of the hlist_node within the struct.</div><div class="line"> */</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> hlist_for_each_entry_continue(pos, member)                      \</span></div><div class="line">        for (pos = hlist_entry_safe((pos)-&gt;member.next, typeof(*(pos)), member);\</div><div class="line">             pos;                                                       \</div><div class="line">             pos = hlist_entry_safe((pos)-&gt;member.next, typeof(*(pos)), member))</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * hlist_for_each_entry_from - iterate over a hlist continuing from current point</div><div class="line"> * @pos:        the type * to use as a loop cursor.</div><div class="line"> * @member:     the name of the hlist_node within the struct.</div><div class="line"> */</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> hlist_for_each_entry_from(pos, member)                          \</span></div><div class="line">        for (; pos;                                                     \</div><div class="line">             pos = hlist_entry_safe((pos)-&gt;member.next, typeof(*(pos)), member))</div><div class="line"></div><div class="line"><span class="comment">/**</span></div><div class="line"> * hlist_for_each_entry_safe - iterate over list of given type safe against removal of list entry</div><div class="line"> * @pos:        the type * to use as a loop cursor.</div><div class="line"> * @n:          another &amp;struct hlist_node to use as temporary storage</div><div class="line"> * @head:       the head for your list.</div><div class="line"> * @member:     the name of the hlist_node within the struct.</div><div class="line"> */</div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> hlist_for_each_entry_safe(pos, n, head, member)                 \</span></div><div class="line">        for (pos = hlist_entry_safe((head)-&gt;first, typeof(*pos), member);\</div><div class="line">             pos &amp;&amp; (&#123; n = pos-&gt;member.next; 1; &#125;);                     \</div><div class="line">             pos = hlist_entry_safe(n, typeof(*pos), member))</div></pre></td></tr></table></figure>
+<h2 id="参考原文"><a href="#参考原文" class="headerlink" title="参考原文"></a>参考原文</h2><p><a href="http://blog.csdn.net/zhanglei4214/article/details/6767288" target="_blank" rel="external">linux内核hlist分析</a><br><a href="http://blog.csdn.net/ronliu/article/details/6425368" target="_blank" rel="external">内核数据结构：hlist_head </a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/Kernel/内核数据结构/list-head/" rel="next" title="linux内核链表之list_head">
+                <i class="fa fa-chevron-left"></i> linux内核链表之list_head
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/Kernel/内核数据结构/klist/" rel="prev" title="linux内核链表之klist">
+                linux内核链表之klist <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="Kernel/内核数据结构/hlist/"
+     data-title="linux内核链表之hlist"
+     data-content=""
+     data-url="https://jarsonfang.github.io/Kernel/内核数据结构/hlist/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="Kernel/内核数据结构/hlist/"
+           data-title="linux内核链表之hlist" data-url="https://jarsonfang.github.io/Kernel/内核数据结构/hlist/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Jarson Fang" />
+          <p class="site-author-name" itemprop="name">Jarson Fang</p>
+          <p class="site-description motion-element" itemprop="description">学习、工作、生活</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">68</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/jarsonfang" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/jarson-fang" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://tldp.org/LDP/abs/html/" title="ABS" target="_blank">ABS</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://git-scm.com/book/zh/" title="ProGit" target="_blank">ProGit</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://www.devbean.net/" title="DevBean" target="_blank">DevBean</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://coolshell.cn/" title="CoolShell" target="_blank">CoolShell</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://doc.rust-lang.org/book/" title="Rust-Book" target="_blank">Rust-Book</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/liigo/" title="Rust-庄晓立" target="_blank">Rust-庄晓立</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/rustcc/" title="Rust-中文社区" target="_blank">Rust-中文社区</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.wowotech.net/" title="蜗窝科技" target="_blank">蜗窝科技</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hexo.io/" title="Hexo" target="_blank">Hexo</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://theme-next.iissnan.com/" title="NexT" target="_blank">NexT</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://guides.github.com/features/mastering-markdown/" title="Mastering-Markdown" target="_blank">Mastering-Markdown</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.cirosantilli.com/markdown-style-guide/" title="Markdown-Style-Guide" target="_blank">Markdown-Style-Guide</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#其他接口"><span class="nav-number">1.</span> <span class="nav-text">其他接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#链表遍历"><span class="nav-number">2.</span> <span class="nav-text">链表遍历</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考原文"><span class="nav-number">3.</span> <span class="nav-text">参考原文</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jarson Fang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"jarsonfang"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js?v=5.1.0"></script>
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

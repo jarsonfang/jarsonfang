@@ -1,0 +1,1013 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="VFS," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="原文：http://www.ibm.com/developerworks/cn/linux/l-cn-relay/index.html
+Relay 是一种从 Linux 内核到用户空间的高效数据传输技术。通过用户定义的 relay 通道，内核空间的程序能够高效、可靠、便捷地将数据传输到用户空间。Relay 特别适用于内核空间有大量数据需要传输到用户空间的情形，目前已经广泛应用在内核调试工具如 Sy">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Relay：一种内核到用户空间的高效数据传输技术">
+<meta property="og:url" content="https://jarsonfang.github.io/Kernel/内核文件系统/relay/index.html">
+<meta property="og:site_name" content="Jarson's Blog">
+<meta property="og:description" content="原文：http://www.ibm.com/developerworks/cn/linux/l-cn-relay/index.html
+Relay 是一种从 Linux 内核到用户空间的高效数据传输技术。通过用户定义的 relay 通道，内核空间的程序能够高效、可靠、便捷地将数据传输到用户空间。Relay 特别适用于内核空间有大量数据需要传输到用户空间的情形，目前已经广泛应用在内核调试工具如 Sy">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/内核文件系统/relay/relay.png">
+<meta property="og:updated_time" content="2017-01-20T12:32:12.359Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Relay：一种内核到用户空间的高效数据传输技术">
+<meta name="twitter:description" content="原文：http://www.ibm.com/developerworks/cn/linux/l-cn-relay/index.html
+Relay 是一种从 Linux 内核到用户空间的高效数据传输技术。通过用户定义的 relay 通道，内核空间的程序能够高效、可靠、便捷地将数据传输到用户空间。Relay 特别适用于内核空间有大量数据需要传输到用户空间的情形，目前已经广泛应用在内核调试工具如 Sy">
+<meta name="twitter:image" content="https://jarsonfang.github.io/Kernel/内核文件系统/relay/relay.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '6327478655802934000',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jarsonfang.github.io/Kernel/内核文件系统/relay/"/>
+
+
+
+
+
+  <title> Relay：一种内核到用户空间的高效数据传输技术 | Jarson's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Jarson's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle">静水深流，岁月安好</p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核文件系统/relay/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Jarson Fang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Jarson's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Relay：一种内核到用户空间的高效数据传输技术
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2015-04-11T18:37:26+08:00">
+                2015-04-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kernel/" itemprop="url" rel="index">
+                    <span itemprop="name">Kernel</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kernel/内核文件系统/" itemprop="url" rel="index">
+                    <span itemprop="name">内核文件系统</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/Kernel/内核文件系统/relay/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/内核文件系统/relay/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>原文：<a href="http://www.ibm.com/developerworks/cn/linux/l-cn-relay/index.html" target="_blank" rel="external">http://www.ibm.com/developerworks/cn/linux/l-cn-relay/index.html</a></p>
+<p>Relay 是一种从 Linux 内核到用户空间的高效数据传输技术。通过用户定义的 relay 通道，内核空间的程序能够高效、可靠、便捷地将数据传输到用户空间。Relay 特别适用于内核空间有大量数据需要传输到用户空间的情形，目前已经广泛应用在内核调试工具如 SystemTap中。本文介绍了 Relay 的历史和原理，并且用一个简单的实例介绍了 Relay 的具体用法。<br><a id="more"></a></p>
+<h2 id="Relay要解决的问题"><a href="#Relay要解决的问题" class="headerlink" title="Relay要解决的问题"></a>Relay要解决的问题</h2><p>对于任何在内核工作的程序而言，如何把大量的调试信息从内核空间传输到用户空间都是一个大麻烦，对于运行中的内核更是如此。特别是对于哪些用于调试内核性能的工具，更是如此。</p>
+<p>对于这种大量数据需要在内核中缓存并传输到用户空间需求，很多传统的方法都已到达了极限，例如内核程序员很熟悉的<code>printk()</code>调用。此外，如果不同的内核子系统都开发自己的缓存和传输代码，造成很大的代码冗余，而且也带来维护上的困难。</p>
+<p>这些，都要求开发一套能够高效可靠地将数据从内核空间转发到用户空间的系统，而且这个系统应该独立于各个调试子系统。</p>
+<p>这样就诞生了 RelayFS。</p>
+<h2 id="Relay的发展历史"><a href="#Relay的发展历史" class="headerlink" title="Relay的发展历史"></a>Relay的发展历史</h2><p>Relay的前身是RelayFS，即作为Linux的一个新型文件系统。2003年3月，RelayFS的第一个版本的代码被开发出来，在7月14日，第一个针对2.6内核的版本也开始提供下载。经过广泛的试用和改进，直到2005年9月，RelayFS才被加入mainline内核(2.6.14)。同时，RelayFS也被移植到2.4内核中。在2006年2月，从2.6.17开始，RelayFS不再作为单独的文件系统存在，而是成为内核的一部分。它的源码也从fs/目录下转移到kernel/relay.c中，名称中也从RelayFS改成了Relay。</p>
+<p>RelayFS目前已经被越来越多的内核工具使用，包括内核调试工具SystemTap、LTT，以及一些特殊的文件系统例如DebugFS。</p>
+<h2 id="Relay的基本原理"><a href="#Relay的基本原理" class="headerlink" title="Relay的基本原理"></a>Relay的基本原理</h2><p>总的说来，Relay提供了一种机制，使得内核空间的程序能够通过用户定义的relay通道(channel)将大量数据高效的传输到用户空间。</p>
+<p>一个relay通道由一组和CPU一一对应的内核缓冲区组成。这些缓冲区又被称为relay缓冲区(buffer)，其中的每一个在用户空间都用一个常规文件来表示，这被叫做relay文件(file)。内核空间的用户可以利用relay提供的API接口来写入数据，这些数据会被自动的写入当前的CPU id对应的那个relay缓冲区；同时，这些缓冲区从用户空间看来，是一组普通文件，可以直接使用read()进行读取，也可以使用mmap()进行映射。Relay并不关心数据的格式和内容，这些完全依赖于使用relay的用户程序。Relay的目的是提供一个足够简单的接口，从而使得基本操作尽可能的高效。</p>
+<p>Relay将数据的读和写分离，使得突发性大量数据写入的时候，不需要受限于用户空间相对较慢的读取速度，从而大大提高了效率。Relay作为写入和读取的桥梁，也就是将内核用户写入的数据缓存并转发给用户空间的程序。这种转发机制也正是Relay这个名称的由来。</p>
+<p>下面这个图给出了Relay的基本结构和典型操作：<br><img src="/Kernel/内核文件系统/relay/relay.png" alt="relay.png" title=""><br>可以看到，这里的relay通道由四个relay缓冲区(<code>kbuf0</code>到<code>kbuf3</code>)组成，分别对应于系统中的<code>cpu0</code>到<code>cpu3</code>。每个CPU上的代码调用<code>relay_write()</code>的时候将数据写入自己对应的relay缓冲区内。每个relay缓冲区称一个relay文件，即<code>/cpu0</code>到<code>/cpu3</code>。当文件系统被mount到<code>/mnt/</code>以后，这个relay文件就被映射成映射到用户空间的地址空间。一旦数据可用，用户程序就可以把它的数据读出来写入到硬盘上的文件中，即<code>cpu0.out</code>到<code>cpu3.out</code>。</p>
+<h2 id="Relay的主要API"><a href="#Relay的主要API" class="headerlink" title="Relay的主要API"></a>Relay的主要API</h2><p>前面提到的<code>relay_write()</code>就是 relay API 之一。除此以外，Relay 还提供了更多的 API来支持用户程序完整的使用 relay。这些 API，主要按照面向用户空间和面向内核空间分为两大类，下面我们来分别进行介绍。</p>
+<p><strong>面向用户空间的API</strong></p>
+<p>这些 Relay 编程接口向用户空间程序提供了访问 relay 通道缓冲区数据的基本操作的入口，包括：</p>
+<ul>
+<li><code>open()</code> 允许用户打开一个已经存在的通道缓冲区</li>
+<li><code>mmap()</code> 使通道缓冲区被映射到位于用户空间的调用者的地址空间。要特别注意的是，我们不能仅对局部区域进行映射。也就是说，必须映射整个缓冲区文件，其大小是CPU的个数和单个CPU缓冲区大小的乘积</li>
+<li><code>read()</code> 读取通道缓冲区的内容。这些数据一旦被读出，就意味着他们被用户空间的程序消费掉了，也就不能被之后的读操作看到</li>
+<li><code>sendfile()</code> 将数据从通道缓冲区传输到一个输出文件描述符。其中可能的填充字符会被自动去掉，不会被用户看到</li>
+<li><code>poll()</code> 支持 POLLIN/POLLRDNORM/POLLERR 信号。每次子缓冲区的边界被越过时，等待着的用户空间程序会得到通知</li>
+<li><code>close()</code> 将通道缓冲区的引用数减1。当引用数减为0时，表明没有进程或者内核用户需要打开它，从而这个通道缓冲区被释放。</li>
+</ul>
+<p><strong>面向内核空间的API</strong></p>
+<p>这些API接口向位于内核空间的用户提供了管理relay通道、数据写入等功能。下面介绍其中主要的部分，完整的API接口列表请参见这里。</p>
+<ul>
+<li><code>relay_open()</code> 创建一个relay通道，包括创建每个CPU对应的relay缓冲区。</li>
+<li><code>relay_close()</code> 关闭一个relay通道，包括释放所有的relay缓冲区，在此之前会调用<code>relay_switch()</code>来处理这些relay缓冲区以保证已读取但是未满的数据不会丢失。</li>
+<li><code>relay_write()</code> 将数据写入到当前CPU对应的relay缓冲区内。由于它使用了<code>local_irqsave()</code>保护，因此也可以在中断上下文中使用。</li>
+<li><code>relay_reserve()</code> 在relay通道中保留一块连续的区域来留给未来的写入操作。这通常用于那些希望直接写入到relay缓冲区的用户。考虑到性能或者其它因素，这些用户不希望先把数据写到一个临时缓冲区中，然后再通过<code>relay_write()</code>进行写入。</li>
+</ul>
+<h2 id="Relay的例子"><a href="#Relay的例子" class="headerlink" title="Relay的例子"></a>Relay的例子</h2><p>我们用一个最简单的例子来介绍怎么使用Relay。这个例子由两部分组成：一部分是位于内核空间将数据写入relay文件的程序，使用时需要作为一个内核模块被加载；另一部分是位于用户空间从relay文件中读取数据的程序，使用时作为普通用户态程序运行。</p>
+<p><strong>内核空间的程序主要操作</strong></p>
+<ul>
+<li>加载模块时，打开一个relay通道，并且往打开的relay通道中写入消息；</li>
+<li>卸载模块时，关闭relay通道。</li>
+</ul>
+<p>程序内容：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/*</span></div><div class="line"> * hello-mod.c</div><div class="line"> * a kernel-space client example of relayfs filesystem</div><div class="line"> */</div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/module.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;linux/relayfs_fs.h&gt;</span></span></div><div class="line"><span class="keyword">static</span> <span class="keyword">struct</span> rchan *hello_rchan;</div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">init_module</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line">&#123;</div><div class="line">        <span class="keyword">const</span> <span class="keyword">char</span> *msg=<span class="string">"Hello world\n"</span>;</div><div class="line">        hello_rchan = relay_open(<span class="string">"cpu"</span>, <span class="literal">NULL</span>, <span class="number">8192</span>, <span class="number">2</span>, <span class="literal">NULL</span>);</div><div class="line">        <span class="keyword">if</span>(!hello_rchan)&#123;</div><div class="line">                printk(<span class="string">"relay_open() failed.\n"</span>);</div><div class="line">                <span class="keyword">return</span> -ENOMEM;</div><div class="line">        &#125;</div><div class="line">        relay_write(hello_rchan, msg, <span class="built_in">strlen</span>(msg));</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">cleanup_module</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line">&#123;</div><div class="line">        <span class="keyword">if</span>(hello_rchan) &#123;</div><div class="line">                relay_close(hello_rchan);</div><div class="line">                hello_rchan = <span class="literal">NULL</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span>;</div><div class="line">&#125;</div><div class="line">MODULE_LICENSE (<span class="string">"GPL"</span>);</div><div class="line">MODULE_DESCRIPTION (<span class="string">"Simple example of Relay"</span>);</div></pre></td></tr></table></figure></p>
+<p><strong>用户空间的函数主要操作</strong></p>
+<ul>
+<li>如果relayfs文件系统还没有被mount，则将其mount到目录/mnt/relay上；</li>
+<li>遍历每一个CPU对应的缓冲文件<ul>
+<li>打开文件</li>
+<li>读取所有文件内容</li>
+<li>关闭文件</li>
+</ul>
+</li>
+<li>最后，umount掉relay文件系统。</li>
+</ul>
+<p>程序内容：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/*</span></div><div class="line"> * audience.c</div><div class="line"> * a user-space client example of relayfs filesystem</div><div class="line"> */</div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/types.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/stat.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sys/mount.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;fcntl.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sched.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;errno.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> MAX_BUFLEN 256</span></div><div class="line"><span class="keyword">const</span> <span class="keyword">char</span> filename_base[]=<span class="string">"/mnt/relay/cpu"</span>;</div><div class="line"><span class="comment">// implement your own get_cputotal() before compilation</span></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">get_cputotal</span><span class="params">(<span class="keyword">void</span>)</span></span>;</div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></div><div class="line">&#123;</div><div class="line">        <span class="keyword">char</span> filename[<span class="number">128</span>]=&#123;<span class="number">0</span>&#125;;</div><div class="line">        <span class="keyword">char</span> buf[MAX_BUFLEN];</div><div class="line">        <span class="keyword">int</span> fd, c, i, bytesread, cputotal = <span class="number">0</span>;</div><div class="line">        <span class="keyword">if</span>(mount(<span class="string">"relayfs"</span>, <span class="string">"/mnt/relay"</span>, <span class="string">"relayfs"</span>, <span class="number">0</span>, <span class="literal">NULL</span>)</div><div class="line">                        &amp;&amp; (errno != EBUSY)) &#123;</div><div class="line">                <span class="built_in">printf</span>(<span class="string">"mount() failed: %s\n"</span>, strerror(errno));</div><div class="line">                <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">        &#125;</div><div class="line">        cputotal = get_cputotal();</div><div class="line">        <span class="keyword">if</span>(cputotal &lt;= <span class="number">0</span>) &#123;</div><div class="line">                <span class="built_in">printf</span>(<span class="string">"invalid cputotal value: %d\n"</span>, cputotal);</div><div class="line">                <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">for</span>(i=<span class="number">0</span>; i&lt;cputotal; i++) &#123;</div><div class="line">                <span class="comment">// open per-cpu file</span></div><div class="line">                <span class="built_in">sprintf</span>(filename, <span class="string">"%s%d"</span>, filename_base, i);</div><div class="line">                fd = open(filename, O_RDONLY);</div><div class="line">                <span class="keyword">if</span> (fd &lt; <span class="number">0</span>) &#123;</div><div class="line">                        <span class="built_in">printf</span>(<span class="string">"fopen() failed: %s\n"</span>, strerror(errno));</div><div class="line">                        <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">                &#125;</div><div class="line">                <span class="comment">// read per-cpu file</span></div><div class="line">                bytesread = read(fd, buf, MAX_BUFLEN);</div><div class="line">                <span class="keyword">while</span>(bytesread &gt; <span class="number">0</span>) &#123;</div><div class="line">                        buf[bytesread] = <span class="string">'\0'</span>;</div><div class="line">                        <span class="built_in">puts</span>(buf);</div><div class="line">                        bytesread = read(fd, buf, MAX_BUFLEN);</div><div class="line">                &#125;;</div><div class="line">                <span class="comment">// close per-cpu file</span></div><div class="line">                <span class="keyword">if</span>(fd &gt; <span class="number">0</span>) &#123;</div><div class="line">                        close(fd);</div><div class="line">                        fd = <span class="number">0</span>;</div><div class="line">                &#125;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span>(umount(<span class="string">"/mnt/relay"</span>) &amp;&amp; (errno != EINVAL)) &#123;</div><div class="line">                <span class="built_in">printf</span>(<span class="string">"umount() failed: %s\n"</span>, strerror(errno));</div><div class="line">                <span class="keyword">return</span> <span class="number">1</span>;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>上面这个例子给出了使用relay的一个最简单的情形，并没有实际用处，但是形象描述了从用户空间和内核空间两个方面使用relay的基本流程。实际应用中对relay的使用当然要比这复杂得多。更多的例子请参见relay的主页。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p>Relay的主页：<a href="http://relayfs.sourceforge.net/" target="_blank" rel="external">http://relayfs.sourceforge.net/</a><br>示例代码： <a href="/Kernel/内核文件系统/relay/relay-apps-0.94.tar.gz" title="relay-apps-0.94.tar.gz">relay-apps-0.94.tar.gz</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/VFS/" rel="tag"># VFS</a>
+          
+        </div>
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/Kernel/设备驱动/linux-lcd-driver/" rel="next" title="Linux LCD 驱动学习">
+                <i class="fa fa-chevron-left"></i> Linux LCD 驱动学习
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/Kernel/内核设备树/dt-usage/" rel="prev" title="设备树使用手册（译）">
+                设备树使用手册（译） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="Kernel/内核文件系统/relay/"
+     data-title="Relay：一种内核到用户空间的高效数据传输技术"
+     data-content=""
+     data-url="https://jarsonfang.github.io/Kernel/内核文件系统/relay/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="Kernel/内核文件系统/relay/"
+           data-title="Relay：一种内核到用户空间的高效数据传输技术" data-url="https://jarsonfang.github.io/Kernel/内核文件系统/relay/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Jarson Fang" />
+          <p class="site-author-name" itemprop="name">Jarson Fang</p>
+          <p class="site-description motion-element" itemprop="description">学习、工作、生活</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">68</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/jarsonfang" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/jarson-fang" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://tldp.org/LDP/abs/html/" title="ABS" target="_blank">ABS</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://git-scm.com/book/zh/" title="ProGit" target="_blank">ProGit</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://www.devbean.net/" title="DevBean" target="_blank">DevBean</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://coolshell.cn/" title="CoolShell" target="_blank">CoolShell</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://doc.rust-lang.org/book/" title="Rust-Book" target="_blank">Rust-Book</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/liigo/" title="Rust-庄晓立" target="_blank">Rust-庄晓立</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/rustcc/" title="Rust-中文社区" target="_blank">Rust-中文社区</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.wowotech.net/" title="蜗窝科技" target="_blank">蜗窝科技</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hexo.io/" title="Hexo" target="_blank">Hexo</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://theme-next.iissnan.com/" title="NexT" target="_blank">NexT</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://guides.github.com/features/mastering-markdown/" title="Mastering-Markdown" target="_blank">Mastering-Markdown</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.cirosantilli.com/markdown-style-guide/" title="Markdown-Style-Guide" target="_blank">Markdown-Style-Guide</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Relay要解决的问题"><span class="nav-number">1.</span> <span class="nav-text">Relay要解决的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Relay的发展历史"><span class="nav-number">2.</span> <span class="nav-text">Relay的发展历史</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Relay的基本原理"><span class="nav-number">3.</span> <span class="nav-text">Relay的基本原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Relay的主要API"><span class="nav-number">4.</span> <span class="nav-text">Relay的主要API</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Relay的例子"><span class="nav-number">5.</span> <span class="nav-text">Relay的例子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">6.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jarson Fang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"jarsonfang"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js?v=5.1.0"></script>
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

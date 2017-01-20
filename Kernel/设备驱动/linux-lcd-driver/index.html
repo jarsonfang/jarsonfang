@@ -1,0 +1,1052 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="学习, 工作, 生活" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="原文：S3C2410 LCD驱动学习心得
+实验内容简要描述1．实验目的学会驱动程序的编写方法，配置S3C2410的LCD驱动，以及在LCD屏上显示包括bmp和jpeg两种格式的图片2．实验内容（1）分析S3c2410实验箱LCD以及LCD控制器的硬件原理，据此找出相应的硬件设置参数，参考xcale实验箱关于lcd的设置，完成s3c2410实验箱LCD的设置（2）在LCD上显示一张BMP图片或JPE">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux LCD 驱动学习">
+<meta property="og:url" content="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/index.html">
+<meta property="og:site_name" content="Jarson's Blog">
+<meta property="og:description" content="原文：S3C2410 LCD驱动学习心得
+实验内容简要描述1．实验目的学会驱动程序的编写方法，配置S3C2410的LCD驱动，以及在LCD屏上显示包括bmp和jpeg两种格式的图片2．实验内容（1）分析S3c2410实验箱LCD以及LCD控制器的硬件原理，据此找出相应的硬件设置参数，参考xcale实验箱关于lcd的设置，完成s3c2410实验箱LCD的设置（2）在LCD上显示一张BMP图片或JPE">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/lcd1.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/lcd2.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/lcd3.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/lcd4.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/lcd5.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/lcd6.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/lcd7.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/lcd8.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/lcd10.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/lcd11.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/lcd12.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/lcd13.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/lcd14.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/lcd15.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/lcd16.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/lcd17.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/lcd18.jpg">
+<meta property="og:image" content="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/lcd19.jpg">
+<meta property="og:updated_time" content="2017-01-20T12:32:12.355Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux LCD 驱动学习">
+<meta name="twitter:description" content="原文：S3C2410 LCD驱动学习心得
+实验内容简要描述1．实验目的学会驱动程序的编写方法，配置S3C2410的LCD驱动，以及在LCD屏上显示包括bmp和jpeg两种格式的图片2．实验内容（1）分析S3c2410实验箱LCD以及LCD控制器的硬件原理，据此找出相应的硬件设置参数，参考xcale实验箱关于lcd的设置，完成s3c2410实验箱LCD的设置（2）在LCD上显示一张BMP图片或JPE">
+<meta name="twitter:image" content="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/lcd1.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '6327478655802934000',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/"/>
+
+
+
+
+
+  <title> Linux LCD 驱动学习 | Jarson's Blog </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Jarson's Blog</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+    
+      <p class="site-subtitle">静水深流，岁月安好</p>
+    
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup">
+ <span class="search-icon fa fa-search"></span>
+ <input type="text" id="local-search-input">
+ <div id="local-search-result"></div>
+ <span class="popup-btn-close">close</span>
+</div>
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Jarson Fang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Jarson's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Linux LCD 驱动学习
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2015-04-04T22:45:09+08:00">
+                2015-04-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kernel/" itemprop="url" rel="index">
+                    <span itemprop="name">Kernel</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kernel/设备驱动/" itemprop="url" rel="index">
+                    <span itemprop="name">设备驱动</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/Kernel/设备驱动/linux-lcd-driver/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/设备驱动/linux-lcd-driver/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>原文：<a href="http://blog.csdn.net/gzliu_hit/article/details/6719457" target="_blank" rel="external">S3C2410 LCD驱动学习心得</a></p>
+<h2 id="实验内容简要描述"><a href="#实验内容简要描述" class="headerlink" title="实验内容简要描述"></a>实验内容简要描述</h2><p><strong>1．实验目的</strong><br>学会驱动程序的编写方法，配置S3C2410的LCD驱动，以及在LCD屏上显示包括bmp和jpeg两种格式的图片<br><strong>2．实验内容</strong><br>（1）分析S3c2410实验箱LCD以及LCD控制器的硬件原理，据此找出相应的硬件设置参数，参考xcale实验箱关于lcd的设置，完成s3c2410实验箱LCD的设置<br>（2）在LCD上显示一张BMP图片或JPEG图片<br><strong>3．实验条件（软硬件环境）</strong><br>PC机、S3C2410开发板、PXA255开发板<br><a id="more"></a></p>
+<h2 id="实验原理"><a href="#实验原理" class="headerlink" title="实验原理"></a>实验原理</h2><h3 id="S3C2410内置LCD控制器分析"><a href="#S3C2410内置LCD控制器分析" class="headerlink" title="S3C2410内置LCD控制器分析"></a>S3C2410内置LCD控制器分析</h3><h4 id="S3C2410-LCD控制器"><a href="#S3C2410-LCD控制器" class="headerlink" title="S3C2410 LCD控制器"></a>S3C2410 LCD控制器</h4><p>一块LCD屏显示图像，不但需要LCD驱动器，还需要有相应的LCD控制器。通常LCD驱动器会以COF/COG的形式与LCD玻璃基板制作在一起，而LCD控制器则由外部电路来实现。而S3C2410内部已经集成了LCD控制器，因此可以很方便地去控制各种类型的LCD屏，例如：STN和TFT屏。S3C2410 LCD控制器的特性如下：  </p>
+<ol>
+<li>STN屏<br>支持3种扫描方式：4bit单扫、4位双扫和8位单扫<br>支持单色、4级灰度和16级灰度屏<br>支持256色和4096色彩色STN屏（CSTN）<br>支持分辩率为640<em>480、320</em>240、160*160以及其它规格的多种LCD</li>
+<li>TFT屏<br>支持单色、4级灰度、256色的调色板显示模式<br>支持64K和16M色非调色板显示模式<br>支持分辩率为640<em>480，320</em>240及其它多种规格的LCD<br>对于控制TFT屏来说，除了要给它送视频资料（<code>VD[23:0]</code>）以外，还有以下一些信号是必不可少的，分别是：<br><code>VSYNC(VFRAME)</code>：帧同步信号<br><code>HSYNC(VLINE)</code>：行同步信号<br><code>VCLK</code>：像数时钟信号<br><code>VDEN(VM)</code>：数据有效标志信号</li>
+</ol>
+<p>由于本项目所用的S3C2410上的LCD是TFT屏，并且TFT屏将是今后应用的主流，因此接下来，重点围绕TFT屏的控制来进行。<br>图1.1 是S3C2410内部的LCD控制器的逻辑示意图：</p>
+<img src="/Kernel/设备驱动/linux-lcd-driver/lcd1.jpg" alt="图1.1" title="图1.1">
+<p><code>REGBANK</code> 是LCD控制器的寄存器组，用来对LCD控制器的各项参数进行设置。而 <code>LCDCDMA</code> 则是LCD控制器专用的DMA信道，负责将视频资料从系统总线（System Bus）上取来，通过 <code>VIDPRCS</code> 从<code>VD[23:0]</code>发送给LCD屏。同时 <code>TIMEGEN</code> 和 <code>LPC3600</code> 负责产生 LCD屏所需要的控制时序，例如<code>VSYNC</code>、<code>HSYNC</code>、<code>VCLK</code>、<code>VDEN</code>，然后从 <code>VIDEO MUX</code> 送给LCD屏。</p>
+<h4 id="TFT屏时序分析"><a href="#TFT屏时序分析" class="headerlink" title="TFT屏时序分析"></a>TFT屏时序分析</h4><p>图1.2 是TFT屏的典型时序。其中<code>VSYNC</code>是帧同步信号，<code>VSYNC</code>每发出1个脉冲，都意味着新的1屏视频资料开始发送。而<code>HSYNC</code>为行同步信号，每个<code>HSYNC</code>脉冲都表明新的1行视频资料开始发送。而<code>VDEN</code>则用来标明视频资料的有效，<code>VCLK</code>是用来锁存视频资料的像数时钟。<br>在帧同步以及行同步的头尾都必须留有回扫时间，例如对于<code>VSYNC</code>来说前回扫时间就是<code>(VSPW+1)＋(VBPD+1)</code>，后回扫时间就是<code>(VFPD +1)</code>；<code>HSYNC</code>亦类同。这样的时序要求是当初CRT显示器由于电子枪偏转需要时间，但后来成了实际上的工业标准，乃至于后来出现的TFT屏为了在时序上与CRT兼容，也采用了这样的控制时序。</p>
+<img src="/Kernel/设备驱动/linux-lcd-driver/lcd2.jpg" alt="图1.2" title="图1.2">
+<p>S3C2410实验箱上的LCD是一款3.5寸TFT真彩LCD屏，分辩率为240*320，下图为该屏的时序要求。</p>
+<img src="/Kernel/设备驱动/linux-lcd-driver/lcd3.jpg" alt="图1.3" title="图1.3">
+<p>通过对比图1.2和图1.3，我们不难看出：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">VSPW+1=2 =&gt; VSPW=1</div><div class="line">VBPD+1=2 =&gt; VBPD=1</div><div class="line">LINVAL+1=320 =&gt; LINVAL=319</div><div class="line">VFPD+1=3 =&gt; VFPD=2</div><div class="line">HSPW+1=4 =&gt; HSPW=3</div><div class="line">HBPD+1=7 =&gt; HBPW=6</div><div class="line">HOZVAL+1=240 =&gt; HOZVAL=239</div><div class="line">HFPD+1=31 =&gt; HFPD=30</div></pre></td></tr></table></figure></p>
+<p>以上各参数，除了<code>LINVAL</code>和<code>HOZVAL</code>直接和屏的分辩率有关，其它的参数在实际操作过程中应以上面的为参考，不应偏差太多。</p>
+<h4 id="LCD控制器主要寄存器功能详解"><a href="#LCD控制器主要寄存器功能详解" class="headerlink" title="LCD控制器主要寄存器功能详解"></a>LCD控制器主要寄存器功能详解</h4><img src="/Kernel/设备驱动/linux-lcd-driver/lcd4.jpg" alt="图1.4" title="图1.4">
+<p><code>LINECNT</code>：当前行扫描计数器值，标明当前扫描到了多少行。<br><code>CLKVAL</code>：决定VCLK的分频比。LCD控制器输出的VCLK是直接由系统总线（AHB）的工作频率HCLK直接分频得到的。作为240*320的TFT屏，应保证得出的VCLK在5~10MHz之间。<br><code>MMODE</code>：VM信号的触发模式（仅对STN屏有效，对TFT屏无意义）。<br><code>PNRMODE</code>：选择当前的显示模式，对于TFT屏而言，应选择<code>[11]</code>，即TFT LCD panel。<br><code>BPPMODE</code>：选择色彩模式，对于真彩显示而言，选择16bpp（64K色）即可满足要求。<br><code>ENVID</code>：使能LCD信号输出。</p>
+<img src="/Kernel/设备驱动/linux-lcd-driver/lcd5.jpg" alt="图1.5" title="图1.5">
+<p><code>VBPD</code>， <code>LINEVAL</code>， <code>VFPD</code>， <code>VSPW</code> 的各项含义已经在前面的时序图中得到体现。</p>
+<img src="/Kernel/设备驱动/linux-lcd-driver/lcd6.jpg" alt="图1.6" title="图1.6">
+<p><code>HBPD</code>， <code>HOZVAL</code>， <code>HFPD</code> 的各项含义已经在前面的时序图中得到体现。</p>
+<img src="/Kernel/设备驱动/linux-lcd-driver/lcd7.jpg" alt="图1.7" title="图1.7">
+<p><code>HSPW</code> 的含义已经在前面的时序图中得到体现。<br><code>MVAL</code> 只对STN屏有效，对TFT屏无意义。<br><code>HSPW</code> 的含义已经在前面的时序图中得到体现，这里不再赘述。<br><code>MVAL</code> 只对STN屏有效，对TFT屏无意义。</p>
+<img src="/Kernel/设备驱动/linux-lcd-driver/lcd8.jpg" alt="图1.8" title="图1.8">
+<p><code>VSTATUS</code>：当前<code>VSYNC</code>信号扫描状态，指明当前<code>VSYNC</code>同步信号处于何种扫描阶段。<br><code>HSTATUS</code>：当前<code>HSYNC</code>信号扫描状态，指明当前<code>HSYNC</code>同步信号处于何种扫描阶段。<br><code>BPP24BL</code>：设定<code>24bpp</code>显示模式时，视频资料在显示缓冲区中的排列顺序（即低位有效还是高位有效）。对于<code>16bpp</code>的64K色显示模式，该设置位无意义。<br><code>FRM565</code>：对于<code>16bpp</code>显示模式，有2种形式，一种是<code>RGB = 5:5:5:1</code>，另一种是<code>5:6:5</code>。后一种模式最为常用，它的含义是表示64K种色彩的16bit RGB资料中，红色（R）占了5bit，绿色（G）占了6bit，蓝色（B）占了5bit<br><code>INVVCLK</code>，<code>INVLINE</code>，<code>INVFRAME</code>，<code>INVVD</code>：通过前面的时序图，我们知道，CPU的LCD控制器输出的时序默认是正脉冲，而LCD需要<code>VSYNC(VFRAME)</code>、<code>VLINE(HSYNC)</code>均为负脉冲，因此 <code>INVLINE</code> 和 <code>INVFRAME</code> 必须设为“1”，即选择反相输出。</p>
+
+<p><code>INVVDEN</code>，<code>INVPWREN</code>，<code>INVLEND</code> 的功能同前面的类似。<br><code>PWREN</code> 为LCD电源使能控制。在CPU LCD控制器的输出信号中，有一个电源使能管脚<code>LCD_PWREN</code>，用来做为LCD屏电源的开关信号。<br><code>ENLEND</code> 对普通的TFT屏无效，可以不考虑。<br><code>BSWP</code> 和 <code>HWSWP</code> 为字节（Byte）或半字（Half-Word）交换使能。由于不同的GUI对FrameBuffer（显示缓冲区）的管理不同，必要时需要通过调整 <code>BSWP</code> 和 <code>HWSWP</code> 来适应GUI。</p>
+<h3 id="Linux-驱动"><a href="#Linux-驱动" class="headerlink" title="Linux 驱动"></a>Linux 驱动</h3><h4 id="FrameBuffer"><a href="#FrameBuffer" class="headerlink" title="FrameBuffer"></a>FrameBuffer</h4><p>Linux是工作在保护模式下，所以用户态进程是无法像DOS那样使用显卡BIOS里提供的中断调用来实现直接写屏，Linux仿显卡的功能，将显存抽象出FrameBuffer这个设备来供用户态进程实现直接写屏。Framebuffer机制将硬件结构抽象掉，可以通过Framebuffer的读写直接对显存进行操作。用户可以将Framebuffer看成是显示内存的一个映像，将其映射到进程地址空间之后，就可以直接进行读写操作，而写操作可以立即反应在屏幕上。这种操作是抽象的，统一的。用户不必关心物理显存的位置、换页机制等等具体细节。这些都是由Framebuffer设备驱动来完成的。</p>
+<p>在Linux系统下，FrameBuffer的主要的结构如图所示。Linux为了开发FrameBuffer程序的方便，使用了分层结构。<code>fbmem.c</code> 处于Framebuffer设备驱动技术的中心位置。它为上层应用程序提供系统调用，也为下一层的特定硬件驱动提供接口；那些底层硬件驱动需要用到这儿的接口来向系统内核注册它们自己。</p>
+<img src="/Kernel/设备驱动/linux-lcd-driver/lcd10.jpg" alt="图2.1" title="图2.1">
+<p><code>fbmem.c</code> 为所有支持FrameBuffer的设备驱动提供了通用的接口，避免重复工作。下将介绍<code>fbmem.c</code>主要的一些数据结构。</p>
+<h4 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h4><h5 id="Linux-FrameBuffer的数据结构"><a href="#Linux-FrameBuffer的数据结构" class="headerlink" title="Linux FrameBuffer的数据结构"></a>Linux FrameBuffer的数据结构</h5><p>在FrameBuffer中，<code>fb_info</code>可以说是最重要的一个结构体，它是Linux为帧缓冲设备定义的驱动层接口。它不仅包含了底层函数，而且还有记录设备状态的数据。每个帧缓冲设备都与一个<code>fb_info</code>结构相对应。<code>fb_info</code>的主要成员如下<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> fb_info &#123;</div><div class="line">    <span class="keyword">int</span> node;</div><div class="line">    <span class="keyword">struct</span> fb_var_screeninfo var; <span class="comment">/* Current var */</span></div><div class="line">    <span class="keyword">struct</span> fb_fix_screeninfo fix; <span class="comment">/* Current fix */</span></div><div class="line">    <span class="keyword">struct</span> fb_videomode *mode;    <span class="comment">/* current mode */</span></div><div class="line"></div><div class="line">    <span class="keyword">struct</span> fb_ops *fbops;</div><div class="line">    <span class="keyword">struct</span> device *device; <span class="comment">/* This is the parent */</span></div><div class="line">    <span class="keyword">struct</span> device *dev;    <span class="comment">/* This is this fb device */</span></div><div class="line"></div><div class="line">    <span class="keyword">char</span> __iomem *screen_base; <span class="comment">/* Virtual address */</span></div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> screen_size; <span class="comment">/* Amount of ioremapped VRAM or 0 */</span></div><div class="line">    …………</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>其中<code>node</code>成员域标示了特定的FrameBuffer，实际上也就是一个FrameBuffer设备的次设备号。<code>fb_var_screeninfo</code>结构体成员记录用户可修改的显示控制器参数，包括屏幕分辨率和每个像素点的比特数。<code>fb_var_screeninfo</code>中的<code>xres</code>定义屏幕一行有多少个点, <code>yres</code>定义屏幕一列有多少个点, <code>bits_per_pixel</code>定义每个点用多少个字节表示。其他域见以下代码注释。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> fb_var_screeninfo &#123;</div><div class="line">    __u32 xres;   <span class="comment">/* visible resolution */</span></div><div class="line">    __u32 yres;</div><div class="line">    __u32 xoffset;  <span class="comment">/* offset from virtual to visible */</span></div><div class="line">    __u32 yoffset;  <span class="comment">/* resolution */</span></div><div class="line">    __u32 bits_per_pixel; <span class="comment">/* bits/pixel */</span></div><div class="line">    __u32 pixclock; <span class="comment">/* pixel clock in ps (pico seconds) */</span></div><div class="line">    __u32 left_margin;  <span class="comment">/* time from sync to picture */</span></div><div class="line">    __u32 right_margin; <span class="comment">/* time from picture to sync */</span></div><div class="line">    __u32 hsync_len;  <span class="comment">/* length of horizontal sync */</span></div><div class="line">    __u32 vsync_len;  <span class="comment">/* length of vertical sync */</span></div><div class="line">    …………</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>在<code>fb_info</code>结构体中，<code>fb_fix_screeninfo</code>中记录用户不能修改的显示控制器的参数，如屏幕缓冲区的物理地址，长度。当对帧缓冲设备进行映射操作的时候，就是从<code>fb_fix_screeninfo</code>中取得缓冲区物理地址的。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> fb_fix_screeninfo &#123;</div><div class="line">    <span class="keyword">char</span> id[<span class="number">16</span>];        <span class="comment">/* identification string eg "TT Builtin" */</span></div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> smem_start;    <span class="comment">/* Start of frame buffer mem (physical address) */</span></div><div class="line">    __u32 smem_len;     <span class="comment">/* Length of frame buffer mem */</span></div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> mmio_start;    <span class="comment">/* Start of Mem Mapped I/O(physical address) */</span></div><div class="line">    __u32 mmio_len;      <span class="comment">/* Length of Memory Mapped I/O  */</span></div><div class="line">    …………</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p><code>fb_info</code>还有一个很重要的域就是<code>fb_ops</code>。它是提供给底层设备驱动的一个接口。通常我们编写字符驱动的时候，要填写一个<code>file_operations</code>结构体，并使用<code>register_chrdev()</code>注册之，以告诉Linux如何操控驱动。当我们编写一个FrameBuffer的时候，就要依照Linux FrameBuffer编程的套路，填写<code>fb_ops</code>结构体。这个<code>fb_ops</code>也就相当于通常的<code>file_operations</code>结构体。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> fb_ops &#123;</div><div class="line">    <span class="keyword">int</span> (*fb_open)(<span class="keyword">struct</span> fb_info *info, <span class="keyword">int</span> user);</div><div class="line">    <span class="keyword">int</span> (*fb_release)(<span class="keyword">struct</span> fb_info *info, <span class="keyword">int</span> user);</div><div class="line">    <span class="keyword">ssize_t</span> (*fb_read)(<span class="keyword">struct</span> file *file, <span class="keyword">char</span> __user *buf, <span class="keyword">size_t</span> count, <span class="keyword">loff_t</span> *ppos);</div><div class="line">    <span class="keyword">ssize_t</span> (*fb_write)(<span class="keyword">struct</span> file *file, <span class="keyword">const</span> <span class="keyword">char</span> __user *buf, <span class="keyword">size_t</span> count, <span class="keyword">loff_t</span> *ppos);</div><div class="line">    <span class="keyword">int</span> (*fb_set_par)(<span class="keyword">struct</span> fb_info *info);</div><div class="line">    <span class="keyword">int</span> (*fb_setcolreg)(<span class="keyword">unsigned</span> regno, <span class="keyword">unsigned</span> red, <span class="keyword">unsigned</span> green,</div><div class="line">        <span class="keyword">unsigned</span> blue, <span class="keyword">unsigned</span> transp, <span class="keyword">struct</span> fb_info *info);</div><div class="line">    <span class="keyword">int</span> (*fb_setcmap)(<span class="keyword">struct</span> fb_cmap *cmap, <span class="keyword">struct</span> fb_info *info)</div><div class="line">    <span class="keyword">int</span> (*fb_mmap)(<span class="keyword">struct</span> fb_info *info, <span class="keyword">struct</span> vm_area_struct *vma);</div><div class="line">    ……………</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>上面的结构体，根据函数的名字就可以看出它的作用，这里不在一一说明。下图给出了Linux FrameBuffer的总体结构，作为这一部分的总结。</p>
+<img src="/Kernel/设备驱动/linux-lcd-driver/lcd11.jpg" alt="图2.2" title="图2.2">
+<h5 id="S3C2410中LCD的数据结构"><a href="#S3C2410中LCD的数据结构" class="headerlink" title="S3C2410中LCD的数据结构"></a>S3C2410中LCD的数据结构</h5><p>在S3C2410的LCD设备驱动中，定义了<code>s3c2410fb_info</code>来标识一个LCD设备，结构体如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> s3c2410fb_info &#123;</div><div class="line">    <span class="keyword">struct</span> fb_info  *fb;</div><div class="line">    <span class="keyword">struct</span> device  *dev;</div><div class="line">    <span class="keyword">struct</span> s3c2410fb_mach_info *mach_info;</div><div class="line">    <span class="keyword">struct</span> s3c2410fb_hw regs;  <span class="comment">/* LCD Hardware Regs */</span></div><div class="line">    <span class="keyword">dma_addr_t</span>  map_dma;  <span class="comment">/* physical */</span></div><div class="line">    u_char *   map_cpu;   <span class="comment">/* virtual */</span></div><div class="line">    u_int   map_size;</div><div class="line">    <span class="comment">/* addresses of pieces placed in raw buffer */</span></div><div class="line">    u_char *   screen_cpu;  <span class="comment">/* virtual address of buffer */</span></div><div class="line">    <span class="keyword">dma_addr_t</span>  screen_dma; <span class="comment">/* physical address of buffer */</span></div><div class="line">    …………</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>成员变量fb指向我们上面所说明的<code>fb_info</code>结构体，代表了一个FrameBuffer。<code>dev</code>则表示了这个LCD设备。<code>map_dma</code>，<code>map_cpu</code>，<code>map_size</code>这三个域指向了开辟给LCD DMA使用的内存地址。<code>screen_cpu</code>，<code>screen_dma</code>指向了LCD控制器映射的内存地址。另外regs标识了LCD控制器的寄存器。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> s3c2410fb_hw &#123;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> lcdcon1;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> lcdcon2;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> lcdcon3;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> lcdcon4;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> lcdcon5;</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>这个寄存器和硬件的寄存器一一对应，主要作为实际寄存器的映像，以便程序使用。<br>这个<code>s3c2410fb_info</code>中还有一个<code>s3c2410fb_mach_info</code>成员域。它存放了和体系结构相关的一些信息，如时钟、LCD设备的GPIO口等等。这个结构体定义为<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> s3c2410fb_mach_info &#123;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> fixed_syncs; <span class="comment">/* do not update sync/border */</span></div><div class="line">    <span class="keyword">int</span> type;      <span class="comment">/* LCD types */</span></div><div class="line">    <span class="keyword">int</span> width;     <span class="comment">/* Screen size */</span></div><div class="line">    <span class="keyword">int</span> height;</div><div class="line">    <span class="keyword">struct</span> s3c2410fb_val xres;  <span class="comment">/* Screen info */</span></div><div class="line">    <span class="keyword">struct</span> s3c2410fb_val yres;</div><div class="line">    <span class="keyword">struct</span> s3c2410fb_val bpp;</div><div class="line">    <span class="keyword">struct</span> s3c2410fb_hw  regs;  <span class="comment">/* lcd configuration registers */</span></div><div class="line">    <span class="comment">/* GPIOs */</span></div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> gpcup;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> gpcup_mask;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> gpccon;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> gpccon_mask;</div><div class="line">    …………</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<img src="/Kernel/设备驱动/linux-lcd-driver/lcd12.jpg" alt="图2.3" title="图2.3">
+<p>上图表示了S3C2410驱动的整体结构，反映了结构体之间的相互关系</p>
+<h4 id="主要代码结构以及关键代码分析"><a href="#主要代码结构以及关键代码分析" class="headerlink" title="主要代码结构以及关键代码分析"></a>主要代码结构以及关键代码分析</h4><h5 id="FrameBuffer驱动的统一管理"><a href="#FrameBuffer驱动的统一管理" class="headerlink" title="FrameBuffer驱动的统一管理"></a>FrameBuffer驱动的统一管理</h5><p><code>fbmem.c</code>实现了Linux FrameBuffer的中间层，任何一个FrameBuffer驱动，在系统初始化时，必须向<code>fbmem.c</code>注册，即需要调用<code>register_framebuffer()</code>函数，在这个过程中，设备驱动的信息将会存放入名称为<code>registered_fb</code>数组中，这个数组定义为<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> fb_info *registered_fb[FB_MAX];</div><div class="line"><span class="keyword">int</span> num_registered_fb;</div></pre></td></tr></table></figure></p>
+<p>它是类型为<code>fb_info</code>的数组，另外<code>num_register_fb</code>则存放了注册过的设备数量。<br>我们分析一下<code>register_framebuffer</code>的代码。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">register_framebuffer</span><span class="params">(<span class="keyword">struct</span> fb_info *fb_info)</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">int</span> i;</div><div class="line">    <span class="keyword">struct</span> fb_event event;</div><div class="line">    <span class="keyword">struct</span> fb_videomode mode;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (num_registered_fb == FB_MAX) <span class="keyword">return</span> -ENXIO; <span class="comment">/* 超过最大数量 */</span></div><div class="line">    num_registered_fb++;</div><div class="line">    <span class="keyword">for</span> (i = <span class="number">0</span> ; i &lt; FB_MAX; i++)</div><div class="line">        <span class="keyword">if</span> (!registered_fb[i]) <span class="keyword">break</span>;     <span class="comment">/* 找到空余的数组空间 */</span></div><div class="line">    fb_info-&gt;node = i;</div><div class="line"></div><div class="line">    fb_info-&gt;dev = device_create(fb_class, fb_info-&gt;device,</div><div class="line">        MKDEV(FB_MAJOR, i), <span class="string">"fb%d"</span>, i);  <span class="comment">/* 为设备建立设备节点 */</span></div><div class="line">    <span class="keyword">if</span> (IS_ERR(fb_info-&gt;dev)) &#123;</div><div class="line">     …………</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        fb_init_device(fb_info);      <span class="comment">/* 初始化改设备 */</span></div><div class="line">    &#125;</div><div class="line">    …………</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>从上面的代码可知，当FrameBuffer驱动进行注册的时候，它将驱动的<code>fb_info</code>结构体记录到全局数组<code>registered_fb</code>中，并动态建立设备节点，进行设备的初始化。注意，这里建立的设备节点的次设备号就是该驱动信息在<code>registered_fb</code>存放的位置，即数组下标 <code>i</code>。在完成注册之后，<code>fbmem.c</code>就记录了驱动的<code>fb_info</code>。这样我们就有可能实现<code>fbmem.c</code>对全部FrameBuffer驱动的统一处理。</p>
+<h5 id="实现消息的分派"><a href="#实现消息的分派" class="headerlink" title="实现消息的分派"></a>实现消息的分派</h5><p><code>fbmem.c</code>实现了对系统全部FrameBuffer设备的统一管理。当用户尝试使用一个特定的FrameBuffer时，<code>fbmem.c</code>怎么知道该调用哪个特定的设备驱动呢？<br>我们知道，Linux是通过主设备号和次设备号，对设备进行唯一标识。不同的FrameBuffer设备向<code>fbmem.c</code>注册时，程序分配给它们的主设备号是一样的，而次设备号是不一样的。于是我们就可以通过用户指明的次设备号，来决定具体该调用哪一个FrameBuffer驱动。下面通过分析<code>fbmem.c</code>的<code>fb_open()</code>函数来说明。（注：一般我们写FrameBuffer驱动不需要实现open函数，这里只是说明函数流程。）<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">fb_open</span><span class="params">(<span class="keyword">struct</span> inode *inode, <span class="keyword">struct</span> file *file)</span></span>&#123;</div><div class="line">    <span class="keyword">int</span> fbidx = iminor(inode);</div><div class="line">    <span class="keyword">struct</span> fb_info *info;</div><div class="line">    <span class="keyword">int</span> res;</div><div class="line">       <span class="comment">/* 得到真正驱动的函数指针 */</span></div><div class="line">    <span class="keyword">if</span> (!(info = registered_fb[fbidx])) <span class="keyword">return</span> -ENODEV; </div><div class="line">    <span class="keyword">if</span> (info-&gt;fbops-&gt;fb_open) &#123;</div><div class="line">        res = info-&gt;fbops-&gt;fb_open(info,<span class="number">1</span>); <span class="comment">//调用驱动的open()</span></div><div class="line">        <span class="keyword">if</span> (res)  module_put(info-&gt;fbops-&gt;owner);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> res;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>当用户打开一个FrameBuffer设备的时，将调用这里的<code>fb_open()</code>函数。传进来的<code>inode</code>就是欲打开设备的设备号，包括主设备和次设备号。<code>fb_open</code>函数首先通过<code>iminor()</code>函数取得次设备号，然后查全局数组<code>registered_fb</code>得到设备的<code>fb_info</code>信息，而这里面存放了设备的操作函数集<code>fb_ops</code>。这样，我们就可以调用具体驱动的<code>fb_open()</code>函数，实现<code>open</code>的操作。下面给出了一个LCD驱动的<code>open()</code>函数的调用流程图，用以说明上面的步骤。</p>
+<img src="/Kernel/设备驱动/linux-lcd-driver/lcd13.jpg" alt="图2.4" title="图2.4">
+<h5 id="开发板S3C2410-LCD驱动的流程"><a href="#开发板S3C2410-LCD驱动的流程" class="headerlink" title="开发板S3C2410 LCD驱动的流程"></a>开发板S3C2410 LCD驱动的流程</h5><p>（1）在<code>mach-smdk2410.c</code>中，定义了初始的LCD参数。注意这是个全局变量。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">static</span> <span class="keyword">struct</span> s3c2410fb_mach_info smdk2410_lcd_cfg = &#123;</div><div class="line">    .regs= &#123;</div><div class="line">        .lcdcon1 = S3C2410_LCDCON1_TFT16BPP |</div><div class="line">            S3C2410_LCDCON1_TFT |</div><div class="line">            S3C2410_LCDCON1_CLKVAL(<span class="number">7</span>),</div><div class="line">            ......</div><div class="line">    &#125;,</div><div class="line">    .width  = <span class="number">240</span>,</div><div class="line">    .height = <span class="number">320</span>,</div><div class="line">    .xres = &#123;.min = <span class="number">240</span>, .max= <span class="number">240</span>, .defval = <span class="number">240</span>&#125;,</div><div class="line">    .bpp   = &#123;.min = <span class="number">16</span>, .max= <span class="number">16</span>, .defval = <span class="number">16</span>&#125;,</div><div class="line">    ......</div><div class="line">&#125;;</div></pre></td></tr></table></figure></p>
+<p>（2）内核初始化时候调用<code>s3c2410fb_probe</code>函数。下面分析这个函数的做的工作。首先先动态分配<code>s3c2410fb_info</code>空间。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">fbinfo = framebuffer_alloc(<span class="keyword">sizeof</span>(<span class="keyword">struct</span> s3c2410fb_info),&amp;pdev-&gt;dev);</div></pre></td></tr></table></figure></p>
+<p>把域<code>mach_info</code>指向<code>mach-smdk2410.c</code>中的<code>smdk2410_lcd_cfg</code> 。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">info-&gt;mach_info = pdev-&gt;dev.platform_data;</div></pre></td></tr></table></figure></p>
+<p>设置<code>fb_info</code>域的<code>fix</code>，<code>var</code>，<code>fops</code>字段。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">fbinfo-&gt;fix.type  =  FB_TYPE_PACKED_PIXELS;</div><div class="line">fbinfo-&gt;fix.type_aux  = <span class="number">0</span>;</div><div class="line">fbinfo-&gt;fix.xpanstep  = <span class="number">0</span>;</div><div class="line"></div><div class="line">fbinfo-&gt;var.nonstd    = <span class="number">0</span>;</div><div class="line">fbinfo-&gt;var.activate  = FB_ACTIVATE_NOW;</div><div class="line">fbinfo-&gt;var.height    = mach_info-&gt;height;</div><div class="line">fbinfo-&gt;var.width     = mach_info-&gt;width;</div><div class="line"></div><div class="line">fbinfo-&gt;fbops  = &amp;s3c2410fb_ops;</div><div class="line">……</div></pre></td></tr></table></figure></p>
+<p>该函数调用<code>s3c2410fb_map_video_memory()</code>申请DMA内存，即显存。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">fbi-&gt;map_size = PAGE_ALIGN(fbi-&gt;fb-&gt;fix.smem_len + PAGE_SIZE);</div><div class="line">fbi-&gt;map_cpu  = dma_alloc_writecombine(fbi-&gt;dev, fbi-&gt;map_size,</div><div class="line">          &amp;fbi-&gt;map_dma, GFP_KERNEL);</div><div class="line"></div><div class="line">fbi-&gt;map_size = fbi-&gt;fb-&gt;fix.smem_len;</div><div class="line">……</div></pre></td></tr></table></figure></p>
+<p>设置控制寄存器，设置硬件寄存器。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">memcpy</span>(&amp;info-&gt;regs, &amp;mach_info-&gt;regs, <span class="keyword">sizeof</span>(info-&gt;regs));</div><div class="line">info-&gt;regs.lcdcon1 &amp;= ~S3C2410_LCDCON1_ENVID;</div><div class="line">………</div></pre></td></tr></table></figure></p>
+<p>调用函数<code>s3c2410fb_init_registers()</code>，把初始值写入寄存器。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">writel(fbi-&gt;regs.lcdcon1, S3C2410_LCDCON1);</div><div class="line">writel(fbi-&gt;regs.lcdcon2, S3C2410_LCDCON2);</div></pre></td></tr></table></figure></p>
+<p>（3）当用户调用<code>mmap()</code>映射内存的时候，<code>fbmem.c</code>把刚才设置好的显存区域映射给用户。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">start = info-&gt;fix.smem_start;</div><div class="line">len = PAGE_ALIGN((start &amp; ~PAGE_MASK) + info-&gt;fix.smem_len);</div><div class="line">io_remap_pfn_range(vma, vma-&gt;vm_start, off &gt;&gt; PAGE_SHIFT,</div><div class="line">    vma-&gt;vm_end - vma-&gt;vm_start, vma-&gt;vm_page_prot)；</div><div class="line">……</div></pre></td></tr></table></figure></p>
+<p>这样就完成了驱动初始化到用户调用的整个过程。</p>
+<h3 id="BMP和JPEG图形显示程序"><a href="#BMP和JPEG图形显示程序" class="headerlink" title="BMP和JPEG图形显示程序"></a>BMP和JPEG图形显示程序</h3><h4 id="在LCD上显示BMP或JPEG图片的主流程图"><a href="#在LCD上显示BMP或JPEG图片的主流程图" class="headerlink" title="在LCD上显示BMP或JPEG图片的主流程图"></a>在LCD上显示BMP或JPEG图片的主流程图</h4><p>首先，在程序开始前。要在<code>nfs/dev</code>目录下创建LCD的设备结点，设备名<code>fb0</code>,设备类型为字符设备，主设备号为<code>29</code>，次设备号为<code>0</code>。命令如下：<br><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mknod fb0 c 29 0</div></pre></td></tr></table></figure></p>
+<p>在LCD上显示图象的主流程图如图3.1所示。程序一开始要调用<code>open</code>函数打开设备，然后调用<code>ioctl</code>获取设备相关信息，接下来就是读取图形文件数据，把图象的RGB值映射到显存中，这部分是图象显示的核心。对于JPEG格式的图片，要先经过JPEG解码才能得到RGB数据，本项目中直接采用现成的JPEG库进行解码。对于bmp格式的图片，则可以直接从文件里面提取其RGB数据。要从一个bmp文件里面把图片数据阵列提取出来，首先必须知道bmp文件的格式。下面来详细介绍bmp文件的格式。</p>
+<img src="/Kernel/设备驱动/linux-lcd-driver/lcd14.jpg" alt="图3.1" title="图3.1">
+<h4 id="bmp位图格式分析"><a href="#bmp位图格式分析" class="headerlink" title="bmp位图格式分析"></a>bmp位图格式分析</h4><p>位图文件可看成由四个部分组成：位图文件头、位图信息头、彩色表和定义位图的字节阵列。如图3.2所示。</p>
+<img src="/Kernel/设备驱动/linux-lcd-driver/lcd15.jpg" alt="图3.2" title="图3.2">
+<p>（1）文件头中各个段的地址及其内容如图3.3。</p>
+<img src="/Kernel/设备驱动/linux-lcd-driver/lcd16.jpg" alt="图3.3" title="图3.3">
+<p>位图文件头数据结构包含BMP图象文件的类型，显示内容等信息。它的数据结构如下定义：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">int</span>  bfType；<span class="comment">//表明位图文件的类型，必须为BM</span></div><div class="line">    <span class="keyword">long</span> bfSize；<span class="comment">//表明位图文件的大小，以字节为单位</span></div><div class="line">    <span class="keyword">int</span>  bfReserved1；<span class="comment">//属于保留字，必须为本0</span></div><div class="line">    <span class="keyword">int</span>  bfReserved2；<span class="comment">//也是保留字，必须为本0</span></div><div class="line">    <span class="keyword">long</span> bfOffBits；<span class="comment">//位图阵列的起始位置，以字节为单位</span></div><div class="line">&#125; BITMAPFILEHEADER；</div></pre></td></tr></table></figure></p>
+<p>（2）信息头中各个段的地址及其内容如图3.4所示。</p>
+<img src="/Kernel/设备驱动/linux-lcd-driver/lcd17.jpg" alt="图3.4" title="图3.4">
+<p>位图信息头的数据结构包含了有关BMP图象的宽，高，压缩方法等信息，它的C语言数据结构如下所示。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</div><div class="line">    <span class="keyword">long</span>  biSize； <span class="comment">//指出本数据结构所需要的字节数</span></div><div class="line">    <span class="keyword">long</span>  biWidth；<span class="comment">//以象素为单位，给出BMP图象的宽度</span></div><div class="line">    <span class="keyword">long</span>  biHeight；<span class="comment">//以象素为单位，给出BMP图象的高度</span></div><div class="line">    <span class="keyword">int</span>   biPlanes；<span class="comment">//输出设备的位平面数，必须置为1</span></div><div class="line">    <span class="keyword">int</span>   biBitCount；<span class="comment">//给出每个象素的位数</span></div><div class="line">    <span class="keyword">long</span>  biCompress；<span class="comment">//给出位图的压缩类型</span></div><div class="line">    <span class="keyword">long</span>  biSizeImage；<span class="comment">//给出图象字节数的多少</span></div><div class="line">    <span class="keyword">long</span>  biXPelsPerMeter；<span class="comment">//图像的水平分辨率</span></div><div class="line">    <span class="keyword">long</span>  biYPelsPerMeter；<span class="comment">//图象的垂直分辨率</span></div><div class="line">    <span class="keyword">long</span>  biClrUsed；<span class="comment">//调色板中图象实际使用的颜色素数</span></div><div class="line">    <span class="keyword">long</span>  biClrImportant；<span class="comment">//给出重要颜色的索引值</span></div><div class="line">&#125; BITMAPINFOHEADER；</div></pre></td></tr></table></figure></p>
+<p>（3）对于象素小于或等于16位的图片，都有一个颜色表用来给图象数据阵列提供颜色索引，其中的每块数据都以B、G、R的顺序排列，还有一个是<code>reserved</code>保留位。而在图形数据区域存放的是各个象素点的索引值。它的C语言数据结构如下所示。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> b;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> g;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> r;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> reserved;</div><div class="line">&#125; ColorTable;</div></pre></td></tr></table></figure></p>
+<p>4）对于24位和32位的图片，没有彩色表，它在图象数据区里直接存放图片的RGB数据，其中的每个象素点的数据都以B、G、R的顺序排列。每个象素点的数据结构如下所示。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">typedef</span> <span class="keyword">struct</span> &#123;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> b;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> g;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> r;</div><div class="line">    <span class="keyword">unsigned</span> <span class="keyword">char</span> reserved;</div><div class="line">&#125; RGB;</div></pre></td></tr></table></figure></p>
+<p>（5）由于图象数据阵列中的数据是从图片的最后一行开始往上存放的，因此在显示图象时，是从图象的左下角开始逐行扫描图象，即从左到右，从下到上。<br>（6）对S3C2410或PXA255开发板上的LCD来说，他们每个象素点所占的位数为16位，这16位按<code>B：G：R=5：6：5</code>的方式分，其中B在最高位，R在最低位。而从bmp图象得到的R、G、B数据则每个数据占8位，合起来一共24位，因此需要对该R、G、B数据进行移位组合成一个16位的数据。移位方法如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">b &gt;&gt;= <span class="number">3</span>; g &gt;&gt;= <span class="number">2</span>; r &gt;&gt;= <span class="number">3</span>;</div><div class="line">RGBValue = ( r&lt;&lt;<span class="number">11</span> | g &lt;&lt; <span class="number">5</span> | b);</div></pre></td></tr></table></figure></p>
+<p>基于以上分析，提取各种类型的bmp图象的流程如图3.5所示</p>
+<img src="/Kernel/设备驱动/linux-lcd-driver/lcd18.jpg" alt="图3.5" title="图3.5">
+<h4 id="实现显示任意大小的图片"><a href="#实现显示任意大小的图片" class="headerlink" title="实现显示任意大小的图片"></a>实现显示任意大小的图片</h4><p>开发板上的LCD屏的大小是固定的，S3C2410上的LCD为：240<em>320，PXA255上的为：640</em>480。比屏幕小的图片在屏上显示当然没问题，但是如果图片比屏幕大呢？这就要求我们通过某种算法对图片进行缩放。<br>缩放的基本思想是将图片分成若干个方块，对每个方块中的R、G、B数据进行取平均，得到一个新的R、G、B值，这个值就作为该方块在LCD屏幕上的映射。<br>缩放的算法描述如下：<br>(1)、计算图片大小与LCD屏大小的比例，以及方块的大小。为了适应各种屏幕大小，这里并不直接给lcd_width和lcd_height赋值为240和320。而是调用标准的接口来获取有关屏幕的参数。具体如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Get variable screen information</span></div><div class="line"><span class="keyword">if</span> (ioctl(fbfd, FBIOGET_VSCREENINFO, &amp;vinfo)) &#123;</div><div class="line">    <span class="built_in">printf</span>(<span class="string">"Error reading variable information."</span>);</div><div class="line">    <span class="built_in">exit</span>(<span class="number">3</span>);</div><div class="line">&#125;</div><div class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> lcd_width=vinfo.xres;</div><div class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> lcd_height=vinfo.yres;</div></pre></td></tr></table></figure></p>
+<p>计算比例：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">widthScale=bmpi-&gt;width/lcd_width;</div><div class="line">heightScale=bmpi-&gt;height/lcd_height;</div></pre></td></tr></table></figure></p>
+<p>本程序中方块的大小以如下的方式确定：<br>注：以下两行代码原文内容已缺失，待补充。<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> paneWidth= ;</div><div class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> paneHeight= ;</div></pre></td></tr></table></figure></p>
+<p>符号 代表向上取整。<br>(2)、从图片的左上角开始，以(<code>i * widthScale</code>，<code>j * heightScale</code>)位起始点，以宽<code>paneWidth</code>高<code>paneHeight</code>为一个小方块，对该方块的R、G、B数值分别取平均，得到映射点的R、G、B值，把该点作为要在LCD上显示的第（<code>i</code> , <code>j</code>）点存储起来。<br>这部分的程序如下：<br><figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div></pre></td><td class="code"><pre><div class="line"><span class="comment">//-------------取平均--------</span></div><div class="line"><span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; lcd_height; i++)</div><div class="line">&#123;</div><div class="line">    <span class="keyword">for</span>(j = <span class="number">0</span>; j &lt; lcd_width; j++)</div><div class="line">    &#123;</div><div class="line">        color_sum_r = <span class="number">0</span>;</div><div class="line">        color_sum_g = <span class="number">0</span>;</div><div class="line">        color_sum_b = <span class="number">0</span>;</div><div class="line">        <span class="keyword">for</span>(m = i*heightScale; m &lt; i*heightScale+paneHeight; m++)</div><div class="line">        &#123;</div><div class="line">            <span class="keyword">for</span>(n = j*widthScale; n &lt; j*widthScale+paneWidth; n++)</div><div class="line">            &#123;</div><div class="line">                color_sum_r += pointvalue[m][n].r;</div><div class="line">                color_sum_g += pointvalue[m][n].g;</div><div class="line">                color_sum_b += pointvalue[m][n].b;</div><div class="line">            &#125;</div><div class="line">        &#125;</div><div class="line">         RGBvalue_256-&gt;r = div_round(color_sum_r, paneHeight*paneWidth);</div><div class="line">         RGBvalue_256-&gt;g = div_round(color_sum_g, paneHeight*paneWidth);</div><div class="line">         RGBvalue_256-&gt;b = div_round(color_sum_b, paneHeight*paneWidth);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h4 id="图片数据提取及显示的总流程"><a href="#图片数据提取及显示的总流程" class="headerlink" title="图片数据提取及显示的总流程"></a>图片数据提取及显示的总流程</h4><p>通过以上的分析，整个图片数据提取及显示的总流程如图3.6所示。</p>
+<img src="/Kernel/设备驱动/linux-lcd-driver/lcd19.jpg" alt="图3.6" title="图3.6">
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/Programming/设计模式/uml-use-case-diagram/" rel="next" title="UML 用例图总结">
+                <i class="fa fa-chevron-left"></i> UML 用例图总结
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/Kernel/内核文件系统/relay/" rel="prev" title="Relay：一种内核到用户空间的高效数据传输技术">
+                Relay：一种内核到用户空间的高效数据传输技术 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <div class="ds-share flat" data-thread-key="Kernel/设备驱动/linux-lcd-driver/"
+     data-title="Linux LCD 驱动学习"
+     data-content=""
+     data-url="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/">
+  <div class="ds-share-inline">
+    <ul  class="ds-share-icons-16">
+
+      <li data-toggle="ds-share-icons-more"><a class="ds-more" href="javascript:void(0);">分享到：</a></li>
+      <li><a class="ds-weibo" href="javascript:void(0);" data-service="weibo">微博</a></li>
+      <li><a class="ds-qzone" href="javascript:void(0);" data-service="qzone">QQ空间</a></li>
+      <li><a class="ds-qqt" href="javascript:void(0);" data-service="qqt">腾讯微博</a></li>
+      <li><a class="ds-wechat" href="javascript:void(0);" data-service="wechat">微信</a></li>
+
+    </ul>
+    <div class="ds-share-icons-more">
+    </div>
+  </div>
+</div>
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="Kernel/设备驱动/linux-lcd-driver/"
+           data-title="Linux LCD 驱动学习" data-url="https://jarsonfang.github.io/Kernel/设备驱动/linux-lcd-driver/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Jarson Fang" />
+          <p class="site-author-name" itemprop="name">Jarson Fang</p>
+          <p class="site-description motion-element" itemprop="description">学习、工作、生活</p>
+        </div>
+        <nav class="site-state motion-element">
+        
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">68</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/jarsonfang" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.zhihu.com/people/jarson-fang" target="_blank" title="知乎">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                  知乎
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+          <div class="cc-license motion-element" itemprop="license">
+            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
+              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
+            </a>
+          </div>
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              Links
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://tldp.org/LDP/abs/html/" title="ABS" target="_blank">ABS</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://git-scm.com/book/zh/" title="ProGit" target="_blank">ProGit</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://www.devbean.net/" title="DevBean" target="_blank">DevBean</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://coolshell.cn/" title="CoolShell" target="_blank">CoolShell</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://doc.rust-lang.org/book/" title="Rust-Book" target="_blank">Rust-Book</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://blog.csdn.net/liigo/" title="Rust-庄晓立" target="_blank">Rust-庄晓立</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://github.com/rustcc/" title="Rust-中文社区" target="_blank">Rust-中文社区</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.wowotech.net/" title="蜗窝科技" target="_blank">蜗窝科技</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://hexo.io/" title="Hexo" target="_blank">Hexo</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://theme-next.iissnan.com/" title="NexT" target="_blank">NexT</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="https://guides.github.com/features/mastering-markdown/" title="Mastering-Markdown" target="_blank">Mastering-Markdown</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.cirosantilli.com/markdown-style-guide/" title="Markdown-Style-Guide" target="_blank">Markdown-Style-Guide</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#实验内容简要描述"><span class="nav-number">1.</span> <span class="nav-text">实验内容简要描述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#实验原理"><span class="nav-number">2.</span> <span class="nav-text">实验原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#S3C2410内置LCD控制器分析"><span class="nav-number">2.1.</span> <span class="nav-text">S3C2410内置LCD控制器分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#S3C2410-LCD控制器"><span class="nav-number">2.1.1.</span> <span class="nav-text">S3C2410 LCD控制器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TFT屏时序分析"><span class="nav-number">2.1.2.</span> <span class="nav-text">TFT屏时序分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LCD控制器主要寄存器功能详解"><span class="nav-number">2.1.3.</span> <span class="nav-text">LCD控制器主要寄存器功能详解</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Linux-驱动"><span class="nav-number">2.2.</span> <span class="nav-text">Linux 驱动</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#FrameBuffer"><span class="nav-number">2.2.1.</span> <span class="nav-text">FrameBuffer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据结构"><span class="nav-number">2.2.2.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Linux-FrameBuffer的数据结构"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">Linux FrameBuffer的数据结构</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#S3C2410中LCD的数据结构"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">S3C2410中LCD的数据结构</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#主要代码结构以及关键代码分析"><span class="nav-number">2.2.3.</span> <span class="nav-text">主要代码结构以及关键代码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#FrameBuffer驱动的统一管理"><span class="nav-number">2.2.3.1.</span> <span class="nav-text">FrameBuffer驱动的统一管理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#实现消息的分派"><span class="nav-number">2.2.3.2.</span> <span class="nav-text">实现消息的分派</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#开发板S3C2410-LCD驱动的流程"><span class="nav-number">2.2.3.3.</span> <span class="nav-text">开发板S3C2410 LCD驱动的流程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BMP和JPEG图形显示程序"><span class="nav-number">2.3.</span> <span class="nav-text">BMP和JPEG图形显示程序</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#在LCD上显示BMP或JPEG图片的主流程图"><span class="nav-number">2.3.1.</span> <span class="nav-text">在LCD上显示BMP或JPEG图片的主流程图</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#bmp位图格式分析"><span class="nav-number">2.3.2.</span> <span class="nav-text">bmp位图格式分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#实现显示任意大小的图片"><span class="nav-number">2.3.3.</span> <span class="nav-text">实现显示任意大小的图片</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#图片数据提取及显示的总流程"><span class="nav-number">2.3.4.</span> <span class="nav-text">图片数据提取及显示的总流程</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2016 - 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jarson Fang</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"jarsonfang"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+      
+      <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+      <script src="/js/src/hook-duoshuo.js?v=5.1.0"></script>
+    
+    
+    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
+    <script src="/js/src/hook-duoshuo.js"></script>
+  
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length == 0) {
+      search_path = "search.xml";
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    function proceedsearch() {
+      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
+      $('.popup').toggle();
+    }
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+      $.ajax({
+        url: path,
+        dataType: "xml",
+        async: true,
+        success: function( xmlResponse ) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = $( "entry", xmlResponse ).map(function() {
+            return {
+              title: $( "title", this ).text(),
+              content: $("content",this).text(),
+              url: $( "url" , this).text()
+            };
+          }).get();
+          var $input = document.getElementById(search_id);
+          var $resultContent = document.getElementById(content_id);
+          $input.addEventListener('input', function(){
+            var matchcounts = 0;
+            var str='<ul class=\"search-result-list\">';
+            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
+            $resultContent.innerHTML = "";
+            if (this.value.trim().length > 1) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var content_index = [];
+                var data_title = data.title.trim().toLowerCase();
+                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
+                var data_url = decodeURIComponent(data.url);
+                var index_title = -1;
+                var index_content = -1;
+                var first_occur = -1;
+                // only match artiles with not empty titles and contents
+                if(data_title != '') {
+                  keywords.forEach(function(keyword, i) {
+                    index_title = data_title.indexOf(keyword);
+                    index_content = data_content.indexOf(keyword);
+                    if( index_title >= 0 || index_content >= 0 ){
+                      isMatch = true;
+                      if (i == 0) {
+                        first_occur = index_content;
+                      }
+                    }
+
+                  });
+                }
+                // show search results
+                if (isMatch) {
+                  matchcounts += 1;
+                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
+                  var content = data.content.trim().replace(/<[^>]+>/g,"");
+                  if (first_occur >= 0) {
+                    // cut out 100 characters
+                    var start = first_occur - 20;
+                    var end = first_occur + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if(start == 0){
+                      end = 50;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    var match_content = content.substring(start, end);
+                    // highlight all keywords
+                    keywords.forEach(function(keyword){
+                      var regS = new RegExp(keyword, "gi");
+                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
+                    });
+
+                    str += "<p class=\"search-result\">" + match_content +"...</p>"
+                  }
+                  str += "</li>";
+                }
+              })};
+            str += "</ul>";
+            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
+            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
+            $resultContent.innerHTML = str;
+          });
+          proceedsearch();
+        }
+      });}
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched == false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(function(e){
+      $('.popup').hide();
+      $(".popoverlay").remove();
+      $('body').css('overflow', '');
+    });
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+  </script>
+
+
+  
+
+  
+
+  
+
+  
+
+
+</body>
+</html>

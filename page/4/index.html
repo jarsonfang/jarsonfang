@@ -267,7 +267,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/kernel/内核修炼之道/how-to-analysis-kernel-source-1/">
+  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核修炼之道/linux-driver-model/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Jarson Fang">
@@ -292,7 +292,341 @@
             
               
                 
-                <a class="post-title-link" href="/kernel/内核修炼之道/how-to-analysis-kernel-source-1/" itemprop="url">
+                <a class="post-title-link" href="/Kernel/内核修炼之道/linux-driver-model/" itemprop="url">
+                  linux设备模型
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2014-04-17T14:17:28+08:00">
+                2014-04-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kernel/" itemprop="url" rel="index">
+                    <span itemprop="name">Kernel</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kernel/内核修炼之道/" itemprop="url" rel="index">
+                    <span itemprop="name">内核修炼之道</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/Kernel/内核修炼之道/linux-driver-model/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/内核修炼之道/linux-driver-model/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>参考原文：<br><a href="http://blog.csdn.net/fudan_abc/article/details/5410486">《Linux内核修炼之道》精华分享与讨论（11）——设备模型（上） </a><br><a href="http://blog.csdn.net/fudan_abc/article/details/5417879">《Linux内核修炼之道》精华分享与讨论（12）——设备模型（下） </a></p>
+<p>对于驱动开发来说，设备模型的理解是根本，毫不夸张得说，理解了设备模型，再去看那些五花八门的驱动程序，你会发现自己站在了另一个高度，从而有了一种俯视的感觉。<br>顾名而思义，设备模型是关于设备的模型，对咱们写驱动的和不写驱动的人来说，设备的概念就是总线和与其相连的各种设备。电脑城的IT工作者都会知道设备是通过总线连到计算机上的，而且还需要对应的驱动才能用，可是总线是如何发现设备的，设备又是如何和驱动对应起来的，它们经过怎样的艰辛才找到命里注定的那个他，它们的关系如何，白头偕老型的还是朝三暮四型的，这些问题就不是他们关心的了，而是咱们需要关心的。这些疑问的中心思想中心词汇就是总线、设备和驱动，没错，它们就是咱们这里要聊的Linux设备模型的名角。<br>
+          <!--noindex-->
+          <div class="post-more-link text-center">
+            <a class="btn" href="/Kernel/内核修炼之道/linux-driver-model/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核修炼之道/how-to-analysis-kernel-source-2/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Jarson Fang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Jarson's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/Kernel/内核修炼之道/how-to-analysis-kernel-source-2/" itemprop="url">
+                  分析内核源码如何入手（下）
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2014-04-17T12:46:02+08:00">
+                2014-04-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kernel/" itemprop="url" rel="index">
+                    <span itemprop="name">Kernel</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kernel/内核修炼之道/" itemprop="url" rel="index">
+                    <span itemprop="name">内核修炼之道</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/Kernel/内核修炼之道/how-to-analysis-kernel-source-2/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/内核修炼之道/how-to-analysis-kernel-source-2/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>原文：<a href="http://blog.csdn.net/fudan_abc/article/details/5355062">《Linux内核修炼之道》精华分享与讨论（7）——分析内核源码如何入手？（下） </a></p>
+<h2 id="从初始化函数开始"><a href="#从初始化函数开始" class="headerlink" title="从初始化函数开始"></a>从初始化函数开始</h2><p>有了地图Kconfig和Makefile，我们可以在庞大复杂的内核代码中定位以及缩小了目标代码的范围。那么现在，为了研究内核对USB子系统的实现，我们还需要在目标代码中找到一个突破口，这个突破口就是USB子系统的初始化代码。<br>
+          <!--noindex-->
+          <div class="post-more-link text-center">
+            <a class="btn" href="/Kernel/内核修炼之道/how-to-analysis-kernel-source-2/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核修炼之道/how-to-analysis-kernel-source-1/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="Jarson Fang">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="/images/avatar.jpg">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="Jarson's Blog">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/Kernel/内核修炼之道/how-to-analysis-kernel-source-1/" itemprop="url">
                   分析内核源码如何入手（上）
                 </a>
               
@@ -332,8 +666,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kernel/" itemprop="url" rel="index">
-                    <span itemprop="name">kernel</span>
+                  <a href="/categories/Kernel/" itemprop="url" rel="index">
+                    <span itemprop="name">Kernel</span>
                   </a>
                 </span>
 
@@ -343,7 +677,7 @@
                 
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kernel/内核修炼之道/" itemprop="url" rel="index">
+                  <a href="/categories/Kernel/内核修炼之道/" itemprop="url" rel="index">
                     <span itemprop="name">内核修炼之道</span>
                   </a>
                 </span>
@@ -361,8 +695,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/kernel/内核修炼之道/how-to-analysis-kernel-source-1/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="kernel/内核修炼之道/how-to-analysis-kernel-source-1/" itemprop="commentCount"></span>
+                <a href="/Kernel/内核修炼之道/how-to-analysis-kernel-source-1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/内核修炼之道/how-to-analysis-kernel-source-1/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -394,7 +728,7 @@
 <p>既然要学习内核源码，就要经常对内核代码进行分析，而内核代码千千万，还前仆后继的不断往里加，这就让大部分人都有种雾里看花花不见的无助感。不过不要怕，孔老夫子早就留给我们了应对之策：敏于事而慎于言，就有道而正焉，可谓好学也已。这就是说，做事要踏实才是好学生好同志，要遵循严谨的态度，去理解每一段代码的实现，多问多想多记。如果抱着走马观花，得过且过的态度，结果极有可能就是一边看一边丢，没有多大的收获<br>
           <!--noindex-->
           <div class="post-more-link text-center">
-            <a class="btn" href="/kernel/内核修炼之道/how-to-analysis-kernel-source-1/#more" rel="contents">
+            <a class="btn" href="/Kernel/内核修炼之道/how-to-analysis-kernel-source-1/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -435,7 +769,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/kernel/内核修炼之道/kconfig-and-makefile/">
+  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核修炼之道/kconfig-and-makefile/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Jarson Fang">
@@ -460,7 +794,7 @@
             
               
                 
-                <a class="post-title-link" href="/kernel/内核修炼之道/kconfig-and-makefile/" itemprop="url">
+                <a class="post-title-link" href="/Kernel/内核修炼之道/kconfig-and-makefile/" itemprop="url">
                   Kernel地图：Kconfig与Makefile
                 </a>
               
@@ -500,8 +834,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kernel/" itemprop="url" rel="index">
-                    <span itemprop="name">kernel</span>
+                  <a href="/categories/Kernel/" itemprop="url" rel="index">
+                    <span itemprop="name">Kernel</span>
                   </a>
                 </span>
 
@@ -511,7 +845,7 @@
                 
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kernel/内核修炼之道/" itemprop="url" rel="index">
+                  <a href="/categories/Kernel/内核修炼之道/" itemprop="url" rel="index">
                     <span itemprop="name">内核修炼之道</span>
                   </a>
                 </span>
@@ -529,8 +863,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/kernel/内核修炼之道/kconfig-and-makefile/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="kernel/内核修炼之道/kconfig-and-makefile/" itemprop="commentCount"></span>
+                <a href="/Kernel/内核修炼之道/kconfig-and-makefile/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/内核修炼之道/kconfig-and-makefile/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -561,7 +895,7 @@
 <p>Kconfig和Makefile就是Linux Kernel迷宫里的地图。地图引导我们去认识一个城市，而Kconfig和Makefile则可以让我们了解一个Kernel目录下面的结构。我们每次浏览kernel寻找属于自己的那一段代码时，都应该首先看看目录下的这两个文件。<br>
           <!--noindex-->
           <div class="post-more-link text-center">
-            <a class="btn" href="/kernel/内核修炼之道/kconfig-and-makefile/#more" rel="contents">
+            <a class="btn" href="/Kernel/内核修炼之道/kconfig-and-makefile/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -602,7 +936,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/programming/APUE/files-and-directories/">
+  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Programming/APUE/files-and-directories/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Jarson Fang">
@@ -627,7 +961,7 @@
             
               
                 
-                <a class="post-title-link" href="/programming/APUE/files-and-directories/" itemprop="url">
+                <a class="post-title-link" href="/Programming/APUE/files-and-directories/" itemprop="url">
                   文件和目录
                 </a>
               
@@ -667,8 +1001,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/programming/" itemprop="url" rel="index">
-                    <span itemprop="name">programming</span>
+                  <a href="/categories/Programming/" itemprop="url" rel="index">
+                    <span itemprop="name">Programming</span>
                   </a>
                 </span>
 
@@ -678,7 +1012,7 @@
                 
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/programming/APUE/" itemprop="url" rel="index">
+                  <a href="/categories/Programming/APUE/" itemprop="url" rel="index">
                     <span itemprop="name">APUE</span>
                   </a>
                 </span>
@@ -696,8 +1030,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/programming/APUE/files-and-directories/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="programming/APUE/files-and-directories/" itemprop="commentCount"></span>
+                <a href="/Programming/APUE/files-and-directories/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="Programming/APUE/files-and-directories/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -734,7 +1068,7 @@
 <p>本章还初步介绍了UFS（UNIX FIle System)软件层的基本结构。<br>
           <!--noindex-->
           <div class="post-more-link text-center">
-            <a class="btn" href="/programming/APUE/files-and-directories/#more" rel="contents">
+            <a class="btn" href="/Programming/APUE/files-and-directories/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -775,7 +1109,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/programming/APUE/file-io/">
+  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Programming/APUE/file-io/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Jarson Fang">
@@ -800,7 +1134,7 @@
             
               
                 
-                <a class="post-title-link" href="/programming/APUE/file-io/" itemprop="url">
+                <a class="post-title-link" href="/Programming/APUE/file-io/" itemprop="url">
                   文件 I/O
                 </a>
               
@@ -840,8 +1174,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/programming/" itemprop="url" rel="index">
-                    <span itemprop="name">programming</span>
+                  <a href="/categories/Programming/" itemprop="url" rel="index">
+                    <span itemprop="name">Programming</span>
                   </a>
                 </span>
 
@@ -851,7 +1185,7 @@
                 
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/programming/APUE/" itemprop="url" rel="index">
+                  <a href="/categories/Programming/APUE/" itemprop="url" rel="index">
                     <span itemprop="name">APUE</span>
                   </a>
                 </span>
@@ -869,8 +1203,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/programming/APUE/file-io/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="programming/APUE/file-io/" itemprop="commentCount"></span>
+                <a href="/Programming/APUE/file-io/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="Programming/APUE/file-io/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -900,7 +1234,7 @@
           <p>原文参考：<a href="http://www.cnblogs.com/CoreyGao/archive/2013/04/21/3031414.html">APUE读书笔记 之 文件I/O</a><br>文章中的英文图片都引用自：<a href="http://infohost.nmt.edu/~eweiss/222_book/222_book/0201433079/toc.html">http://infohost.nmt.edu/~eweiss/222_book/222_book/0201433079/toc.html</a><br>中文图片为（CoreyGao）原创，用Xmind所画。<br>
           <!--noindex-->
           <div class="post-more-link text-center">
-            <a class="btn" href="/programming/APUE/file-io/#more" rel="contents">
+            <a class="btn" href="/Programming/APUE/file-io/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -941,7 +1275,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/kernel/内核数据结构/kfifo/">
+  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核数据结构/kfifo/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Jarson Fang">
@@ -966,7 +1300,7 @@
             
               
                 
-                <a class="post-title-link" href="/kernel/内核数据结构/kfifo/" itemprop="url">
+                <a class="post-title-link" href="/Kernel/内核数据结构/kfifo/" itemprop="url">
                   linux内核环形队列kfifo
                 </a>
               
@@ -1006,8 +1340,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kernel/" itemprop="url" rel="index">
-                    <span itemprop="name">kernel</span>
+                  <a href="/categories/Kernel/" itemprop="url" rel="index">
+                    <span itemprop="name">Kernel</span>
                   </a>
                 </span>
 
@@ -1017,7 +1351,7 @@
                 
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kernel/内核数据结构/" itemprop="url" rel="index">
+                  <a href="/categories/Kernel/内核数据结构/" itemprop="url" rel="index">
                     <span itemprop="name">内核数据结构</span>
                   </a>
                 </span>
@@ -1035,8 +1369,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/kernel/内核数据结构/kfifo/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="kernel/内核数据结构/kfifo/" itemprop="commentCount"></span>
+                <a href="/Kernel/内核数据结构/kfifo/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/内核数据结构/kfifo/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -1067,7 +1401,7 @@
 <p><code>kfifo</code>就是这样的一类优美代码，它十分简洁，绝无多余的一行代码，却非常高效。<br>关于kfifo信息如下：<br><span style="color:blue;"><br>本文分析的原代码版本：2.6.25<br>kfifo的定义文件：kernel/kfifo.c<br>kfifo的头文件：include/linux/kfifo.h<br></span><br>
           <!--noindex-->
           <div class="post-more-link text-center">
-            <a class="btn" href="/kernel/内核数据结构/kfifo/#more" rel="contents">
+            <a class="btn" href="/Kernel/内核数据结构/kfifo/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1108,7 +1442,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/kernel/设备驱动/linux-char-device-module-script/">
+  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/设备驱动/linux-char-device-module-script/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Jarson Fang">
@@ -1133,7 +1467,7 @@
             
               
                 
-                <a class="post-title-link" href="/kernel/设备驱动/linux-char-device-module-script/" itemprop="url">
+                <a class="post-title-link" href="/Kernel/设备驱动/linux-char-device-module-script/" itemprop="url">
                   linux字符设备模块加载脚本
                 </a>
               
@@ -1173,8 +1507,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kernel/" itemprop="url" rel="index">
-                    <span itemprop="name">kernel</span>
+                  <a href="/categories/Kernel/" itemprop="url" rel="index">
+                    <span itemprop="name">Kernel</span>
                   </a>
                 </span>
 
@@ -1184,7 +1518,7 @@
                 
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kernel/设备驱动/" itemprop="url" rel="index">
+                  <a href="/categories/Kernel/设备驱动/" itemprop="url" rel="index">
                     <span itemprop="name">设备驱动</span>
                   </a>
                 </span>
@@ -1202,8 +1536,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/kernel/设备驱动/linux-char-device-module-script/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="kernel/设备驱动/linux-char-device-module-script/" itemprop="commentCount"></span>
+                <a href="/Kernel/设备驱动/linux-char-device-module-script/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/设备驱动/linux-char-device-module-script/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -1271,7 +1605,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/kernel/设备驱动/template-of-linux-kernel-module-makefile/">
+  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/设备驱动/template-of-linux-kernel-module-makefile/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Jarson Fang">
@@ -1296,7 +1630,7 @@
             
               
                 
-                <a class="post-title-link" href="/kernel/设备驱动/template-of-linux-kernel-module-makefile/" itemprop="url">
+                <a class="post-title-link" href="/Kernel/设备驱动/template-of-linux-kernel-module-makefile/" itemprop="url">
                   Linux内核模块编译Makefile模板
                 </a>
               
@@ -1336,8 +1670,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kernel/" itemprop="url" rel="index">
-                    <span itemprop="name">kernel</span>
+                  <a href="/categories/Kernel/" itemprop="url" rel="index">
+                    <span itemprop="name">Kernel</span>
                   </a>
                 </span>
 
@@ -1347,7 +1681,7 @@
                 
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kernel/设备驱动/" itemprop="url" rel="index">
+                  <a href="/categories/Kernel/设备驱动/" itemprop="url" rel="index">
                     <span itemprop="name">设备驱动</span>
                   </a>
                 </span>
@@ -1365,8 +1699,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/kernel/设备驱动/template-of-linux-kernel-module-makefile/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="kernel/设备驱动/template-of-linux-kernel-module-makefile/" itemprop="commentCount"></span>
+                <a href="/Kernel/设备驱动/template-of-linux-kernel-module-makefile/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/设备驱动/template-of-linux-kernel-module-makefile/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -1397,7 +1731,7 @@
 <p>根据LDD3的内核模块makefile和原理说明，根据自己的需要做了适当的修改使得这个Makefile脚本可以方便被应用于不同的简单模块编译，并可以在模块需要编译进内核的时候直接放入内核源码目录中，脚本如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div></pre></td><td class="code"><pre><div class="line">MODULE_NAME = hello_linux_simple</div><div class="line">MODULE_CONFIG = CONFIG_HELLO_LINUX_SIMPLE</div><div class="line">CROSS_CONFIG = y</div><div class="line"># Comment/uncomment the following line to disable/enable debugging</div><div class="line">DEBUG = y</div><div class="line"></div><div class="line"># If KERNELRELEASE is defined, we&apos;ve been invoked from the</div><div class="line"># kernel build system and can use its language.</div><div class="line">ifneq ($(KERNELRELEASE),)</div><div class="line"></div><div class="line"># Add your debugging flag (or not) to CFLAGS</div><div class="line">ifeq ($(DEBUG),y)</div><div class="line">	DEBFLAGS = -O -g -DDEBUG # &quot;-O&quot; is needed to expand inlines</div><div class="line">else</div><div class="line">	DEBFLAGS = -O2</div><div class="line">endif</div><div class="line"></div><div class="line">ccflags-y += $(DEBFLAGS)</div><div class="line"></div><div class="line">obj-$($(MODULE_CONFIG)) := $(MODULE_NAME).o</div><div class="line">#for Multi-files module</div><div class="line">$(MODULE_NAME)-objs := hello_linux_simple_dep.o ex_output.o</div><div class="line"></div><div class="line"># Otherwise we were called directly from the command line;</div><div class="line"># invoke the kernel build system.</div><div class="line">else</div><div class="line"></div><div class="line">ifeq ($(CROSS_CONFIG), y)</div><div class="line">#for Cross-compile</div><div class="line">KERNELDIR = （内核源码路径）</div><div class="line">ARCH = arm</div><div class="line">#FIXME:maybe we need absolute path for different user. eg root</div><div class="line">#CROSS_COMPILE = arm-none-linux-gnueabi-</div><div class="line">CROSS_COMPILE = （交叉编译工具路径）</div><div class="line">INSTALLDIR := （目标模块所安装的根文件系统路径）</div><div class="line"></div><div class="line">else</div><div class="line">#for Local compile</div><div class="line">KERNELDIR = /lib/modules/$(shell uname -r)/build</div><div class="line">ARCH = x86</div><div class="line">CROSS_COMPILE =</div><div class="line">INSTALLDIR := /</div><div class="line"></div><div class="line">endif</div><div class="line"></div><div class="line">################################</div><div class="line">PWD := $(shell pwd)</div><div class="line"></div><div class="line">.PHONY: modules modules_install clean</div><div class="line"></div><div class="line">modules:</div><div class="line">	$(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) $(MODULE_CONFIG)=m -C $(KERNELDIR) M=$(PWD) modules</div><div class="line"></div><div class="line">modules_install: modules</div><div class="line">	$(MAKE) ARCH=$(ARCH) CROSS_COMPILE=$(CROSS_COMPILE) $(MODULE_CONFIG)=m -C $(KERNELDIR) INSTALL_MOD_PATH=$(INSTALLDIR) M=$(PWD) modules_install</div><div class="line"></div><div class="line">clean:</div><div class="line">	@rm -rf *.o *~ core .depend .*.cmd *.ko *.mod.c .tmp_versions *.symvers *.order .*.o.d modules.builtin</div><div class="line"></div><div class="line">endif</div></pre></td></tr></table></figure></p>
           <!--noindex-->
           <div class="post-more-link text-center">
-            <a class="btn" href="/kernel/设备驱动/template-of-linux-kernel-module-makefile/#more" rel="contents">
+            <a class="btn" href="/Kernel/设备驱动/template-of-linux-kernel-module-makefile/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1438,7 +1772,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/kernel/设备驱动/principle-of-linux-char-device-driver/">
+  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/设备驱动/principle-of-linux-char-device-driver/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Jarson Fang">
@@ -1463,7 +1797,7 @@
             
               
                 
-                <a class="post-title-link" href="/kernel/设备驱动/principle-of-linux-char-device-driver/" itemprop="url">
+                <a class="post-title-link" href="/Kernel/设备驱动/principle-of-linux-char-device-driver/" itemprop="url">
                   字符设备驱动原理图解
                 </a>
               
@@ -1503,8 +1837,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kernel/" itemprop="url" rel="index">
-                    <span itemprop="name">kernel</span>
+                  <a href="/categories/Kernel/" itemprop="url" rel="index">
+                    <span itemprop="name">Kernel</span>
                   </a>
                 </span>
 
@@ -1514,7 +1848,7 @@
                 
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kernel/设备驱动/" itemprop="url" rel="index">
+                  <a href="/categories/Kernel/设备驱动/" itemprop="url" rel="index">
                     <span itemprop="name">设备驱动</span>
                   </a>
                 </span>
@@ -1532,8 +1866,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/kernel/设备驱动/principle-of-linux-char-device-driver/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="kernel/设备驱动/principle-of-linux-char-device-driver/" itemprop="commentCount"></span>
+                <a href="/Kernel/设备驱动/principle-of-linux-char-device-driver/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/设备驱动/principle-of-linux-char-device-driver/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -1561,351 +1895,10 @@
       
         
           <p>现实世界中存在着大量的设备，这些设备在电气特性和I/O方式上都各不相同。为了简化设备驱动程序员的工作，linux系统从这些各异的设备中抽象出共性的特征，将其划分为三大类：字符设备、块设备和网络设备。内核针对每一类设备都提供了对应的驱动模型框架，包括基本的内核设施和文件系统接口。这样，设备驱动程序员在编写某类设备驱动程序时，就有一套完整的驱动模型框架可以使用，从而可以将大量的精力放在设备本身的操作上。下图2-1展示了一个粗略的linux设备驱动程序结构图：</p>
-<img src="/kernel/设备驱动/principle-of-linux-char-device-driver/device_driver_framework.png" alt="device_driver_framework.png" title="">
+<img src="/Kernel/设备驱动/principle-of-linux-char-device-driver/device_driver_framework.png" alt="device_driver_framework.png" title="">
           <!--noindex-->
           <div class="post-more-link text-center">
-            <a class="btn" href="/kernel/设备驱动/principle-of-linux-char-device-driver/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/kernel/内核数据结构/klist/">
-
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Jarson Fang">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/avatar.jpg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="Jarson's Blog">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
-    </span>
-  </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/kernel/内核数据结构/klist/" itemprop="url">
-                  linux内核链表之klist
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2014-03-09T12:47:25+08:00">
-                2014-03-09
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kernel/" itemprop="url" rel="index">
-                    <span itemprop="name">kernel</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kernel/内核数据结构/" itemprop="url" rel="index">
-                    <span itemprop="name">内核数据结构</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/kernel/内核数据结构/klist/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="kernel/内核数据结构/klist/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p><code>klist</code>是<code>list</code>的线程安全版本，它提供了整个链表的自旋锁，查找链表节点，对链表节点的插入和删除操作都要获得这个自旋锁。<code>klist</code>的节点数据结构是<code>klist_node</code>，<code>klist_node</code>引入引用计数，只有当引用计数减到0时才允许该<code>node</code>从链表中移除。当一个内核线程要移除一个<code>node</code>，必须要等待到<code>node</code>的引用计数释放，在此期间线程处于休眠状态。为了方便线程等待，<code>klist</code>引入等待移除节点者结构体<code>klist_waiter</code>，<code>klist_waiter</code>组成<code>klist_remove_waiters</code>（内核全局变量）链表，为保护<code>klist_remove_waiters</code>线程安全，引入<code>klist_remove_lock</code>（内核全局变量）自旋锁。为方便遍历<code>klist</code>，引入了迭代器<code>klist_iter</code>。<br>
-          <!--noindex-->
-          <div class="post-more-link text-center">
-            <a class="btn" href="/kernel/内核数据结构/klist/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/kernel/内核数据结构/hlist/">
-
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Jarson Fang">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/avatar.jpg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="Jarson's Blog">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
-    </span>
-  </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/kernel/内核数据结构/hlist/" itemprop="url">
-                  linux内核链表之hlist
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2014-03-08T11:54:51+08:00">
-                2014-03-08
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kernel/" itemprop="url" rel="index">
-                    <span itemprop="name">kernel</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/kernel/内核数据结构/" itemprop="url" rel="index">
-                    <span itemprop="name">内核数据结构</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/kernel/内核数据结构/hlist/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="kernel/内核数据结构/hlist/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>在Linux内核中，hlist（哈希链表）使用非常广泛，本文将对其数据结构和核心函数进行分析。</p>
-<p>和hlist相关的数据结构有两个</p>
-<ol>
-<li>hlist_head</li>
-<li>hlist_node<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">struct</span> hlist_head &#123;</div><div class="line">        <span class="keyword">struct</span> hlist_node *first;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">struct</span> hlist_node &#123;</div><div class="line">        <span class="keyword">struct</span> hlist_node *next, **pprev;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>顾名思义，<code>hlist_head</code>表示哈希表的头结点。哈希表中每一个 entry (hlist_head) 所对应的都是一个链表（hlist)，该链表的结点由<code>hlist_node</code>表示。<br><img src="/kernel/内核数据结构/hlist/hlist.jpg" alt="hlist.jpg" title=""><br><code>hlist_head</code> 结构体只有一个域，即<code>first</code>。<code>first</code>指针指向该 hlist 链表的第一个节点。</p>
-<p><code>hlist_node</code>结构体有两个域，<code>next</code>和<code>pprev</code>。 <code>next</code>指针很容易理解，它指向下个<code>hlist_node</code>结点，倘若该节点是链表的最后一个节点，<code>next</code>指向<code>NULL</code>。</p>
-<p><code>pprev</code>是一个二级指针，为什么我们需要这样一个指针呢？它的好处是什么？<br>
-          <!--noindex-->
-          <div class="post-more-link text-center">
-            <a class="btn" href="/kernel/内核数据结构/hlist/#more" rel="contents">
+            <a class="btn" href="/Kernel/设备驱动/principle-of-linux-char-device-driver/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1984,7 +1977,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">66</span>
+                <span class="site-state-item-count">68</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2002,7 +1995,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-count">12</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
