@@ -5,7 +5,7 @@
     
   <url>
     <loc>https://jarsonfang.github.io/Life/C1-drive-training-2/</loc>
-    <lastmod>2017-01-20T15:18:43.042Z</lastmod>
+    <lastmod>2017-01-21T07:51:10.718Z</lastmod>
     <data>
         <display>
         <title>科目二学习笔记</title>
@@ -26,35 +26,12 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/Programming/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/uml-class-diagram/</loc>
+    <loc>https://jarsonfang.github.io/Kernel/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/serio-bus/</loc>
     <lastmod>2017-01-20T12:32:12.359Z</lastmod>
     <data>
         <display>
-        <title>UML类图几种关系的总结</title>
-        <pubTime>2014-08-18T15:01:05.000Z</pubTime>
-        
-        <tag>UML</tag>
-         
-         
-           
-             
-              <breadCrumb title="Programming" url="https://jarsonfang.github.io/categories/Programming/"/>
-          
-             
-              <breadCrumb title="设计模式" url="https://jarsonfang.github.io/categories/Programming/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/unstable-kernel-api/</loc>
-    <lastmod>2017-01-20T12:32:12.359Z</lastmod>
-    <data>
-        <display>
-        <title>不稳定的内核API</title>
-        <pubTime>2014-04-17T06:45:34.000Z</pubTime>
+        <title>serio总线</title>
+        <pubTime>2014-03-03T06:10:35.000Z</pubTime>
         
          
            
@@ -62,74 +39,7 @@
               <breadCrumb title="Kernel" url="https://jarsonfang.github.io/categories/Kernel/"/>
           
              
-              <breadCrumb title="内核修炼之道" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://jarsonfang.github.io/Programming/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/uml-use-case-diagram/</loc>
-    <lastmod>2017-01-20T12:32:12.359Z</lastmod>
-    <data>
-        <display>
-        <title>UML 用例图总结</title>
-        <pubTime>2014-08-26T14:42:28.000Z</pubTime>
-        
-        <tag>UML</tag>
-         
-         
-           
-             
-              <breadCrumb title="Programming" url="https://jarsonfang.github.io/categories/Programming/"/>
-          
-             
-              <breadCrumb title="设计模式" url="https://jarsonfang.github.io/categories/Programming/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://jarsonfang.github.io/Programming/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/uml-sequence-diagram/</loc>
-    <lastmod>2017-01-20T12:32:12.359Z</lastmod>
-    <data>
-        <display>
-        <title>UML序列图总结</title>
-        <pubTime>2014-08-19T14:15:33.000Z</pubTime>
-        
-        <tag>UML</tag>
-         
-         
-           
-             
-              <breadCrumb title="Programming" url="https://jarsonfang.github.io/categories/Programming/"/>
-          
-             
-              <breadCrumb title="设计模式" url="https://jarsonfang.github.io/categories/Programming/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/list-head/</loc>
-    <lastmod>2017-01-20T12:32:12.359Z</lastmod>
-    <data>
-        <display>
-        <title>linux内核链表之list_head</title>
-        <pubTime>2014-03-07T08:58:28.000Z</pubTime>
-        
-         
-           
-             
-              <breadCrumb title="Kernel" url="https://jarsonfang.github.io/categories/Kernel/"/>
-          
-             
-              <breadCrumb title="内核数据结构" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
+              <breadCrumb title="设备驱动" url="https://jarsonfang.github.io/categories/Kernel/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/"/>
           
         </display>
     </data>
@@ -179,6 +89,27 @@
 
     
   <url>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/list-head/</loc>
+    <lastmod>2017-01-20T12:32:12.359Z</lastmod>
+    <data>
+        <display>
+        <title>linux内核链表之list_head</title>
+        <pubTime>2014-03-07T08:58:28.000Z</pubTime>
+        
+         
+           
+             
+              <breadCrumb title="Kernel" url="https://jarsonfang.github.io/categories/Kernel/"/>
+          
+             
+              <breadCrumb title="内核数据结构" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/platform/</loc>
     <lastmod>2017-01-20T12:32:12.359Z</lastmod>
     <data>
@@ -221,29 +152,6 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/probe-of-linux-kernel-driver-module/</loc>
-    <lastmod>2017-01-20T12:32:12.359Z</lastmod>
-    <data>
-        <display>
-        <title>linux设备模型深探</title>
-        <pubTime>2014-02-27T07:23:42.000Z</pubTime>
-        
-        <tag>设备模型</tag>
-         
-         
-           
-             
-              <breadCrumb title="Kernel" url="https://jarsonfang.github.io/categories/Kernel/"/>
-          
-             
-              <breadCrumb title="设备驱动" url="https://jarsonfang.github.io/categories/Kernel/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/relay/</loc>
     <lastmod>2017-01-20T12:32:12.359Z</lastmod>
     <data>
@@ -267,14 +175,39 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/why-dt/</loc>
+    <loc>https://jarsonfang.github.io/Tools/sed-awk/sed-awk-overview/</loc>
     <lastmod>2017-01-20T12:32:12.359Z</lastmod>
     <data>
         <display>
-        <title>Device Tree（一）：背景介绍</title>
-        <pubTime>2015-04-19T07:52:30.000Z</pubTime>
+        <title>sed & awk 概述</title>
+        <pubTime>2014-02-21T06:23:20.000Z</pubTime>
         
-        <tag>DevTree</tag>
+        <tag>sed</tag>
+         
+        <tag>awk</tag>
+         
+         
+           
+             
+              <breadCrumb title="Tools" url="https://jarsonfang.github.io/categories/Tools/"/>
+          
+             
+              <breadCrumb title="sed &amp; awk" url="https://jarsonfang.github.io/categories/Tools/sed-awk/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://jarsonfang.github.io/Kernel/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/probe-of-linux-kernel-driver-module/</loc>
+    <lastmod>2017-01-20T12:32:12.359Z</lastmod>
+    <data>
+        <display>
+        <title>linux设备模型深探</title>
+        <pubTime>2014-02-27T07:23:42.000Z</pubTime>
+        
+        <tag>设备模型</tag>
          
          
            
@@ -282,7 +215,7 @@
               <breadCrumb title="Kernel" url="https://jarsonfang.github.io/categories/Kernel/"/>
           
              
-              <breadCrumb title="内核设备树" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/"/>
+              <breadCrumb title="设备驱动" url="https://jarsonfang.github.io/categories/Kernel/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/"/>
           
         </display>
     </data>
@@ -336,20 +269,22 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/serio-bus/</loc>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/why-dt/</loc>
     <lastmod>2017-01-20T12:32:12.359Z</lastmod>
     <data>
         <display>
-        <title>serio总线</title>
-        <pubTime>2014-03-03T06:10:35.000Z</pubTime>
+        <title>Device Tree（一）：背景介绍</title>
+        <pubTime>2015-04-19T07:52:30.000Z</pubTime>
         
+        <tag>DevTree</tag>
+         
          
            
              
               <breadCrumb title="Kernel" url="https://jarsonfang.github.io/categories/Kernel/"/>
           
              
-              <breadCrumb title="设备驱动" url="https://jarsonfang.github.io/categories/Kernel/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/"/>
+              <breadCrumb title="内核设备树" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/"/>
           
         </display>
     </data>
@@ -380,27 +315,6 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/sparse/</loc>
-    <lastmod>2017-01-20T12:32:12.359Z</lastmod>
-    <data>
-        <display>
-        <title>Sparse 简介</title>
-        <pubTime>2014-05-14T04:07:03.000Z</pubTime>
-        
-         
-           
-             
-              <breadCrumb title="Kernel" url="https://jarsonfang.github.io/categories/Kernel/"/>
-          
-             
-              <breadCrumb title="内核文档" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/spec-datasheet-and-kernel-source/</loc>
     <lastmod>2017-01-20T12:32:12.359Z</lastmod>
     <data>
@@ -422,22 +336,20 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/Programming/APUE/std-io-lib/</loc>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/sparse/</loc>
     <lastmod>2017-01-20T12:32:12.359Z</lastmod>
     <data>
         <display>
-        <title>标准I/O库</title>
-        <pubTime>2014-05-05T15:27:27.000Z</pubTime>
+        <title>Sparse 简介</title>
+        <pubTime>2014-05-14T04:07:03.000Z</pubTime>
         
-        <tag>APUE</tag>
-         
          
            
              
-              <breadCrumb title="Programming" url="https://jarsonfang.github.io/categories/Programming/"/>
+              <breadCrumb title="Kernel" url="https://jarsonfang.github.io/categories/Kernel/"/>
           
              
-              <breadCrumb title="APUE" url="https://jarsonfang.github.io/categories/Programming/APUE/"/>
+              <breadCrumb title="内核文档" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/"/>
           
         </display>
     </data>
@@ -461,6 +373,29 @@
           
              
               <breadCrumb title="内核文档" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://jarsonfang.github.io/Programming/APUE/std-io-lib/</loc>
+    <lastmod>2017-01-20T12:32:12.359Z</lastmod>
+    <data>
+        <display>
+        <title>标准I/O库</title>
+        <pubTime>2014-05-05T15:27:27.000Z</pubTime>
+        
+        <tag>APUE</tag>
+         
+         
+           
+             
+              <breadCrumb title="Programming" url="https://jarsonfang.github.io/categories/Programming/"/>
+          
+             
+              <breadCrumb title="APUE" url="https://jarsonfang.github.io/categories/Programming/APUE/"/>
           
         </display>
     </data>
@@ -509,24 +444,22 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/Tools/sed-awk/sed-awk-overview/</loc>
+    <loc>https://jarsonfang.github.io/Programming/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/uml-class-diagram/</loc>
     <lastmod>2017-01-20T12:32:12.359Z</lastmod>
     <data>
         <display>
-        <title>sed & awk 概述</title>
-        <pubTime>2014-02-21T06:23:20.000Z</pubTime>
+        <title>UML类图几种关系的总结</title>
+        <pubTime>2014-08-18T15:01:05.000Z</pubTime>
         
-        <tag>sed</tag>
-         
-        <tag>awk</tag>
+        <tag>UML</tag>
          
          
            
              
-              <breadCrumb title="Tools" url="https://jarsonfang.github.io/categories/Tools/"/>
+              <breadCrumb title="Programming" url="https://jarsonfang.github.io/categories/Programming/"/>
           
              
-              <breadCrumb title="sed &amp; awk" url="https://jarsonfang.github.io/categories/Tools/sed-awk/"/>
+              <breadCrumb title="设计模式" url="https://jarsonfang.github.io/categories/Programming/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
           
         </display>
     </data>
@@ -534,22 +467,22 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/Tools/Hexo/hexo-tag-plugins/</loc>
-    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
+    <loc>https://jarsonfang.github.io/Programming/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/uml-sequence-diagram/</loc>
+    <lastmod>2017-01-20T12:32:12.359Z</lastmod>
     <data>
         <display>
-        <title>Hexo 标签插件</title>
-        <pubTime>2016-10-01T13:40:05.000Z</pubTime>
+        <title>UML序列图总结</title>
+        <pubTime>2014-08-19T14:15:33.000Z</pubTime>
         
-        <tag>Hexo</tag>
+        <tag>UML</tag>
          
          
            
              
-              <breadCrumb title="Tools" url="https://jarsonfang.github.io/categories/Tools/"/>
+              <breadCrumb title="Programming" url="https://jarsonfang.github.io/categories/Programming/"/>
           
              
-              <breadCrumb title="Hexo" url="https://jarsonfang.github.io/categories/Tools/Hexo/"/>
+              <breadCrumb title="设计模式" url="https://jarsonfang.github.io/categories/Programming/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
           
         </display>
     </data>
@@ -557,12 +490,35 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/hlist/</loc>
-    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
+    <loc>https://jarsonfang.github.io/Programming/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/uml-use-case-diagram/</loc>
+    <lastmod>2017-01-20T12:32:12.359Z</lastmod>
     <data>
         <display>
-        <title>linux内核链表之hlist</title>
-        <pubTime>2014-03-08T03:54:51.000Z</pubTime>
+        <title>UML 用例图总结</title>
+        <pubTime>2014-08-26T14:42:28.000Z</pubTime>
+        
+        <tag>UML</tag>
+         
+         
+           
+             
+              <breadCrumb title="Programming" url="https://jarsonfang.github.io/categories/Programming/"/>
+          
+             
+              <breadCrumb title="设计模式" url="https://jarsonfang.github.io/categories/Programming/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/unstable-kernel-api/</loc>
+    <lastmod>2017-01-20T12:32:12.359Z</lastmod>
+    <data>
+        <display>
+        <title>不稳定的内核API</title>
+        <pubTime>2014-04-17T06:45:34.000Z</pubTime>
         
          
            
@@ -570,28 +526,7 @@
               <breadCrumb title="Kernel" url="https://jarsonfang.github.io/categories/Kernel/"/>
           
              
-              <breadCrumb title="内核数据结构" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/how-the-kernel-manages-your-memory/</loc>
-    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
-    <data>
-        <display>
-        <title>内核是如何管理内存的</title>
-        <pubTime>2014-02-26T05:34:46.000Z</pubTime>
-        
-         
-           
-             
-              <breadCrumb title="Kernel" url="https://jarsonfang.github.io/categories/Kernel/"/>
-          
-             
-              <breadCrumb title="内核内存管理" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/"/>
+              <breadCrumb title="内核修炼之道" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/"/>
           
         </display>
     </data>
@@ -620,6 +555,29 @@
 
     
   <url>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/linux-fd/</loc>
+    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
+    <data>
+        <display>
+        <title>linux中文件描述符fd和文件指针filp的理解</title>
+        <pubTime>2014-02-25T08:18:57.000Z</pubTime>
+        
+        <tag>VFS</tag>
+         
+         
+           
+             
+              <breadCrumb title="Kernel" url="https://jarsonfang.github.io/categories/Kernel/"/>
+          
+             
+              <breadCrumb title="内核文件系统" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/how-to-analysis-kernel-source-2/</loc>
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     <data>
@@ -634,29 +592,6 @@
           
              
               <breadCrumb title="内核修炼之道" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/linux-3-10-arm-device-tree/</loc>
-    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
-    <data>
-        <display>
-        <title>Linux 3.10 ARM Device Tree 的初始化</title>
-        <pubTime>2015-05-10T03:46:09.000Z</pubTime>
-        
-        <tag>DevTree</tag>
-         
-         
-           
-             
-              <breadCrumb title="Kernel" url="https://jarsonfang.github.io/categories/Kernel/"/>
-          
-             
-              <breadCrumb title="内核设备树" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/"/>
           
         </display>
     </data>
@@ -720,29 +655,6 @@
           
              
               <breadCrumb title="内核数据结构" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/kobject/</loc>
-    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
-    <data>
-        <display>
-        <title>关于 kobject，kset 和 ktype 的一切</title>
-        <pubTime>2014-03-04T07:01:22.000Z</pubTime>
-        
-        <tag>设备模型</tag>
-         
-         
-           
-             
-              <breadCrumb title="Kernel" url="https://jarsonfang.github.io/categories/Kernel/"/>
-          
-             
-              <breadCrumb title="内核文档" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/"/>
           
         </display>
     </data>
@@ -815,6 +727,29 @@
 
     
   <url>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/linux-3-10-arm-device-tree/</loc>
+    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
+    <data>
+        <display>
+        <title>Linux 3.10 ARM Device Tree 的初始化</title>
+        <pubTime>2015-05-10T03:46:09.000Z</pubTime>
+        
+        <tag>DevTree</tag>
+         
+         
+           
+             
+              <breadCrumb title="Kernel" url="https://jarsonfang.github.io/categories/Kernel/"/>
+          
+             
+              <breadCrumb title="内核设备树" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/linux-driver-model/</loc>
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     <data>
@@ -831,29 +766,6 @@
           
              
               <breadCrumb title="内核修炼之道" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/linux-fd/</loc>
-    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
-    <data>
-        <display>
-        <title>linux中文件描述符fd和文件指针filp的理解</title>
-        <pubTime>2014-02-25T08:18:57.000Z</pubTime>
-        
-        <tag>VFS</tag>
-         
-         
-           
-             
-              <breadCrumb title="Kernel" url="https://jarsonfang.github.io/categories/Kernel/"/>
-          
-             
-              <breadCrumb title="内核文件系统" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"/>
           
         </display>
     </data>
@@ -882,12 +794,12 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/linux-lcd-driver/</loc>
+    <loc>https://jarsonfang.github.io/Kernel/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/linux-platform-device-and-driver/</loc>
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     <data>
         <display>
-        <title>Linux LCD 驱动学习</title>
-        <pubTime>2015-04-04T14:45:09.000Z</pubTime>
+        <title>Linux Platform Device and Driver</title>
+        <pubTime>2014-02-25T02:52:33.000Z</pubTime>
         
          
            
@@ -903,12 +815,12 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/linux-platform-device-and-driver/</loc>
+    <loc>https://jarsonfang.github.io/Kernel/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/linux-lcd-driver/</loc>
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     <data>
         <display>
-        <title>Linux Platform Device and Driver</title>
-        <pubTime>2014-02-25T02:52:33.000Z</pubTime>
+        <title>Linux LCD 驱动学习</title>
+        <pubTime>2015-04-04T14:45:09.000Z</pubTime>
         
          
            
@@ -1018,27 +930,6 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/codingstyle/</loc>
-    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
-    <data>
-        <display>
-        <title>Linux内核代码风格</title>
-        <pubTime>2014-03-04T01:07:17.000Z</pubTime>
-        
-         
-           
-             
-              <breadCrumb title="Kernel" url="https://jarsonfang.github.io/categories/Kernel/"/>
-          
-             
-              <breadCrumb title="内核文档" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/devclass/</loc>
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     <data>
@@ -1069,6 +960,27 @@
         
         <tag>设备模型</tag>
          
+         
+           
+             
+              <breadCrumb title="Kernel" url="https://jarsonfang.github.io/categories/Kernel/"/>
+          
+             
+              <breadCrumb title="内核文档" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/codingstyle/</loc>
+    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
+    <data>
+        <display>
+        <title>Linux内核代码风格</title>
+        <pubTime>2014-03-04T01:07:17.000Z</pubTime>
+        
          
            
              
@@ -1221,29 +1133,6 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/Programming/APUE/files-and-directories/</loc>
-    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
-    <data>
-        <display>
-        <title>文件和目录</title>
-        <pubTime>2014-04-17T02:02:30.000Z</pubTime>
-        
-        <tag>APUE</tag>
-         
-         
-           
-             
-              <breadCrumb title="Programming" url="https://jarsonfang.github.io/categories/Programming/"/>
-          
-             
-              <breadCrumb title="APUE" url="https://jarsonfang.github.io/categories/Programming/APUE/"/>
-          
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
     <loc>https://jarsonfang.github.io/Tools/VCS/git-in-common/</loc>
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     <data>
@@ -1306,6 +1195,29 @@
           
              
               <breadCrumb title="Hexo" url="https://jarsonfang.github.io/categories/Tools/Hexo/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://jarsonfang.github.io/Programming/APUE/files-and-directories/</loc>
+    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
+    <data>
+        <display>
+        <title>文件和目录</title>
+        <pubTime>2014-04-17T02:02:30.000Z</pubTime>
+        
+        <tag>APUE</tag>
+         
+         
+           
+             
+              <breadCrumb title="Programming" url="https://jarsonfang.github.io/categories/Programming/"/>
+          
+             
+              <breadCrumb title="APUE" url="https://jarsonfang.github.io/categories/Programming/APUE/"/>
           
         </display>
     </data>
@@ -1405,12 +1317,35 @@
 
     
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/anatomy-of-a-program-in-memory/</loc>
-    <lastmod>2017-01-20T12:32:12.351Z</lastmod>
+    <loc>https://jarsonfang.github.io/Tools/Hexo/hexo-tag-plugins/</loc>
+    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     <data>
         <display>
-        <title>进程内存布局剖析</title>
-        <pubTime>2014-02-26T05:32:52.000Z</pubTime>
+        <title>Hexo 标签插件</title>
+        <pubTime>2016-10-01T13:40:05.000Z</pubTime>
+        
+        <tag>Hexo</tag>
+         
+         
+           
+             
+              <breadCrumb title="Tools" url="https://jarsonfang.github.io/categories/Tools/"/>
+          
+             
+              <breadCrumb title="Hexo" url="https://jarsonfang.github.io/categories/Tools/Hexo/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/how-the-kernel-manages-your-memory/</loc>
+    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
+    <data>
+        <display>
+        <title>内核是如何管理内存的</title>
+        <pubTime>2014-02-26T05:34:46.000Z</pubTime>
         
          
            
@@ -1419,6 +1354,50 @@
           
              
               <breadCrumb title="内核内存管理" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/hlist/</loc>
+    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
+    <data>
+        <display>
+        <title>linux内核链表之hlist</title>
+        <pubTime>2014-03-08T03:54:51.000Z</pubTime>
+        
+         
+           
+             
+              <breadCrumb title="Kernel" url="https://jarsonfang.github.io/categories/Kernel/"/>
+          
+             
+              <breadCrumb title="内核数据结构" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/kobject/</loc>
+    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
+    <data>
+        <display>
+        <title>关于 kobject，kset 和 ktype 的一切</title>
+        <pubTime>2014-03-04T07:01:22.000Z</pubTime>
+        
+        <tag>设备模型</tag>
+         
+         
+           
+             
+              <breadCrumb title="Kernel" url="https://jarsonfang.github.io/categories/Kernel/"/>
+          
+             
+              <breadCrumb title="内核文档" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/"/>
           
         </display>
     </data>
@@ -1440,6 +1419,27 @@
           
              
               <breadCrumb title="设备驱动" url="https://jarsonfang.github.io/categories/Kernel/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/anatomy-of-a-program-in-memory/</loc>
+    <lastmod>2017-01-20T12:32:12.351Z</lastmod>
+    <data>
+        <display>
+        <title>进程内存布局剖析</title>
+        <pubTime>2014-02-26T05:32:52.000Z</pubTime>
+        
+         
+           
+             
+              <breadCrumb title="Kernel" url="https://jarsonfang.github.io/categories/Kernel/"/>
+          
+             
+              <breadCrumb title="内核内存管理" url="https://jarsonfang.github.io/categories/Kernel/%E5%86%85%E6%A0%B8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/"/>
           
         </display>
     </data>
