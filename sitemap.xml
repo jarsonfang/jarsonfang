@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>https://jarsonfang.github.io/Life/C1-drive-training-3/</loc>
+    
+    <lastmod>2017-08-19T15:36:30.290Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://jarsonfang.github.io/Life/C1-drive-training-2/</loc>
     
     <lastmod>2017-02-25T15:11:26.919Z</lastmod>
@@ -9,7 +16,7 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Tools/sed-awk/sed-functions/</loc>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/unstable-kernel-api/</loc>
     
     <lastmod>2017-01-20T12:32:12.359Z</lastmod>
     
@@ -30,7 +37,7 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/why-dt/</loc>
+    <loc>https://jarsonfang.github.io/Programming/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/uml-class-diagram/</loc>
     
     <lastmod>2017-01-20T12:32:12.359Z</lastmod>
     
@@ -51,14 +58,14 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/platform/</loc>
+    <loc>https://jarsonfang.github.io/Kernel/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/platform-bus/</loc>
     
     <lastmod>2017-01-20T12:32:12.359Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/platform-bus/</loc>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/platform/</loc>
     
     <lastmod>2017-01-20T12:32:12.359Z</lastmod>
     
@@ -79,6 +86,13 @@
   </url>
   
   <url>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/why-dt/</loc>
+    
+    <lastmod>2017-01-20T12:32:12.359Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://jarsonfang.github.io/Kernel/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/probe-of-linux-kernel-driver-module/</loc>
     
     <lastmod>2017-01-20T12:32:12.359Z</lastmod>
@@ -86,14 +100,14 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/unstable-kernel-api/</loc>
+    <loc>https://jarsonfang.github.io/Tools/sed-awk/sed-functions/</loc>
     
     <lastmod>2017-01-20T12:32:12.359Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Tools/sed-awk/sed-awk-overview/</loc>
+    <loc>https://jarsonfang.github.io/Tools/sed-awk/sed-manual/</loc>
     
     <lastmod>2017-01-20T12:32:12.359Z</lastmod>
     
@@ -114,13 +128,6 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Tools/sed-awk/sed-manual/</loc>
-    
-    <lastmod>2017-01-20T12:32:12.359Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/sparse/</loc>
     
     <lastmod>2017-01-20T12:32:12.359Z</lastmod>
@@ -135,6 +142,13 @@
   </url>
   
   <url>
+    <loc>https://jarsonfang.github.io/Programming/APUE/std-io-lib/</loc>
+    
+    <lastmod>2017-01-20T12:32:12.359Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/sysfs/</loc>
     
     <lastmod>2017-01-20T12:32:12.359Z</lastmod>
@@ -142,7 +156,7 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Programming/APUE/std-io-lib/</loc>
+    <loc>https://jarsonfang.github.io/Kernel/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/template-of-linux-kernel-module-makefile/</loc>
     
     <lastmod>2017-01-20T12:32:12.359Z</lastmod>
     
@@ -156,16 +170,16 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Programming/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/uml-class-diagram/</loc>
+    <loc>https://jarsonfang.github.io/Tools/sed-awk/sed-awk-overview/</loc>
     
     <lastmod>2017-01-20T12:32:12.359Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/template-of-linux-kernel-module-makefile/</loc>
+    <loc>https://jarsonfang.github.io/Tools/Hexo/hexo-tag-plugins/</loc>
     
-    <lastmod>2017-01-20T12:32:12.359Z</lastmod>
+    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     
   </url>
   
@@ -191,7 +205,14 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/linux-char-device-module-script/</loc>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/how-to-analysis-kernel-source-2/</loc>
+    
+    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/linux-3-10-arm-device-tree/</loc>
     
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     
@@ -205,7 +226,7 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/how-to-analysis-kernel-source-2/</loc>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/kfifo/</loc>
     
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     
@@ -219,13 +240,6 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/kfifo/</loc>
-    
-    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/kobject/</loc>
     
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
@@ -233,21 +247,28 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/binding/</loc>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/kref/</loc>
     
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/bus/</loc>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/binary-search-and-printk/</loc>
     
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/linux-3-10-arm-device-tree/</loc>
+    <loc>https://jarsonfang.github.io/Kernel/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/linux-char-device-module-script/</loc>
+    
+    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/linux-driver-model/</loc>
     
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     
@@ -268,7 +289,7 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/linux-driver-model/</loc>
+    <loc>https://jarsonfang.github.io/Kernel/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/linux-lcd-driver/</loc>
     
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     
@@ -282,7 +303,7 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E8%AE%BE%E5%A4%87%E9%A9%B1%E5%8A%A8/linux-lcd-driver/</loc>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/linux-sysfs/</loc>
     
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     
@@ -296,21 +317,14 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/linux-sysfs/</loc>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/binding/</loc>
     
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93/binary-search-and-printk/</loc>
-    
-    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/devclass/</loc>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/bus/</loc>
     
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     
@@ -324,14 +338,14 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/device/</loc>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/devclass/</loc>
     
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/dt-basic-concept/</loc>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/device/</loc>
     
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     
@@ -345,6 +359,13 @@
   </url>
   
   <url>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/dt-basic-concept/</loc>
+    
+    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/dt-code-analysis/</loc>
     
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
@@ -352,14 +373,14 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Tools/VCS/everyday-git/</loc>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/dt-usage/</loc>
     
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E8%AE%BE%E5%A4%87%E6%A0%91/dt-usage/</loc>
+    <loc>https://jarsonfang.github.io/Tools/VCS/everyday-git/</loc>
     
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     
@@ -380,13 +401,6 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Tools/Hexo/hello-world/</loc>
-    
-    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
-    
-  </url>
-  
-  <url>
     <loc>https://jarsonfang.github.io/Tools/VCS/git-in-common/</loc>
     
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
@@ -401,7 +415,7 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Tools/Hexo/hexo-commands/</loc>
+    <loc>https://jarsonfang.github.io/Tools/Hexo/hello-world/</loc>
     
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     
@@ -415,7 +429,7 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Tools/Hexo/hexo-operations/</loc>
+    <loc>https://jarsonfang.github.io/Tools/Hexo/hexo-commands/</loc>
     
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     
@@ -429,16 +443,16 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Tools/Hexo/hexo-tag-plugins/</loc>
+    <loc>https://jarsonfang.github.io/Tools/Hexo/hexo-operations/</loc>
     
     <lastmod>2017-01-20T12:32:12.355Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E6%96%87%E6%A1%A3/kref/</loc>
+    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/anatomy-of-a-program-in-memory/</loc>
     
-    <lastmod>2017-01-20T12:32:12.355Z</lastmod>
+    <lastmod>2017-01-20T12:32:12.351Z</lastmod>
     
   </url>
   
@@ -451,13 +465,6 @@
   
   <url>
     <loc>https://jarsonfang.github.io/Tools/sed-awk/awk/</loc>
-    
-    <lastmod>2017-01-20T12:32:12.351Z</lastmod>
-    
-  </url>
-  
-  <url>
-    <loc>https://jarsonfang.github.io/Kernel/%E5%86%85%E6%A0%B8%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/anatomy-of-a-program-in-memory/</loc>
     
     <lastmod>2017-01-20T12:32:12.351Z</lastmod>
     
@@ -478,14 +485,14 @@
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/tags/index.html</loc>
+    <loc>https://jarsonfang.github.io/categories/index.html</loc>
     
     <lastmod>2016-12-23T15:09:36.437Z</lastmod>
     
   </url>
   
   <url>
-    <loc>https://jarsonfang.github.io/categories/index.html</loc>
+    <loc>https://jarsonfang.github.io/tags/index.html</loc>
     
     <lastmod>2016-12-23T15:09:36.437Z</lastmod>
     

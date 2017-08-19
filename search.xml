@@ -4,6 +4,16 @@
   
     
     <entry>
+      <title><![CDATA[2015深圳科目三路考攻略(白石洲考场)]]></title>
+      <url>https://jarsonfang.github.io/Life/C1-drive-training-3/</url>
+      <content type="html"><![CDATA[<p>原文: <a href="https://wenku.baidu.com/view/2e54c3fa011ca300a6c390fc" target="_blank" rel="external">2015深圳科目三路考100分完美考过攻略(白石洲考场)</a></p>
+<h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>注意事项：<br>1) １档行驶不超过１００米，２档行驶不超过２００米，３档行驶不限距离。<br>2) 车在行驶过程中脚踩离合时间不超过３０秒。<br>3) 行车过程中不能有跳档，如３档跳到１档。<br>4) 当车熄火后挂空挡，不要拉手刹，然后关掉电源后重新打火。</p>
+<p><strong>一、上车准备(5步)</strong><br>1) 调整座位<br>2) 调整后视镜(右后视镜可以看到右后方的车轮)<br>3) 系安全带<br>4) 开大灯<br>5) 检查远近光灯</p>
+<p><strong>二、常规动作</strong><br>1、起步５步走(开始考试启动时、靠边停车后再启动时使用)<br><span style="color:red;">1) 左转向灯<br>2) 鸣喇叭<br>3) 踩离合、刹车<br>4) 挂１档<br>5) 放手刹<br>注：半联动起步，以免溜车；靠边停车后起步，方向盘左转９０度，以免压线。<br>半联动起步：踩刹车，松离合到车身抖动再松刹车，慢慢放完离合。</span><br>2、斑马线３步走<br><span style="color:red;">1) 实线以外踩离合、刹车<br>2) 打左转向灯挂一档<br>3) 等前车通过后，再靠近斑马线<br>注意：<br>(1) 检查远关灯是否打开，如果是，切换到近光灯<br>(2) 看红绿灯，以及前方车辆情况，看是否通过(注：一定要等一个属于自己的绿灯，甚至多等几个，前方无车再启动)</span></p>
+]]></content>
+    </entry>
+    
+    <entry>
       <title><![CDATA[Car driving notes]]></title>
       <url>https://jarsonfang.github.io/Life/Car-driving-notes/</url>
       <content type="html"><![CDATA[<p>原文：<a href="https://mp.weixin.qq.com/s?__biz=MjM5MjAxNDM4MA==&amp;mid=2666148942&amp;idx=2&amp;sn=aa607d130716a030d813370639ba6ef0&amp;chksm=bdb25d0d8ac5d41be4465d19cfbbeabd90c6c7c47082c52231dabeb4f7c3a129a84661f877a4&amp;mpshare=1&amp;scene=1&amp;srcid=0114wQy2Pg44UYbkzmdj3SZl&amp;pass_ticket=Gw%2F0mDXGPR%2FYXd%2FnAZ8GXtOjHclnOv7M%2BUIu9mHzrNBW3c0Zqxsre90WYoD8h3CO#rd" target="_blank" rel="external">【提醒】这样开车要负全责？驾驶员都来看看，有备无患！</a></p>
@@ -3861,7 +3871,7 @@ bus_type</code>中的<code>drivers</code>和<code>devices</code>分别表示了�
 </table>
 <p>以下为正文:</p>
 <p>sysfs - 用于导出内核对象(kobject)的文件系统</p>
-<p>Patrick Mochel    <a href="&#x6d;&#97;&#105;&#108;&#116;&#111;&#58;&#109;&#111;&#99;&#x68;&#x65;&#108;&#64;&#111;&#x73;&#100;&#x6c;&#x2e;&#x6f;&#114;&#103;">&#109;&#111;&#99;&#x68;&#x65;&#108;&#64;&#111;&#x73;&#100;&#x6c;&#x2e;&#x6f;&#114;&#103;</a><br>Mike Murphy <a href="&#109;&#97;&#x69;&#x6c;&#x74;&#111;&#x3a;&#109;&#x61;&#x6d;&#x75;&#114;&#112;&#104;&#x40;&#99;&#115;&#46;&#99;&#x6c;&#101;&#109;&#115;&#111;&#x6e;&#46;&#101;&#x64;&#x75;">&#109;&#x61;&#x6d;&#x75;&#114;&#112;&#104;&#x40;&#99;&#115;&#46;&#99;&#x6c;&#101;&#109;&#115;&#111;&#x6e;&#46;&#101;&#x64;&#x75;</a></p>
+<p>Patrick Mochel    <a href="&#109;&#97;&#x69;&#x6c;&#116;&#x6f;&#58;&#109;&#111;&#x63;&#104;&#x65;&#x6c;&#x40;&#111;&#115;&#100;&#x6c;&#46;&#111;&#114;&#x67;">&#109;&#111;&#x63;&#104;&#x65;&#x6c;&#x40;&#111;&#115;&#100;&#x6c;&#46;&#111;&#114;&#x67;</a><br>Mike Murphy <a href="&#x6d;&#97;&#x69;&#108;&#x74;&#111;&#x3a;&#109;&#97;&#x6d;&#117;&#x72;&#x70;&#x68;&#64;&#x63;&#x73;&#x2e;&#x63;&#x6c;&#101;&#109;&#115;&#111;&#110;&#x2e;&#101;&#x64;&#117;">&#109;&#97;&#x6d;&#117;&#x72;&#x70;&#x68;&#64;&#x63;&#x73;&#x2e;&#x63;&#x6c;&#101;&#109;&#115;&#111;&#110;&#x2e;&#101;&#x64;&#117;</a></p>
 <p>修订:    16 August 2011<br>原始版本:   10 January 2003<br><a id="more"></a></p>
 <h3 id="sysfs-简介"><a href="#sysfs-简介" class="headerlink" title="sysfs 简介"></a>sysfs 简介</h3><p>sysfs 是一个最初基于 <code>ramfs</code> 内存文件系统。它提供一种导出内核数据结构及其属性以及它们之间的关联到用户空间的方法。</p>
 <p>sysfs 始终与 <code>kobject</code> 的底层结构紧密相关。请阅读Documentation/kobject.txt 文档以获得更多关于 <code>kobject</code> 接口的信息。</p>

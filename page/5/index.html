@@ -1,20 +1,30 @@
-<!doctype html>
+<!DOCTYPE html>
 
 
 
   
 
 
-<html class="theme-next mist use-motion" lang="zh-Hans">
+<html class="theme-next gemini use-motion" lang="zh-Hans">
 <head>
   <meta charset="UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
 
 
 
 <meta http-equiv="Cache-Control" content="no-transform" />
 <meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
 
 
 
@@ -40,7 +50,8 @@
   
 
   
-
+    
+    
   
 
   
@@ -49,6 +60,18 @@
 
   
 
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Source Code Pro:300,300italic,400,400italic,700,700italic|Source Code Pro:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
   
 
 
@@ -58,7 +81,7 @@
 
 <link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
 
-<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
 
 
   <meta name="keywords" content="学习, 工作, 生活" />
@@ -70,7 +93,7 @@
 
 
 
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
 
 
 
@@ -93,13 +116,14 @@
   var NexT = window.NexT || {};
   var CONFIG = {
     root: '/',
-    scheme: 'Mist',
-    sidebar: {"position":"right","display":"post"},
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
     fancybox: true,
+    tabs: true,
     motion: true,
     duoshuo: {
-      userId: '6327478655802934000',
-      author: 'Author'
+      userId: '0',
+      author: '博主'
     },
     algolia: {
       applicationID: '',
@@ -119,54 +143,54 @@
 
 
 
-  <title> Jarson's Blog | 静水深流，岁月安好 </title>
+  <title>Jarson's Blog</title>
+  
+
+
+
+
+
+
+
+
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
   
-
-
-
-
-
-
-
-
-
-
-  
   
     
   
 
-  <div class="container one-collumn sidebar-position-right 
+  <div class="container sidebar-position-left 
    page-home 
  ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
-      <div class="header-inner"><div class="site-meta ">
-  
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
 
-  <div class="custom-logo-site-title">
-    <a href="/"  class="brand" rel="start">
-      <span class="logo-line-before"><i></i></span>
-      <span class="site-title">Jarson's Blog</span>
-      <span class="logo-line-after"><i></i></span>
-    </a>
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Jarson's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">静水深流，岁月安好</p>
+      
   </div>
-    
-      <p class="site-subtitle">静水深流，岁月安好</p>
-    
-</div>
 
-<div class="site-nav-toggle">
-  <button>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-    <span class="btn-bar"></span>
-  </button>
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
 </div>
 
 <nav class="site-nav">
@@ -176,8 +200,18 @@
     <ul id="menu" class="menu">
       
         
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
         <li class="menu-item menu-item-categories">
-          <a href="/categories" rel="section">
+          <a href="/categories/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
             
@@ -186,18 +220,18 @@
         </li>
       
         
-        <li class="menu-item menu-item-tags">
-          <a href="/tags" rel="section">
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
             
-            标签
+            关于
           </a>
         </li>
       
         
         <li class="menu-item menu-item-archives">
-          <a href="/archives" rel="section">
+          <a href="/archives/" rel="section">
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
             
@@ -206,43 +240,20 @@
         </li>
       
         
-        <li class="menu-item menu-item-about">
-          <a href="/about" rel="section">
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
             
-            关于
+            标签
           </a>
         </li>
       
 
-      
-        <li class="menu-item menu-item-search">
-          
-            <a href="javascript:;" class="popup-trigger">
-          
-            
-              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
-            
-            搜索
-          </a>
-        </li>
       
     </ul>
   
 
-  
-    <div class="site-search">
-      
-  <div class="popup">
- <span class="search-icon fa fa-search"></span>
- <input type="text" id="local-search-input">
- <div id="local-search-result"></div>
- <span class="popup-btn-close">close</span>
-</div>
-
-
-    </div>
   
 </nav>
 
@@ -266,21 +277,22 @@
   
   
 
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核数据结构/klist/">
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/设备驱动/principle-of-linux-char-device-driver/">
 
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Jarson Fang">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/avatar.jpg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="Jarson's Blog">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jarson Fang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
-  </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jarson's Blog">
+    </span>
 
     
       <header class="post-header">
@@ -288,16 +300,8 @@
         
         
           <h1 class="post-title" itemprop="name headline">
-            
-            
-              
                 
-                <a class="post-title-link" href="/Kernel/内核数据结构/klist/" itemprop="url">
-                  linux内核链表之klist
-                </a>
-              
-            
-          </h1>
+                <a class="post-title-link" href="/Kernel/设备驱动/principle-of-linux-char-device-driver/" itemprop="url">字符设备驱动原理图解</a></h1>
         
 
         <div class="post-meta">
@@ -309,7 +313,165 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2014-03-09T12:47:25+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2014-03-13T10:05:38+08:00">
+                2014-03-13
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kernel/" itemprop="url" rel="index">
+                    <span itemprop="name">Kernel</span>
+                  </a>
+                </span>
+
+                
+                
+                  ， 
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Kernel/设备驱动/" itemprop="url" rel="index">
+                    <span itemprop="name">设备驱动</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <p>现实世界中存在着大量的设备，这些设备在电气特性和I/O方式上都各不相同。为了简化设备驱动程序员的工作，linux系统从这些各异的设备中抽象出共性的特征，将其划分为三大类：字符设备、块设备和网络设备。内核针对每一类设备都提供了对应的驱动模型框架，包括基本的内核设施和文件系统接口。这样，设备驱动程序员在编写某类设备驱动程序时，就有一套完整的驱动模型框架可以使用，从而可以将大量的精力放在设备本身的操作上。下图2-1展示了一个粗略的linux设备驱动程序结构图：</p>
+<img src="/Kernel/设备驱动/principle-of-linux-char-device-driver/device_driver_framework.png" alt="device_driver_framework.png" title="">
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/Kernel/设备驱动/principle-of-linux-char-device-driver/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核数据结构/klist/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jarson Fang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jarson's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/Kernel/内核数据结构/klist/" itemprop="url">linux内核链表之klist</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2014-03-09T12:47:25+08:00">
                 2014-03-09
               </time>
             
@@ -356,21 +518,11 @@
 
           
             
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/Kernel/内核数据结构/klist/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/内核数据结构/klist/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
           
 
           
-
           
+
           
 
           
@@ -381,7 +533,9 @@
       </header>
     
 
-
+    
+    
+    
     <div class="post-body" itemprop="articleBody">
 
       
@@ -391,7 +545,7 @@
         
           <p><code>klist</code>是<code>list</code>的线程安全版本，它提供了整个链表的自旋锁，查找链表节点，对链表节点的插入和删除操作都要获得这个自旋锁。<code>klist</code>的节点数据结构是<code>klist_node</code>，<code>klist_node</code>引入引用计数，只有当引用计数减到0时才允许该<code>node</code>从链表中移除。当一个内核线程要移除一个<code>node</code>，必须要等待到<code>node</code>的引用计数释放，在此期间线程处于休眠状态。为了方便线程等待，<code>klist</code>引入等待移除节点者结构体<code>klist_waiter</code>，<code>klist_waiter</code>组成<code>klist_remove_waiters</code>（内核全局变量）链表，为保护<code>klist_remove_waiters</code>线程安全，引入<code>klist_remove_lock</code>（内核全局变量）自旋锁。为方便遍历<code>klist</code>，引入了迭代器<code>klist_iter</code>。<br>
           <!--noindex-->
-          <div class="post-more-link text-center">
+          <div class="post-button text-center">
             <a class="btn" href="/Kernel/内核数据结构/klist/#more" rel="contents">
               阅读全文 &raquo;
             </a>
@@ -400,17 +554,19 @@
         
       
     </div>
+    
+    
+    
 
-    <div>
-      
-    </div>
+    
 
-    <div>
-      
-    </div>
+    
 
+    
 
     <footer class="post-footer">
+      
+
       
 
       
@@ -420,6 +576,10 @@
         <div class="post-eof"></div>
       
     </footer>
+  </div>
+  
+  
+  
   </article>
 
 
@@ -432,21 +592,22 @@
   
   
 
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核数据结构/hlist/">
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核数据结构/hlist/">
 
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Jarson Fang">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/avatar.jpg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="Jarson's Blog">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jarson Fang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
-  </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jarson's Blog">
+    </span>
 
     
       <header class="post-header">
@@ -454,16 +615,8 @@
         
         
           <h1 class="post-title" itemprop="name headline">
-            
-            
-              
                 
-                <a class="post-title-link" href="/Kernel/内核数据结构/hlist/" itemprop="url">
-                  linux内核链表之hlist
-                </a>
-              
-            
-          </h1>
+                <a class="post-title-link" href="/Kernel/内核数据结构/hlist/" itemprop="url">linux内核链表之hlist</a></h1>
         
 
         <div class="post-meta">
@@ -475,7 +628,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2014-03-08T11:54:51+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2014-03-08T11:54:51+08:00">
                 2014-03-08
               </time>
             
@@ -522,21 +675,11 @@
 
           
             
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/Kernel/内核数据结构/hlist/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/内核数据结构/hlist/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
           
 
           
-
           
+
           
 
           
@@ -547,7 +690,9 @@
       </header>
     
 
-
+    
+    
+    
     <div class="post-body" itemprop="articleBody">
 
       
@@ -566,7 +711,7 @@
 <p><code>hlist_node</code>结构体有两个域，<code>next</code>和<code>pprev</code>。 <code>next</code>指针很容易理解，它指向下个<code>hlist_node</code>结点，倘若该节点是链表的最后一个节点，<code>next</code>指向<code>NULL</code>。</p>
 <p><code>pprev</code>是一个二级指针，为什么我们需要这样一个指针呢？它的好处是什么？<br>
           <!--noindex-->
-          <div class="post-more-link text-center">
+          <div class="post-button text-center">
             <a class="btn" href="/Kernel/内核数据结构/hlist/#more" rel="contents">
               阅读全文 &raquo;
             </a>
@@ -575,17 +720,19 @@
         
       
     </div>
+    
+    
+    
 
-    <div>
-      
-    </div>
+    
 
-    <div>
-      
-    </div>
+    
 
+    
 
     <footer class="post-footer">
+      
+
       
 
       
@@ -595,6 +742,10 @@
         <div class="post-eof"></div>
       
     </footer>
+  </div>
+  
+  
+  
   </article>
 
 
@@ -607,21 +758,22 @@
   
   
 
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核数据结构/list-head/">
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核数据结构/list-head/">
 
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Jarson Fang">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/avatar.jpg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="Jarson's Blog">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jarson Fang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
-  </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jarson's Blog">
+    </span>
 
     
       <header class="post-header">
@@ -629,16 +781,8 @@
         
         
           <h1 class="post-title" itemprop="name headline">
-            
-            
-              
                 
-                <a class="post-title-link" href="/Kernel/内核数据结构/list-head/" itemprop="url">
-                  linux内核链表之list_head
-                </a>
-              
-            
-          </h1>
+                <a class="post-title-link" href="/Kernel/内核数据结构/list-head/" itemprop="url">linux内核链表之list_head</a></h1>
         
 
         <div class="post-meta">
@@ -650,7 +794,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2014-03-07T16:58:28+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2014-03-07T16:58:28+08:00">
                 2014-03-07
               </time>
             
@@ -697,21 +841,11 @@
 
           
             
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/Kernel/内核数据结构/list-head/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/内核数据结构/list-head/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
           
 
           
-
           
+
           
 
           
@@ -722,7 +856,9 @@
       </header>
     
 
-
+    
+    
+    
     <div class="post-body" itemprop="articleBody">
 
       
@@ -742,7 +878,7 @@
 </ul>
 <p>具体见下图：<br><img src="/Kernel/内核数据结构/list-head/dlist.png" alt="dlist.png" title=""><br>
           <!--noindex-->
-          <div class="post-more-link text-center">
+          <div class="post-button text-center">
             <a class="btn" href="/Kernel/内核数据结构/list-head/#more" rel="contents">
               阅读全文 &raquo;
             </a>
@@ -751,17 +887,19 @@
         
       
     </div>
+    
+    
+    
 
-    <div>
-      
-    </div>
+    
 
-    <div>
-      
-    </div>
+    
 
+    
 
     <footer class="post-footer">
+      
+
       
 
       
@@ -771,6 +909,10 @@
         <div class="post-eof"></div>
       
     </footer>
+  </div>
+  
+  
+  
   </article>
 
 
@@ -783,21 +925,22 @@
   
   
 
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核文档/kref/">
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核文档/kref/">
 
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Jarson Fang">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/avatar.jpg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="Jarson's Blog">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jarson Fang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
-  </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jarson's Blog">
+    </span>
 
     
       <header class="post-header">
@@ -805,16 +948,8 @@
         
         
           <h1 class="post-title" itemprop="name headline">
-            
-            
-              
                 
-                <a class="post-title-link" href="/Kernel/内核文档/kref/" itemprop="url">
-                  记录内核对象生命周期的kref
-                </a>
-              
-            
-          </h1>
+                <a class="post-title-link" href="/Kernel/内核文档/kref/" itemprop="url">记录内核对象生命周期的kref</a></h1>
         
 
         <div class="post-meta">
@@ -826,7 +961,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2014-03-07T10:40:14+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2014-03-07T10:40:14+08:00">
                 2014-03-07
               </time>
             
@@ -873,21 +1008,11 @@
 
           
             
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/Kernel/内核文档/kref/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/内核文档/kref/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
           
 
           
-
           
+
           
 
           
@@ -898,7 +1023,9 @@
       </header>
     
 
-
+    
+    
+    
     <div class="post-body" itemprop="articleBody">
 
       
@@ -909,7 +1036,7 @@
           <p>参考原文链接：<a href="http://blog.csdn.net/qb_2008/article/details/6840387">linux内核部件分析（三）——记录生命周期的kref</a><br>另外关于kref的使用可参考：<br><a href="http://www.cnblogs.com/wwang/archive/2010/12/02/1894847.html">Linux内核里的“智能指针”</a><br><a href="http://www.cnblogs.com/wwang/archive/2010/12/03/1895852.html">Linux内核里的“智能指针” (续)</a></p>
 <p><code>kref</code>是一个引用计数器，它被嵌套进其它的结构中，记录所嵌套结构的引用计数，并在计数为0时调用相应的清理函数。<code>kref</code>的原理和实现都非常简单，但要想用好却不容易，或者说<code>kref</code>被创建就是为了跟踪复杂情况下结构的引用和销毁。所以这里先介绍<code>kref</code>的实现，再介绍其使用规则。<br>
           <!--noindex-->
-          <div class="post-more-link text-center">
+          <div class="post-button text-center">
             <a class="btn" href="/Kernel/内核文档/kref/#more" rel="contents">
               阅读全文 &raquo;
             </a>
@@ -918,17 +1045,19 @@
         
       
     </div>
+    
+    
+    
 
-    <div>
-      
-    </div>
+    
 
-    <div>
-      
-    </div>
+    
 
+    
 
     <footer class="post-footer">
+      
+
       
 
       
@@ -938,6 +1067,10 @@
         <div class="post-eof"></div>
       
     </footer>
+  </div>
+  
+  
+  
   </article>
 
 
@@ -950,21 +1083,22 @@
   
   
 
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核文档/platform/">
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核文档/platform/">
 
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Jarson Fang">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/avatar.jpg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="Jarson's Blog">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jarson Fang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
-  </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jarson's Blog">
+    </span>
 
     
       <header class="post-header">
@@ -972,16 +1106,8 @@
         
         
           <h1 class="post-title" itemprop="name headline">
-            
-            
-              
                 
-                <a class="post-title-link" href="/Kernel/内核文档/platform/" itemprop="url">
-                  驱动模型之平台设备
-                </a>
-              
-            
-          </h1>
+                <a class="post-title-link" href="/Kernel/内核文档/platform/" itemprop="url">驱动模型之平台设备</a></h1>
         
 
         <div class="post-meta">
@@ -993,7 +1119,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2014-03-05T16:08:08+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2014-03-05T16:08:08+08:00">
                 2014-03-05
               </time>
             
@@ -1040,21 +1166,11 @@
 
           
             
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/Kernel/内核文档/platform/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/内核文档/platform/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
           
 
           
-
           
+
           
 
           
@@ -1065,7 +1181,9 @@
       </header>
     
 
-
+    
+    
+    
     <div class="post-body" itemprop="articleBody">
 
       
@@ -1075,7 +1193,7 @@
         
           <p>翻译原文链接：<a href="http://m.blog.csdn.net/blog/guoshaobei/4971881">http://m.blog.csdn.net/blog/guoshaobei/4971881</a><br>内核文档：Documentation/driver-model/platform.txt<br>
           <!--noindex-->
-          <div class="post-more-link text-center">
+          <div class="post-button text-center">
             <a class="btn" href="/Kernel/内核文档/platform/#more" rel="contents">
               阅读全文 &raquo;
             </a>
@@ -1084,17 +1202,19 @@
         
       
     </div>
+    
+    
+    
 
-    <div>
-      
-    </div>
+    
 
-    <div>
-      
-    </div>
+    
 
+    
 
     <footer class="post-footer">
+      
+
       
 
       
@@ -1104,6 +1224,10 @@
         <div class="post-eof"></div>
       
     </footer>
+  </div>
+  
+  
+  
   </article>
 
 
@@ -1116,21 +1240,22 @@
   
   
 
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核文档/devclass/">
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核文档/devclass/">
 
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Jarson Fang">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/avatar.jpg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="Jarson's Blog">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jarson Fang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
-  </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jarson's Blog">
+    </span>
 
     
       <header class="post-header">
@@ -1138,16 +1263,8 @@
         
         
           <h1 class="post-title" itemprop="name headline">
-            
-            
-              
                 
-                <a class="post-title-link" href="/Kernel/内核文档/devclass/" itemprop="url">
-                  驱动模型之设备类
-                </a>
-              
-            
-          </h1>
+                <a class="post-title-link" href="/Kernel/内核文档/devclass/" itemprop="url">驱动模型之设备类</a></h1>
         
 
         <div class="post-meta">
@@ -1159,7 +1276,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2014-03-05T15:28:09+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2014-03-05T15:28:09+08:00">
                 2014-03-05
               </time>
             
@@ -1206,21 +1323,11 @@
 
           
             
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/Kernel/内核文档/devclass/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/内核文档/devclass/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
           
 
           
-
           
+
           
 
           
@@ -1231,7 +1338,9 @@
       </header>
     
 
-
+    
+    
+    
     <div class="post-body" itemprop="articleBody">
 
       
@@ -1241,7 +1350,7 @@
         
           <p>翻译原文链接：<a href="http://m.blog.csdn.net/blog/guoshaobei/4927177">http://m.blog.csdn.net/blog/guoshaobei/4927177</a><br>内核文档：Documentation/driver-model/class.txt<br>
           <!--noindex-->
-          <div class="post-more-link text-center">
+          <div class="post-button text-center">
             <a class="btn" href="/Kernel/内核文档/devclass/#more" rel="contents">
               阅读全文 &raquo;
             </a>
@@ -1250,17 +1359,19 @@
         
       
     </div>
+    
+    
+    
 
-    <div>
-      
-    </div>
+    
 
-    <div>
-      
-    </div>
+    
 
+    
 
     <footer class="post-footer">
+      
+
       
 
       
@@ -1270,6 +1381,10 @@
         <div class="post-eof"></div>
       
     </footer>
+  </div>
+  
+  
+  
   </article>
 
 
@@ -1282,21 +1397,22 @@
   
   
 
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核文档/binding/">
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核文档/binding/">
 
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Jarson Fang">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/avatar.jpg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="Jarson's Blog">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jarson Fang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
-  </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jarson's Blog">
+    </span>
 
     
       <header class="post-header">
@@ -1304,16 +1420,8 @@
         
         
           <h1 class="post-title" itemprop="name headline">
-            
-            
-              
                 
-                <a class="post-title-link" href="/Kernel/内核文档/binding/" itemprop="url">
-                  驱动模型之驱动绑定
-                </a>
-              
-            
-          </h1>
+                <a class="post-title-link" href="/Kernel/内核文档/binding/" itemprop="url">驱动模型之驱动绑定</a></h1>
         
 
         <div class="post-meta">
@@ -1325,7 +1433,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2014-03-05T14:58:34+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2014-03-05T14:58:34+08:00">
                 2014-03-05
               </time>
             
@@ -1372,21 +1480,11 @@
 
           
             
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/Kernel/内核文档/binding/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/内核文档/binding/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
           
 
           
-
           
+
           
 
           
@@ -1397,7 +1495,9 @@
       </header>
     
 
-
+    
+    
+    
     <div class="post-body" itemprop="articleBody">
 
       
@@ -1407,7 +1507,7 @@
         
           <p>翻译原文链接：<a href="http://m.blog.csdn.net/blog/guoshaobei/4917225">http://m.blog.csdn.net/blog/guoshaobei/4917225</a><br>内核文档：Documentation/driver-model/binding.txt<br>
           <!--noindex-->
-          <div class="post-more-link text-center">
+          <div class="post-button text-center">
             <a class="btn" href="/Kernel/内核文档/binding/#more" rel="contents">
               阅读全文 &raquo;
             </a>
@@ -1416,17 +1516,19 @@
         
       
     </div>
+    
+    
+    
 
-    <div>
-      
-    </div>
+    
 
-    <div>
-      
-    </div>
+    
 
+    
 
     <footer class="post-footer">
+      
+
       
 
       
@@ -1436,6 +1538,10 @@
         <div class="post-eof"></div>
       
     </footer>
+  </div>
+  
+  
+  
   </article>
 
 
@@ -1448,21 +1554,22 @@
   
   
 
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核文档/driver/">
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核文档/driver/">
 
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Jarson Fang">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/avatar.jpg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="Jarson's Blog">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jarson Fang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
-  </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jarson's Blog">
+    </span>
 
     
       <header class="post-header">
@@ -1470,16 +1577,8 @@
         
         
           <h1 class="post-title" itemprop="name headline">
-            
-            
-              
                 
-                <a class="post-title-link" href="/Kernel/内核文档/driver/" itemprop="url">
-                  驱动模型之设备驱动
-                </a>
-              
-            
-          </h1>
+                <a class="post-title-link" href="/Kernel/内核文档/driver/" itemprop="url">驱动模型之设备驱动</a></h1>
         
 
         <div class="post-meta">
@@ -1491,7 +1590,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2014-03-05T14:18:28+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2014-03-05T14:18:28+08:00">
                 2014-03-05
               </time>
             
@@ -1538,21 +1637,11 @@
 
           
             
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/Kernel/内核文档/driver/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/内核文档/driver/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
           
 
           
-
           
+
           
 
           
@@ -1563,7 +1652,9 @@
       </header>
     
 
-
+    
+    
+    
     <div class="post-body" itemprop="articleBody">
 
       
@@ -1573,7 +1664,7 @@
         
           <p>翻译原文链接：<a href="http://blog.chinaunix.net/uid-20522771-id-3449546.html">http://blog.chinaunix.net/uid-20522771-id-3449546.html</a><br>内核文档： Documentation/driver-model/driver.txt</p>
           <!--noindex-->
-          <div class="post-more-link text-center">
+          <div class="post-button text-center">
             <a class="btn" href="/Kernel/内核文档/driver/#more" rel="contents">
               阅读全文 &raquo;
             </a>
@@ -1582,17 +1673,19 @@
         
       
     </div>
+    
+    
+    
 
-    <div>
-      
-    </div>
+    
 
-    <div>
-      
-    </div>
+    
 
+    
 
     <footer class="post-footer">
+      
+
       
 
       
@@ -1602,6 +1695,10 @@
         <div class="post-eof"></div>
       
     </footer>
+  </div>
+  
+  
+  
   </article>
 
 
@@ -1614,21 +1711,22 @@
   
   
 
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核文档/device/">
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核文档/device/">
 
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Jarson Fang">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/avatar.jpg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="Jarson's Blog">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jarson Fang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.jpg">
     </span>
-  </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Jarson's Blog">
+    </span>
 
     
       <header class="post-header">
@@ -1636,16 +1734,8 @@
         
         
           <h1 class="post-title" itemprop="name headline">
-            
-            
-              
                 
-                <a class="post-title-link" href="/Kernel/内核文档/device/" itemprop="url">
-                  驱动模型之设备结构
-                </a>
-              
-            
-          </h1>
+                <a class="post-title-link" href="/Kernel/内核文档/device/" itemprop="url">驱动模型之设备结构</a></h1>
         
 
         <div class="post-meta">
@@ -1657,7 +1747,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2014-03-05T13:10:52+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2014-03-05T13:10:52+08:00">
                 2014-03-05
               </time>
             
@@ -1704,21 +1794,11 @@
 
           
             
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/Kernel/内核文档/device/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/内核文档/device/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
           
 
           
-
           
+
           
 
           
@@ -1729,7 +1809,9 @@
       </header>
     
 
-
+    
+    
+    
     <div class="post-body" itemprop="articleBody">
 
       
@@ -1739,7 +1821,7 @@
         
           <p>翻译原文链接：<a href="http://blog.chinaunix.net/uid-20522771-id-3447322.html">http://blog.chinaunix.net/uid-20522771-id-3447322.html</a><br>内核文档：Documentation/driver-model/device.txt<br>
           <!--noindex-->
-          <div class="post-more-link text-center">
+          <div class="post-button text-center">
             <a class="btn" href="/Kernel/内核文档/device/#more" rel="contents">
               阅读全文 &raquo;
             </a>
@@ -1748,17 +1830,19 @@
         
       
     </div>
+    
+    
+    
 
-    <div>
-      
-    </div>
+    
 
-    <div>
-      
-    </div>
+    
 
+    
 
     <footer class="post-footer">
+      
+
       
 
       
@@ -1768,172 +1852,10 @@
         <div class="post-eof"></div>
       
     </footer>
-  </article>
-
-
-    
-      
-
-  
-
+  </div>
   
   
   
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="https://jarsonfang.github.io/Kernel/内核文档/bus/">
-
-  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <meta itemprop="name" content="Jarson Fang">
-    <meta itemprop="description" content="">
-    <meta itemprop="image" content="/images/avatar.jpg">
-  </span>
-
-  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-    <meta itemprop="name" content="Jarson's Blog">
-    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
-      <img style="display:none;" itemprop="url image" alt="Jarson's Blog" src="">
-    </span>
-  </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/Kernel/内核文档/bus/" itemprop="url">
-                  驱动模型之总线类型
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2014-03-05T11:59:27+08:00">
-                2014-03-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kernel/" itemprop="url" rel="index">
-                    <span itemprop="name">Kernel</span>
-                  </a>
-                </span>
-
-                
-                
-                  ， 
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Kernel/内核文档/" itemprop="url" rel="index">
-                    <span itemprop="name">内核文档</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-              <span class="post-comments-count">
-                <span class="post-meta-divider">|</span>
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-comment-o"></i>
-                </span>
-                <a href="/Kernel/内核文档/bus/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="Kernel/内核文档/bus/" itemprop="commentCount"></span>
-                </a>
-              </span>
-            
-          
-
-          
-
-          
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <p>翻译原文链接：<a href="http://blog.chinaunix.net/uid-20522771-id-3452028.html">http://blog.chinaunix.net/uid-20522771-id-3452028.html</a><br>内核文档： Documentation/driver-model/bus.txt<br>
-          <!--noindex-->
-          <div class="post-more-link text-center">
-            <a class="btn" href="/Kernel/内核文档/bus/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
   </article>
 
 
@@ -1966,6 +1888,7 @@
   </div>
 
   <aside id="sidebar" class="sidebar">
+    
     <div class="sidebar-inner">
 
       
@@ -1978,22 +1901,26 @@
                src="/images/avatar.jpg"
                alt="Jarson Fang" />
           <p class="site-author-name" itemprop="name">Jarson Fang</p>
-          <p class="site-description motion-element" itemprop="description">学习、工作、生活</p>
+           
+              <p class="site-description motion-element" itemprop="description">学习、工作、生活</p>
+          
         </div>
         <nav class="site-state motion-element">
-        
+
           
             <div class="site-state-item site-state-posts">
-              <a href="/archives">
-                <span class="site-state-item-count">68</span>
+              <a href="/archives/">
+                <span class="site-state-item-count">69</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
           
 
           
+            
+            
             <div class="site-state-item site-state-categories">
-              <a href="/categories">
+              <a href="/categories/index.html">
                 <span class="site-state-item-count">17</span>
                 <span class="site-state-item-name">分类</span>
               </a>
@@ -2001,8 +1928,10 @@
           
 
           
+            
+            
             <div class="site-state-item site-state-tags">
-              <a href="/tags">
+              <a href="/tags/index.html">
                 <span class="site-state-item-count">12</span>
                 <span class="site-state-item-name">标签</span>
               </a>
@@ -2021,7 +1950,9 @@
                   
                     <i class="fa fa-fw fa-github"></i>
                   
-                  GitHub
+                    
+                      GitHub
+                    
                 </a>
               </span>
             
@@ -2030,7 +1961,9 @@
                   
                     <i class="fa fa-fw fa-globe"></i>
                   
-                  知乎
+                    
+                      知乎
+                    
                 </a>
               </span>
             
@@ -2038,12 +1971,6 @@
         </div>
 
         
-        
-          <div class="cc-license motion-element" itemprop="license">
-            <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" target="_blank">
-              <img src="/images/cc-by-nc-sa.svg" alt="Creative Commons" />
-            </a>
-          </div>
         
 
         
@@ -2088,6 +2015,10 @@
                 </li>
               
                 <li class="links-of-blogroll-item">
+                  <a href="http://free-electrons.com/" title="free-electrons" target="_blank">free-electrons</a>
+                </li>
+              
+                <li class="links-of-blogroll-item">
                   <a href="https://hexo.io/" title="Hexo" target="_blank">Hexo</a>
                 </li>
               
@@ -2114,6 +2045,8 @@
 
       
 
+      
+
     </div>
   </aside>
 
@@ -2126,36 +2059,50 @@
       <div class="footer-inner">
         <div class="copyright" >
   
-  &copy;  2016 - 
+  &copy;  2016 &mdash; 
   <span itemprop="copyrightYear">2017</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
   <span class="author" itemprop="copyrightHolder">Jarson Fang</span>
+
+  
 </div>
 
 
-<div class="powered-by">
-  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
-</div>
+  <div class="powered-by">
+    由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+  </div>
 
-<div class="theme-info">
-  主题 -
-  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT.Mist
-  </a>
-</div>
+  <span class="post-meta-divider">|</span>
+
+  <div class="theme-info">
+    主题 &mdash;
+    <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+      NexT.Gemini
+    </a>
+  </div>
 
 
         
+
+
+
+
+
+
 
         
       </div>
     </footer>
 
-    <div class="back-to-top">
-      <i class="fa fa-arrow-up"></i>
-    </div>
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
   </div>
 
   
@@ -2175,6 +2122,15 @@
 
 
   
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2200,188 +2156,68 @@
   
 
 
-  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
 
-  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
-
-
-
-  
-  
-
-  
-
-  
-
-
-  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
 
 
 
   
-
-  
-    
   
 
-  <script type="text/javascript">
-    var duoshuoQuery = {short_name:"jarsonfang"};
-    (function() {
-      var ds = document.createElement('script');
-      ds.type = 'text/javascript';ds.async = true;
-      ds.id = 'duoshuo-script';
-      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-      ds.charset = 'UTF-8';
-      (document.getElementsByTagName('head')[0]
-      || document.getElementsByTagName('body')[0]).appendChild(ds);
-    })();
-  </script>
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
 
   
-    
-      
-      <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
-      <script src="/js/src/hook-duoshuo.js?v=5.1.0"></script>
-    
-    
-    <script src="/lib/ua-parser-js/dist/ua-parser.min.js?v=0.7.9"></script>
-    <script src="/js/src/hook-duoshuo.js"></script>
+    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+  
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
   
 
 
 
 
 
+  
+
+
+
 
 
 
 
 
   
-  
-  <script type="text/javascript">
-    // Popup Window;
-    var isfetched = false;
-    // Search DB path;
-    var search_path = "search.xml";
-    if (search_path.length == 0) {
-      search_path = "search.xml";
-    }
-    var path = "/" + search_path;
-    // monitor main search box;
 
-    function proceedsearch() {
-      $("body").append('<div class="popoverlay">').css('overflow', 'hidden');
-      $('.popup').toggle();
-    }
-    // search function;
-    var searchFunc = function(path, search_id, content_id) {
-      'use strict';
-      $.ajax({
-        url: path,
-        dataType: "xml",
-        async: true,
-        success: function( xmlResponse ) {
-          // get the contents from search data
-          isfetched = true;
-          $('.popup').detach().appendTo('.header-inner');
-          var datas = $( "entry", xmlResponse ).map(function() {
-            return {
-              title: $( "title", this ).text(),
-              content: $("content",this).text(),
-              url: $( "url" , this).text()
-            };
-          }).get();
-          var $input = document.getElementById(search_id);
-          var $resultContent = document.getElementById(content_id);
-          $input.addEventListener('input', function(){
-            var matchcounts = 0;
-            var str='<ul class=\"search-result-list\">';
-            var keywords = this.value.trim().toLowerCase().split(/[\s\-]+/);
-            $resultContent.innerHTML = "";
-            if (this.value.trim().length > 1) {
-              // perform local searching
-              datas.forEach(function(data) {
-                var isMatch = false;
-                var content_index = [];
-                var data_title = data.title.trim().toLowerCase();
-                var data_content = data.content.trim().replace(/<[^>]+>/g,"").toLowerCase();
-                var data_url = decodeURIComponent(data.url);
-                var index_title = -1;
-                var index_content = -1;
-                var first_occur = -1;
-                // only match artiles with not empty titles and contents
-                if(data_title != '') {
-                  keywords.forEach(function(keyword, i) {
-                    index_title = data_title.indexOf(keyword);
-                    index_content = data_content.indexOf(keyword);
-                    if( index_title >= 0 || index_content >= 0 ){
-                      isMatch = true;
-                      if (i == 0) {
-                        first_occur = index_content;
-                      }
-                    }
 
-                  });
-                }
-                // show search results
-                if (isMatch) {
-                  matchcounts += 1;
-                  str += "<li><a href='"+ data_url +"' class='search-result-title'>"+ data_title +"</a>";
-                  var content = data.content.trim().replace(/<[^>]+>/g,"");
-                  if (first_occur >= 0) {
-                    // cut out 100 characters
-                    var start = first_occur - 20;
-                    var end = first_occur + 80;
-                    if(start < 0){
-                      start = 0;
-                    }
-                    if(start == 0){
-                      end = 50;
-                    }
-                    if(end > content.length){
-                      end = content.length;
-                    }
-                    var match_content = content.substring(start, end);
-                    // highlight all keywords
-                    keywords.forEach(function(keyword){
-                      var regS = new RegExp(keyword, "gi");
-                      match_content = match_content.replace(regS, "<b class=\"search-keyword\">"+keyword+"</b>");
-                    });
 
-                    str += "<p class=\"search-result\">" + match_content +"...</p>"
-                  }
-                  str += "</li>";
-                }
-              })};
-            str += "</ul>";
-            if (matchcounts == 0) { str = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>' }
-            if (keywords == "") { str = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>' }
-            $resultContent.innerHTML = str;
-          });
-          proceedsearch();
-        }
-      });}
-
-    // handle and trigger popup window;
-    $('.popup-trigger').click(function(e) {
-      e.stopPropagation();
-      if (isfetched == false) {
-        searchFunc(path, 'local-search-input', 'local-search-result');
-      } else {
-        proceedsearch();
-      };
-    });
-
-    $('.popup-btn-close').click(function(e){
-      $('.popup').hide();
-      $(".popoverlay").remove();
-      $('body').css('overflow', '');
-    });
-    $('.popup').click(function(e){
-      e.stopPropagation();
-    });
-  </script>
 
 
   
@@ -2392,6 +2228,9 @@
 
   
 
+  
+
+  
 
 </body>
 </html>
